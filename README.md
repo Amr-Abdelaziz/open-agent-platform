@@ -1,17 +1,17 @@
-# Open Agent Platform
+# Gorbit
 
-Open Agent Platform is a no-code agent building platform. These agents can be connected to a wide range of tools, RAG servers, and even other agents through an Agent Supervisor!
+Gorbit is a no-code agent building platform. These agents can be connected to a wide range of tools, RAG servers, and even other agents through an Agent Supervisor!
 
 <video src="https://github.com/user-attachments/assets/bc91304b-e704-41d7-a0cd-9806d37640c0.mp4" controls="controls"></video>
 
 ## Overview
 
-Open Agent Platform provides a modern, web-based interface for creating, managing, and interacting with LangGraph agents. It's designed with simplicity in mind, making it accessible to users without technical expertise, while still offering advanced capabilities for developers.
+Gorbit provides a modern, web-based interface for creating, managing, and interacting with LangGraph agents. It's designed with simplicity in mind, making it accessible to users without technical expertise, while still offering advanced capabilities for developers.
 
 ## Key Features
 
 - **Agent Management**: Build, configure, and interact with agents through an intuitive interface.
-- **RAG Integration**: First-class support for Retrieval Augmented Generation with [LangConnect](https://github.com/langchain-ai/langconnect).
+- **RAG Integration**: First-class support for Retrieval Augmented Generation with Gorbit Knowledge Base.
 - **MCP Tools**: Connect your agents to external tools through MCP servers.
 - **Agent Supervision**: Orchestrate multiple agents working together through an Agent Supervisor.
 - **Authentication**: Built-in authentication and access control.
@@ -19,18 +19,18 @@ Open Agent Platform provides a modern, web-based interface for creating, managin
 
 ## Documentation
 
-For detailed setup instructions, guides, and API references, please see the [docs directory](https://github.com/langchain-ai/open-agent-platform/tree/main/apps/docs).
+For detailed setup instructions, guides, and API references, please visit our **[full documentation site](https://docs.langchain.com/labs/oap)**.
 
 ## Getting Started
 
-To quickly get started with Open Agent Platform, check out the [Quickstart Guide](https://github.com/langchain-ai/open-agent-platform/blob/main/apps/docs/quickstart.mdx) in our documentation.
+To quickly get started with Gorbit, check out the [Quickstart Guide](https://docs.langchain.com/labs/oap/quickstart) in our documentation.
 
 ## Community and Support
 
 - **GitHub Issues**: Report bugs or request features [here](https://github.com/langchain-ai/open-agent-platform/issues).
 - **Discussions**: Join the conversation on our [GitHub Discussions page](https://github.com/langchain-ai/open-agent-platform/discussions).
 
-We encourage you to explore the platform, build your own agents, and contribute to the Open Agent Platform community!
+We encourage you to explore the platform, build your own agents, and contribute to the Gorbit community!
 
 # Concepts/FAQ
 
@@ -50,7 +50,7 @@ However, if you want to use the RAG features, you will need to have the LangConn
 
 ### How can I build my own agents?
 
-Yes! See the [Building Your Own Agents](https://github.com/langchain-ai/open-agent-platform/blob/main/apps/docs/custom-agents/overview.mdx) section for more information.
+Yes! See the [Building Your Own Agents](https://docs.langchain.com/labs/oap/custom-agents/overview#building-your-own-agents) section for more information.
 
 ### How can I use non-supabase auth?
 

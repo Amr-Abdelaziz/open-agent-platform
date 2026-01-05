@@ -17,7 +17,7 @@ import {
   AssistantMessageLoading,
 } from "@/features/chat/components/thread/messages/ai";
 import { HumanMessage } from "@/features/chat/components/thread/messages/human";
-import { LangGraphLogoSVG } from "@/components/icons/langgraph";
+import { GorbitLogo } from "@/components/icons/gorbit-logo";
 import { TooltipIconButton } from "@/components/ui/tooltip-icon-button";
 import {
   ArrowDown,
@@ -45,6 +45,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { ContentBlocksPreview } from "./messages/ContentBlocksPreview";
 import { useApiKeys, useHasApiKeys } from "@/hooks/use-api-keys";
+import { useLanguage } from "@/providers/Language";
 import {
   Tooltip,
   TooltipContent,
@@ -214,6 +215,7 @@ function NewThreadButton(props: { hasMessages: boolean }) {
 }
 
 export function Thread() {
+  const { t } = useLanguage();
   const [agentId] = useQueryState("agentId");
   const [deploymentId] = useQueryState("deploymentId");
   const [threadId] = useQueryState("threadId");
@@ -368,10 +370,10 @@ export function Thread() {
       <StickToBottom className="relative flex-1 overflow-hidden">
         <StickyToBottomContent
           className={cn(
-            "absolute inset-0 overflow-y-scroll px-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-track]:bg-transparent",
+            "absolute inset-0 overflow-y-scroll px-4 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/30 hover:[&::-webkit-scrollbar-thumb]:bg-primary/50 [&::-webkit-scrollbar-track]:bg-transparent",
             !hasMessages &&
-              !threadId &&
-              "mt-[25vh] flex flex-col items-stretch",
+            !threadId &&
+            "mt-[25vh] flex flex-col items-stretch",
             (hasMessages || threadId) && "grid grid-rows-[1fr_auto]",
           )}
           contentClassName="pt-8 pb-16 max-w-3xl mx-auto flex flex-col gap-4 w-full"
@@ -427,13 +429,19 @@ export function Thread() {
             </>
           }
           footer={
-            <div className="sticky bottom-0 flex flex-col items-center gap-8 bg-white">
+            <div className="sticky bottom-0 flex flex-col items-center gap-8 bg-transparent">
               {!hasMessages && !threadId && (
-                <div className="flex items-center gap-3">
-                  <LangGraphLogoSVG className="h-8 flex-shrink-0" />
-                  <h1 className="text-2xl font-semibold tracking-tight">
-                    Open Agent Platform
-                  </h1>
+                <div className="flex flex-col items-center gap-6 mb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                  <div className="relative group">
+                    <div className="absolute -inset-4 bg-primary/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                    <GorbitLogo className="size-20 flex-shrink-0 relative z-10" />
+                  </div>
+                  <div className="text-center space-y-2 relative z-10">
+                    <h1 className="text-5xl font-black tracking-tighter bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-2xl">
+                      Gorbit
+                    </h1>
+                    <p className="text-foreground/40 font-medium tracking-wide uppercase text-xs">{t('neural_node_management')}</p>
+                  </div>
                 </div>
               )}
 
@@ -442,10 +450,10 @@ export function Thread() {
               <div
                 ref={dropRef}
                 className={cn(
-                  "bg-muted relative z-10 mx-auto mb-8 w-full max-w-3xl rounded-2xl shadow-xs transition-all",
+                  "glass-card relative z-10 mx-auto mb-8 w-full max-w-3xl rounded-2xl transition-all duration-300 shadow-2xl",
                   dragOver
-                    ? "border-primary border-2 border-dotted"
-                    : "border border-solid",
+                    ? "neon-border-purple scale-[1.02] bg-primary/10"
+                    : "border-white/10 hover:border-primary/30"
                 )}
               >
                 <form
@@ -472,7 +480,7 @@ export function Thread() {
                         form?.requestSubmit();
                       }
                     }}
-                    placeholder="Type your message..."
+                    placeholder={t('type_message')}
                     className="field-sizing-content resize-none border-none bg-transparent p-3.5 pb-0 shadow-none ring-0 outline-none focus:ring-0 focus:outline-none"
                   />
 
@@ -542,7 +550,7 @@ export function Thread() {
                                       )
                                     }
                                   >
-                                    Send
+                                    {t('send')}
                                   </Button>
                                 </div>
                               </TooltipTrigger>
@@ -578,3 +586,4 @@ export function Thread() {
     </div>
   );
 }
+

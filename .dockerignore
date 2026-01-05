@@ -1,0 +1,18 @@
+node_modules
+.next
+.turbo
+# .yarn
+.cache
+out
+build
+dist
+.env
+.env.local
+.git
+.github
+apps/web/.next
+apps/web/node_modules
+apps/docs/node_modules
+# yarn.lock
+# package-lock.json
+

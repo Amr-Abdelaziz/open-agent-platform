@@ -13,6 +13,8 @@ import {
 import NextLink from "next/link";
 import { cn } from "@/lib/utils";
 
+import { useLanguage } from "@/providers/Language";
+
 export function NavMain({
   items,
 }: {
@@ -23,10 +25,11 @@ export function NavMain({
   }[];
 }) {
   const pathname = usePathname();
+  const { t } = useLanguage();
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-[10px] uppercase tracking-widest text-foreground/40 font-black">Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item, index) => (
           <NextLink
@@ -36,12 +39,12 @@ export function NavMain({
             <SidebarMenuItem
               className={cn(
                 pathname === item.url &&
-                  "bg-sidebar-accent text-sidebar-accent-foreground",
+                "bg-sidebar-accent text-sidebar-accent-foreground",
               )}
             >
-              <SidebarMenuButton tooltip={item.title}>
+              <SidebarMenuButton tooltip={t(item.title)}>
                 {item.icon && <item.icon />}
-                <span>{item.title}</span>
+                <span className="font-medium">{t(item.title)}</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </NextLink>

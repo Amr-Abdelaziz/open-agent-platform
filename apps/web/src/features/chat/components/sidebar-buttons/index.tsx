@@ -83,7 +83,7 @@ export const SidebarButtons = forwardRef<HTMLDivElement, SidebarButtonsProps>(
               variant="outline"
               size="icon"
               className={cn(
-                "bg-background hover:bg-muted size-9 rounded-full shadow-xs hover:cursor-pointer",
+                "glass-card hover:bg-muted size-9 rounded-full shadow-xs hover:cursor-pointer",
                 isSidebarOpen && "shadow-lg",
               )}
               onClick={handleConfigClick}
@@ -96,7 +96,7 @@ export const SidebarButtons = forwardRef<HTMLDivElement, SidebarButtonsProps>(
               variant="outline"
               size="icon"
               className={cn(
-                "bg-background hover:bg-muted size-9 rounded-full shadow-xs hover:cursor-pointer",
+                "glass-card hover:bg-muted size-9 rounded-full shadow-xs hover:cursor-pointer",
                 isSidebarOpen && "shadow-lg",
               )}
               onClick={handleHistoryClick}

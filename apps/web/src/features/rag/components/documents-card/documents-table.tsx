@@ -28,25 +28,28 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Trash2, MoreVertical } from "lucide-react";
-import { Document } from "@langchain/core/documents";
+import { Trash2, MoreVertical, Eye, File as FileIcon, Cpu } from "lucide-react";
+import { ApiDocument } from "../../hooks/use-rag";
 import { useRagContext } from "../../providers/RAG";
 import { format } from "date-fns";
 import { Collection } from "@/types/collection";
 import { getCollectionName } from "../../hooks/use-rag";
+import { Separator } from "@/components/ui/separator";
 
 interface DocumentsTableProps {
-  documents: Document[];
+  documents: ApiDocument[];
   selectedCollection: Collection;
   actionsDisabled: boolean;
+  onView: (document: ApiDocument, defaultTab?: string) => void;
 }
 
 export function DocumentsTable({
   documents,
   selectedCollection,
   actionsDisabled,
+  onView,
 }: DocumentsTableProps) {
-  const { deleteDocument } = useRagContext();
+  const { deleteDocument, processDocument } = useRagContext();
   return (
     <Table>
       <TableHeader>
@@ -70,14 +73,24 @@ export function DocumentsTable({
         ) : (
           documents.map((doc) => (
             <TableRow key={doc.id}>
-              <TableCell className="font-medium">{doc.metadata.name}</TableCell>
+              <TableCell className="font-medium">
+                <div className="flex items-center gap-2">
+                  <FileIcon className="size-4 text-primary/70" />
+                  <span>{doc.title || doc.metadata?.name || "Untitled"}</span>
+                </div>
+              </TableCell>
               <TableCell>
                 <Badge variant="secondary">
                   {getCollectionName(selectedCollection.name)}
                 </Badge>
               </TableCell>
               <TableCell>
-                {format(new Date(doc.metadata.created_at), "MM/dd/yyyy h:mm a")}
+                {doc.created_at || doc.metadata?.created_at
+                  ? format(
+                    new Date(doc.created_at || doc.metadata?.created_at),
+                    "MM/dd/yyyy h:mm a",
+                  )
+                  : "N/A"}
               </TableCell>
               <TableCell className="text-right">
                 <AlertDialog>
@@ -91,6 +104,22 @@ export function DocumentsTable({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => onView(doc)}>
+                        <Eye className="mr-2 h-4 w-4" />
+                        View Preview
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onView(doc, "pdf")}>
+                        <FileIcon className="mr-2 h-4 w-4" />
+                        View PDF
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => processDocument(selectedCollection.uuid, doc.id)}
+                        disabled={actionsDisabled}
+                      >
+                        <Cpu className="mr-2 h-4 w-4" />
+                        Process & Embed
+                      </DropdownMenuItem>
+                      <Separator className="my-1" />
                       <AlertDialogTrigger asChild>
                         <DropdownMenuItem
                           className="text-destructive"
@@ -112,7 +141,7 @@ export function DocumentsTable({
                         delete the document
                         <span className="font-semibold">
                           {" "}
-                          {doc.metadata.name}
+                          {doc.title || doc.metadata?.name || "Untitled"}
                         </span>
                         .
                       </AlertDialogDescription>
@@ -120,9 +149,7 @@ export function DocumentsTable({
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={async () =>
-                          await deleteDocument(doc.metadata.file_id)
-                        }
+                        onClick={async () => await deleteDocument(doc.id)}
                         className="bg-destructive hover:bg-destructive/90 text-white"
                         disabled={actionsDisabled}
                       >

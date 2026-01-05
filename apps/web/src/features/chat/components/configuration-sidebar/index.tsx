@@ -234,15 +234,15 @@ export const ConfigurationSidebar = forwardRef<
     <div
       ref={ref}
       className={cn(
-        "fixed top-0 right-0 z-10 h-screen border-l border-gray-200 bg-white shadow-lg transition-all duration-300",
+        "fixed top-0 right-0 z-50 h-screen glass-card neon-border-cyan border-none shadow-2xl transition-all duration-300 backdrop-blur-3xl bg-background/80",
         open ? "w-80 md:w-xl" : "w-0 overflow-hidden border-l-0",
         className,
       )}
     >
       {open && (
         <div className="flex h-full flex-col">
-          <div className="flex flex-shrink-0 items-center justify-between border-b border-gray-200 p-4">
-            <h2 className="text-lg font-semibold">Agent Configuration</h2>
+          <div className="flex flex-shrink-0 items-center justify-between border-b border-secondary/10 p-4">
+            <h2 className="text-lg font-black tracking-tight bg-gradient-to-r from-secondary to-secondary/60 bg-clip-text text-transparent uppercase text-xs">Neural Node Config</h2>
             <div className="flex gap-2">
               <TooltipProvider>
                 <Tooltip delayDuration={200}>
@@ -473,7 +473,7 @@ export const ConfigurationSidebar = forwardRef<
         setOpen={setOpenNameAndDescriptionAlertDialog}
         handleSave={handleSave}
       />
-    </div>
+    </div >
   );
 });
 

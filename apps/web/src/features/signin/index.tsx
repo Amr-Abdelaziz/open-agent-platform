@@ -18,6 +18,7 @@ import {
 import { useAuthContext } from "@/providers/Auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { googleAuthDisabled } from "@/lib/utils";
+import { GorbitLogo } from "@/components/icons/gorbit-logo";
 
 export default function SigninInterface() {
   const { signIn, signInWithGoogle, isAuthenticated } = useAuthContext();
@@ -107,12 +108,25 @@ export default function SigninInterface() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center py-10">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-center text-2xl">Sign In</CardTitle>
-          <CardDescription className="text-center">
-            Welcome back to Open Agent Platform
+    <div className="flex min-h-screen items-center justify-center py-10 px-4 relative overflow-hidden">
+      {/* Background Decorative Elements */}
+      <div className="absolute top-1/4 -left-20 size-96 bg-primary/10 rounded-full blur-[100px] animate-pulse" />
+      <div className="absolute bottom-1/4 -right-20 size-96 bg-secondary/10 rounded-full blur-[100px] animate-pulse delay-700" />
+
+      <Card className="w-full max-w-md glass-card neon-border-purple border-none relative z-10 overflow-hidden group shadow-2xl">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-accent" />
+        <CardHeader className="pt-10">
+          <div className="flex justify-center mb-6">
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-primary/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+              <GorbitLogo className="size-16 relative z-10" />
+            </div>
+          </div>
+          <CardTitle className="text-center text-4xl font-black tracking-tighter bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-sm">
+            Gorbit
+          </CardTitle>
+          <CardDescription className="text-center text-foreground/50 font-medium uppercase tracking-widest text-[10px] mt-2">
+            Neural Network Access
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -245,3 +259,4 @@ export default function SigninInterface() {
     </div>
   );
 }
+

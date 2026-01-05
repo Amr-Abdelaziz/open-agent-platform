@@ -6,7 +6,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { LangGraphLogoSVG } from "../icons/langgraph";
+import { GorbitLogo } from "../icons/gorbit-logo";
 import NextLink from "next/link";
 
 export function SiteHeader() {
@@ -17,13 +17,13 @@ export function SiteHeader() {
           <SidebarMenuButton
             size="lg"
             asChild
-            className="flex items-center justify-center gap-0"
+            className="flex items-center justify-center gap-2 hover:bg-transparent"
           >
-            <NextLink href="/">
-              <LangGraphLogoSVG className="!h-4 !w-auto flex-shrink-0" />
-              <div className="grid flex-1 pl-2 text-left text-sm leading-tight transition-all group-data-[collapsible=icon]:pl-0 group-data-[collapsible=icon]:opacity-0">
-                <span className="truncate font-semibold">
-                  Open Agent Platform
+            <NextLink href="/" className="flex items-center gap-3">
+              <GorbitLogo className="size-6 text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
+              <div className="grid flex-1 text-left text-sm leading-tight transition-all group-data-[collapsible=icon]:hidden">
+                <span className="truncate font-bold text-lg tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+                  Gorbit
                 </span>
               </div>
             </NextLink>
@@ -33,3 +33,4 @@ export function SiteHeader() {
     </SidebarHeader>
   );
 }
+

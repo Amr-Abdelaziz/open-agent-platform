@@ -1,5 +1,5 @@
 {
-  "name": "open-agent-platform",
+  "name": "gorbit",
   "author": "LangChain",
   "private": true,
   "workspaces": [

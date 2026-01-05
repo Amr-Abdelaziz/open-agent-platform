@@ -22,7 +22,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Plus, FileUp, X } from "lucide-react";
+import { Plus, FileUp, X, FileIcon } from "lucide-react";
 import { useRagContext } from "../../providers/RAG";
 import { DocumentsTable } from "./documents-table";
 import { Collection } from "@/types/collection";
@@ -34,6 +34,8 @@ import { isUserSpecifiedDefaultAgent } from "@/lib/agent-utils";
 import { MessageSquare } from "lucide-react";
 import { Agent } from "@/types/agent";
 import { useRouter } from "next/navigation";
+import { DocumentPreview } from "../document-preview";
+import { ApiDocument } from "../../hooks/use-rag";
 
 interface DocumentsCardProps {
   selectedCollection: Collection | undefined;
@@ -63,10 +65,20 @@ export function DocumentsCard({
   const { agents } = useAgentsContext();
   const defaultAgent = agents.find(isUserSpecifiedDefaultAgent);
 
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [selectedDocForPreview, setSelectedDocForPreview] = useState<ApiDocument | null>(null);
+  const [previewDefaultTab, setPreviewDefaultTab] = useState<string>("raw");
+
+  const handleViewDocument = (doc: ApiDocument, defaultTab: string = "raw") => {
+    setSelectedDocForPreview(doc);
+    setPreviewDefaultTab(defaultTab);
+    setPreviewOpen(true);
+  };
+
   const filteredDocuments = useMemo(
     () =>
       documents.filter(
-        (doc) => doc.metadata.collection === selectedCollection?.uuid,
+        (doc) => doc.collection_id === selectedCollection?.uuid,
       ),
     [documents, selectedCollection],
   );
@@ -229,22 +241,28 @@ export function DocumentsCard({
   };
 
   return (
-    <Card>
-      <CardHeader className="flex w-full items-center justify-between">
-        <div className="flex flex-col gap-2">
-          <CardTitle>
-            {getCollectionName(selectedCollection?.name)} Documents
+    <Card className="glass-card neon-border-cyan border-none overflow-hidden relative">
+      <div className="absolute top-0 right-0 p-4 opacity-10">
+        <FileIcon className="size-24" />
+      </div>
+      <CardHeader className="flex flex-row items-center justify-between relative z-10">
+        <div className="space-y-1">
+          <CardTitle className="text-xl font-black tracking-tight bg-gradient-to-r from-secondary to-secondary/60 bg-clip-text text-transparent">
+            Documents
           </CardTitle>
-          <CardDescription>Manage documents in this collection</CardDescription>
+          <CardDescription className="text-foreground/50 font-medium">Orbital resource management</CardDescription>
         </div>
         {defaultAgent && (
-          <Button onClick={() => handleChatWithDocuments(defaultAgent)}>
+          <Button
+            onClick={() => handleChatWithDocuments(defaultAgent)}
+            className="bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold shadow-[0_0_15px_rgba(var(--secondary),0.3)]"
+          >
             <MessageSquare className="mr-2 h-3.5 w-3.5" />
-            Chat with your documents
+            Chat with Satellite
           </Button>
         )}
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative z-10">
         <div className="mb-6">
           <Tabs defaultValue="file">
             <TabsList className="mb-4">
@@ -253,12 +271,15 @@ export function DocumentsCard({
             </TabsList>
             <TabsContent value="file">
               <div
-                className={`flex flex-col items-center rounded-lg border-2 border-dashed p-6 text-center ${isDragging ? "border-primary bg-muted/50" : ""}`}
+                className={`flex flex-col items-center rounded-lg border-2 border-dashed p-8 transition-all duration-300 ${isDragging
+                  ? "neon-border-cyan bg-secondary/10 scale-[1.02]"
+                  : "border-secondary/20 bg-secondary/5 hover:border-secondary/40"
+                  }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
               >
-                <FileUp className="text-muted-foreground mx-auto mb-2 h-8 w-8" />
+                <FileUp className="text-secondary/60 mx-auto mb-3 h-10 w-10 drop-shadow-[0_0_10px_rgba(var(--secondary),0.3)]" />
                 <p className="text-muted-foreground mb-2 text-sm">
                   Drag and drop files here or click to browse
                 </p>
@@ -341,9 +362,18 @@ export function DocumentsCard({
               documents={currentDocuments}
               selectedCollection={selectedCollection}
               actionsDisabled={isUploading}
+              onView={handleViewDocument}
             />
           </div>
         )}
+
+        <DocumentPreview
+          isOpen={previewOpen}
+          onOpenChange={setPreviewOpen}
+          document={selectedDocForPreview}
+          collectionId={selectedCollection?.uuid || ""}
+          defaultTab={previewDefaultTab}
+        />
 
         {/* Pagination */}
         {filteredDocuments.length > itemsPerPage && (

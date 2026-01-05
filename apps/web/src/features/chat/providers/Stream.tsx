@@ -16,7 +16,7 @@ import {
   type RemoveUIMessage,
 } from "@langchain/langgraph-sdk/react-ui";
 import { useQueryState } from "nuqs";
-import { LangGraphLogoSVG } from "@/components/icons/langgraph";
+import { GorbitLogo } from "@/components/icons/gorbit-logo";
 import { AgentsCombobox } from "@/components/ui/agents-combobox";
 import { useAgentsContext } from "@/providers/Agents";
 import { Button } from "@/components/ui/button";
@@ -93,12 +93,12 @@ const StreamSession = ({
     defaultHeaders: {
       ...(!useProxyRoute
         ? {
-            Authorization: `Bearer ${accessToken}`,
-            "x-supabase-access-token": accessToken,
-          }
+          Authorization: `Bearer ${accessToken}`,
+          "x-supabase-access-token": accessToken,
+        }
         : {
-            "x-auth-scheme": "langsmith",
-          }),
+          "x-auth-scheme": "langsmith",
+        }),
     },
   });
 
@@ -159,21 +159,30 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
   // Show the form if we: don't have an API URL, or don't have an assistant ID
   if (!agentId || !deploymentId) {
     return (
-      <div className="flex w-full items-center justify-center p-4">
-        <div className="animate-in fade-in-0 zoom-in-95 bg-background flex min-h-64 max-w-3xl flex-col rounded-lg border shadow-lg">
-          <div className="mt-14 flex flex-col gap-2 p-6">
-            <div className="flex flex-col items-start gap-2">
-              <LangGraphLogoSVG className="h-7" />
-              <h1 className="text-xl font-semibold tracking-tight">
-                Open Agent Platform
-              </h1>
+      <div className="flex w-full items-center justify-center p-4 min-h-screen relative overflow-hidden bg-grid">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 size-96 bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse" />
+
+        <div className="animate-in fade-in-0 zoom-in-95 glass-card neon-border-purple border-none flex min-h-[400px] w-full max-w-xl flex-col rounded-2xl shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-secondary to-accent" />
+
+          <div className="mt-12 flex flex-col items-center text-center gap-6 p-8 relative z-10">
+            <div className="relative">
+              <div className="absolute -inset-4 bg-primary/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+              <GorbitLogo className="size-20 relative z-10" />
             </div>
-            <p className="text-muted-foreground">
-              Welcome to Open Agent Platform's chat! To continue, please select
-              an agent to chat with.
+
+            <div className="space-y-2">
+              <h1 className="text-5xl font-black tracking-tighter bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-sm">
+                Gorbit
+              </h1>
+              <p className="text-foreground/40 font-medium tracking-wide uppercase text-xs">AI Interface</p>
+            </div>
+
+            <p className="text-foreground/60 max-w-xs mt-4 leading-relaxed">
+              Welcome to the Gorbit orbital node. Access to your Organization's AI by selecting your authorized agent.
             </p>
           </div>
-          <div className="mb-24 grid grid-cols-[1fr_auto] gap-4 px-6 pt-4">
+          <div className="mb-12 grid grid-cols-[1fr_auto] gap-4 px-8 pt-4 relative z-10">
             <AgentsCombobox
               disableDeselect
               agents={agents}
@@ -186,8 +195,14 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               }
               open={open}
               setOpen={setOpen}
+              className="glass-card border-white/5 hover:border-primary/20 transition-colors"
             />
-            <Button onClick={handleStartChat}>Start Chat</Button>
+            <Button
+              onClick={handleStartChat}
+              className="bg-primary hover:bg-primary/80 text-primary-foreground font-bold shadow-[0_0_20px_rgba(var(--primary),0.2)] hover:shadow-[0_0_30px_rgba(var(--primary),0.4)] transition-all duration-300"
+            >
+              Start Chat
+            </Button>
           </div>
         </div>
       </div>
@@ -222,3 +237,4 @@ export const useStreamContext = (): StreamContextType => {
 };
 
 export default StreamContext;
+

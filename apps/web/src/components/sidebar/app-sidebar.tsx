@@ -5,6 +5,8 @@ import { Wrench, Bot, MessageCircle, Brain } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
+import { ModeToggle } from "../mode-toggle";
+import { useLanguage } from "@/providers/Language";
 import {
   Sidebar,
   SidebarContent,
@@ -17,17 +19,17 @@ import { SiteHeader } from "./sidebar-header";
 const data = {
   navMain: [
     {
-      title: "Chat",
+      title: "chat",
       url: "/",
       icon: MessageCircle,
     },
     {
-      title: "Agents",
+      title: "agents",
       url: "/agents",
       icon: Bot,
     },
     {
-      title: "Tools",
+      title: "tools",
       url: "/tools",
       icon: Wrench,
     },
@@ -37,7 +39,7 @@ const data = {
     //   icon: Inbox,
     // },
     {
-      title: "RAG",
+      title: "rag",
       url: "/rag",
       icon: Brain,
     },
@@ -48,13 +50,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar
       collapsible="icon"
+      className="border-r-0 bg-transparent"
       {...props}
     >
+      <div className="absolute inset-0 bg-background/50 backdrop-blur-xl -z-10" />
       <SiteHeader />
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="gap-2 p-2">
+        <div className="flex items-center justify-between px-2 group-data-[collapsible=icon]:hidden">
+          <ModeToggle />
+        </div>
         <NavUser />
       </SidebarFooter>
       <SidebarRail />

@@ -9,6 +9,7 @@ import { CollectionsList } from "./collections-list";
 import { toast } from "sonner";
 import { CreateCollectionDialog } from "./create-collection-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Layers } from "lucide-react";
 
 interface CollectionsCardProps {
   collections: Collection[];
@@ -97,16 +98,21 @@ export function CollectionsCard({
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Collections</CardTitle>
+    <Card className="glass-card neon-border-purple border-none overflow-hidden relative">
+      <div className="absolute top-0 right-0 p-4 opacity-10">
+        <Layers className="size-24" />
+      </div>
+      <CardHeader className="flex flex-row items-center justify-between relative z-10">
+        <CardTitle className="text-xl font-black tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          Collections
+        </CardTitle>
         <CreateCollectionDialog
           open={open}
           onOpenChange={setOpen}
           onSubmit={handleCreateCollection}
         />
       </CardHeader>
-      <CardContent>
+      <CardContent className="relative z-10">
         <CollectionsList
           collections={collections}
           selectedCollection={selectedCollection}

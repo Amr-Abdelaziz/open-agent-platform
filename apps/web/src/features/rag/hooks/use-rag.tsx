@@ -14,6 +14,30 @@ export function getDefaultCollection(collections: Collection[]): Collection {
   );
 }
 
+// --- Type Definitions from rag.json ---
+
+export interface ApiDocument {
+  id: string;
+  collection_id: string;
+  title?: string | null;
+  source?: string | null;
+  metadata?: Record<string, any> | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+}
+
+export interface SearchResult {
+  id: string;
+  page_content: string;
+  metadata?: Record<string, any> | null;
+  score: number;
+  document_info?: {
+    id: string;
+    title: string;
+    source: string;
+  } | null;
+}
+
 function getApiUrlOrThrow(): URL {
   if (!process.env.NEXT_PUBLIC_RAG_API_URL) {
     throw new Error(
@@ -24,7 +48,7 @@ function getApiUrlOrThrow(): URL {
 }
 
 export function getCollectionName(name: string | undefined) {
-  if (!name) return "";
+  if (!name) return "Unnamed collection";
   return name === DEFAULT_COLLECTION_NAME ? "Default" : name;
 }
 
@@ -127,21 +151,34 @@ interface UseRagReturn {
   setSelectedCollection: Dispatch<SetStateAction<Collection | undefined>>;
 
   // Document state and operations
-  documents: Document[];
-  setDocuments: Dispatch<SetStateAction<Document[]>>;
+  documents: ApiDocument[];
+  setDocuments: Dispatch<SetStateAction<ApiDocument[]>>;
   documentsLoading: boolean;
   setDocumentsLoading: Dispatch<SetStateAction<boolean>>;
   listDocuments: (
     collectionId: string,
     args?: { limit?: number; offset?: number },
     accessToken?: string,
-  ) => Promise<Document[]>;
+  ) => Promise<ApiDocument[]>;
   deleteDocument: (id: string) => Promise<void>;
   handleFileUpload: (
     files: FileList | null,
     collectionId: string,
   ) => Promise<void>;
   handleTextUpload: (textInput: string, collectionId: string) => Promise<void>;
+  getDocumentChunks: (
+    collectionId: string,
+    fileId: string,
+  ) => Promise<any[]>;
+  searchDocuments: (
+    collectionId: string,
+    query: string,
+    limit?: number,
+    filter?: Record<string, any>
+  ) => Promise<SearchResult[]>;
+  getMarkdownPreview: (file: File) => Promise<string>;
+  processDocument: (collectionId: string, documentId: string) => Promise<void>;
+  checkOllamaHealth: () => Promise<any>;
 }
 
 /**
@@ -154,7 +191,7 @@ export function useRag(): UseRagReturn {
   // --- State ---
   const [collections, setCollections] = useState<Collection[]>([]);
   const [collectionsLoading, setCollectionsLoading] = useState(false);
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<ApiDocument[]>([]);
   const [documentsLoading, setDocumentsLoading] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<
     Collection | undefined
@@ -239,7 +276,7 @@ export function useRag(): UseRagReturn {
       collectionId: string,
       args?: { limit?: number; offset?: number },
       accessToken?: string,
-    ): Promise<Document[]> => {
+    ): Promise<ApiDocument[]> => {
       if (!session?.accessToken && !accessToken) {
         toast.error("No session found", {
           richColors: true,
@@ -299,7 +336,7 @@ export function useRag(): UseRagReturn {
       }
 
       setDocuments((prevDocs) =>
-        prevDocs.filter((doc) => doc.metadata.file_id !== id),
+        prevDocs.filter((doc) => doc.id !== id),
       );
     },
     [selectedCollection, session],
@@ -333,13 +370,20 @@ export function useRag(): UseRagReturn {
         });
       });
 
-      await uploadDocuments(
-        collectionId,
-        Array.from(files),
-        session.accessToken,
-        newDocs.map((d) => d.metadata),
-      );
-      setDocuments((prevDocs) => [...prevDocs, ...newDocs]);
+      setDocumentsLoading(true);
+      try {
+        const response = await uploadDocuments(
+          collectionId,
+          Array.from(files),
+          session.accessToken,
+          newDocs.map((d) => d.metadata),
+        );
+        // Refresh documents from API to get the proper UUIDs and fields
+        const updatedDocs = await listDocuments(collectionId);
+        setDocuments(updatedDocs);
+      } finally {
+        setDocumentsLoading(false);
+      }
     },
     [session],
   );
@@ -367,20 +411,181 @@ export function useRag(): UseRagReturn {
         size: `${(textInput.length / 1024).toFixed(1)} KB`,
         created_at: new Date().toISOString(),
       };
-      await uploadDocuments(collectionId, [textFile], session.accessToken, [
-        metadata,
-      ]);
-      setDocuments((prevDocs) => [
-        ...prevDocs,
-        new Document({
-          id: uuidv4(),
-          pageContent: textInput,
+      setDocumentsLoading(true);
+      try {
+        await uploadDocuments(collectionId, [textFile], session.accessToken, [
           metadata,
-        }),
-      ]);
+        ]);
+        // Refresh documents from API
+        const updatedDocs = await listDocuments(collectionId);
+        setDocuments(updatedDocs);
+      } finally {
+        setDocumentsLoading(false);
+      }
     },
     [session],
   );
+
+  const getDocumentChunks = useCallback(
+    async (collectionId: string, fileId: string): Promise<any[]> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return [];
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/collections/${collectionId}/documents/${fileId}/chunks`;
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch document chunks: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      return data;
+    },
+    [session],
+  );
+
+  const searchDocuments = useCallback(
+    async (
+      collectionId: string,
+      query: string,
+      limit: number = 10,
+      filter?: Record<string, any>
+    ): Promise<SearchResult[]> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return [];
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/collections/${collectionId}/documents/search`;
+
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify({ query, limit, filter }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getMarkdownPreview = useCallback(
+    async (file: File): Promise<string> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return "";
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = "/documents/markdown";
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to generate markdown: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      // data is expected to be { "filename": "markdown content" }
+      const content = Object.values(data)[0] as string;
+      return content;
+    },
+    [session]
+  );
+
+  const processDocument = useCallback(
+    async (collectionId: string, documentId: string) => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return;
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/collections/${collectionId}/documents/${documentId}/process`;
+
+      try {
+        const response = await fetch(url.toString(), {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.detail || `Failed to process document: ${response.statusText}`);
+        }
+
+        toast.success("Document processing started");
+
+        // Refresh documents to get updated status/metadata
+        await listDocuments(collectionId);
+      } catch (error: any) {
+        console.error("Error processing document:", error);
+        toast.error(error.message || "Failed to start document processing");
+        throw error;
+      }
+    },
+    [session, listDocuments]
+  );
+
+  const checkOllamaHealth = useCallback(async () => {
+    if (!session?.accessToken) {
+      toast.error("No session found");
+      return;
+    }
+
+    const url = getApiUrlOrThrow();
+    url.pathname = "/api/ollama/health";
+
+    try {
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.detail || `Failed to check Ollama health: ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error: any) {
+      console.error("Error checking Ollama health:", error);
+      toast.error(error.message || "Failed to check Ollama health");
+      throw error;
+    }
+  }, [session]);
 
   // --- Collection Operations ---
 
@@ -625,5 +830,10 @@ export function useRag(): UseRagReturn {
     deleteDocument,
     handleFileUpload,
     handleTextUpload,
+    getDocumentChunks,
+    searchDocuments,
+    getMarkdownPreview,
+    processDocument,
+    checkOllamaHealth,
   };
 }

@@ -6,6 +6,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { SidebarLayout } from "@/components/sidebar";
 import { AuthProvider } from "@/providers/Auth";
 import { DOCS_LINK } from "@/constants";
+import Script from "next/script";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -14,8 +15,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Open Agent Platform",
-  description: "Open Agent Platform by LangChain",
+  title: "Gorbit",
+  description: "Gorbit by LangChain",
 };
 
 export default function RootLayout({
@@ -25,18 +26,10 @@ export default function RootLayout({
 }>) {
   const isDemoApp = process.env.NEXT_PUBLIC_DEMO_APP === "true";
   return (
-    <html lang="en">
-      <head>
-        {process.env.NODE_ENV !== "production" && (
-          <script
-            crossOrigin="anonymous"
-            src="//unpkg.com/react-scan/dist/auto.global.js"
-          />
-        )}
-      </head>
-      <body className={inter.className}>
+    <NuqsAdapter>
+      <AuthProvider>
         {isDemoApp && (
-          <div className="fixed top-0 right-0 left-0 z-10 bg-[#CFC8FE] py-2 text-center text-black shadow-md">
+          <div className="fixed top-0 right-0 left-0 z-[100] bg-[#CFC8FE] py-2 text-center text-black shadow-md">
             You're currently using the demo application. To use your own agents,
             and run in production, check out the{" "}
             <a
@@ -49,12 +42,9 @@ export default function RootLayout({
             </a>
           </div>
         )}
-        <NuqsAdapter>
-          <AuthProvider>
-            <SidebarLayout>{children}</SidebarLayout>
-          </AuthProvider>
-        </NuqsAdapter>
-      </body>
-    </html>
+        <SidebarLayout>{children}</SidebarLayout>
+      </AuthProvider>
+    </NuqsAdapter>
   );
 }
+
