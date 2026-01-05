@@ -1,0 +1,22 @@
+FROM node:20-bullseye
+
+WORKDIR /app
+
+# Copy the entire repo structure for monorepo workspace resolution
+COPY package.json yarn.lock tsconfig.json turbo.json ./
+COPY apps ./apps
+COPY .yarnrc.yml ./
+
+# Enable corepack to use the pinned yarn version (3.5.1)
+RUN corepack enable && corepack prepare yarn@3.5.1 --activate
+
+# Install dependencies and refresh lockfile if needed
+RUN yarn install --immutable-cache || yarn install
+
+# For development, the source code will be mounted via docker-compose volumes
+
+# Expose dev port
+EXPOSE 3000
+
+# Default command runs the Next dev server binding to 0.0.0.0
+CMD ["yarn", "dev", "--hostname", "0.0.0.0", "--port", "3000"]
