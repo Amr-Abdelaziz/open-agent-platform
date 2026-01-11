@@ -805,6 +805,57 @@
                 }
             }
         },
+        "/documents/search": {
+            "post": {
+                "tags": [
+                    "documents"
+                ],
+                "summary": "Documents Search Global",
+                "description": "Search for documents across all collections.",
+                "operationId": "documents_search_global_documents_search_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SearchQuery"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/SearchResult"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Documents Search Global Documents Search Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
         "/documents/markdown": {
             "post": {
                 "tags": [
@@ -1105,22 +1156,53 @@
                     {
                         "name": "model_name",
                         "in": "query",
-                        "required": true,
+                        "required": false,
                         "schema": {
-                            "type": "string",
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
                             "title": "Model Name"
                         }
                     },
                     {
                         "name": "instance_url",
                         "in": "query",
-                        "required": true,
+                        "required": false,
                         "schema": {
-                            "type": "string",
+                            "anyOf": [
+                                {
+                                    "type": "string"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
                             "title": "Instance Url"
                         }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "anyOf": [
+                                    {
+                                        "$ref": "#/components/schemas/EmbeddingSettings"
+                                    },
+                                    {
+                                        "type": "null"
+                                    }
+                                ],
+                                "title": "Settings"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -1180,6 +1262,328 @@
                         "content": {
                             "application/json": {
                                 "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/collections/{collection_id}/crawl": {
+            "post": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Start Crawl",
+                "description": "Start a new background crawling task for a specific collection.\n\nReturns a task_id that can be used to poll progress.",
+                "operationId": "start_crawl_collections__collection_id__crawl_post",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "collection_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "title": "Collection Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CrawlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Start Crawl Collections  Collection Id  Crawl Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/collections/{collection_id}/crawls": {
+            "get": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "List Collection Crawls",
+                "description": "List all crawl tasks for a specific collection.",
+                "operationId": "list_collection_crawls_collections__collection_id__crawls_get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "collection_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "title": "Collection Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "additionalProperties": true
+                                    },
+                                    "title": "Response List Collection Crawls Collections  Collection Id  Crawls Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/crawl/active": {
+            "get": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "List Active Crawls",
+                "description": "List all active crawl tasks.",
+                "operationId": "list_active_crawls_crawl_active_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response List Active Crawls Crawl Active Get"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/crawl/{task_id}": {
+            "get": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Get Crawl Status",
+                "description": "Get the status of a specific crawl task.",
+                "operationId": "get_crawl_status_crawl__task_id__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "task_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Task Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Get Crawl Status Crawl  Task Id  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/crawl/{task_id}/cancel": {
+            "post": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Cancel Crawl",
+                "description": "Cancel a running crawl task.",
+                "operationId": "cancel_crawl_crawl__task_id__cancel_post",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "task_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Task Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Cancel Crawl Crawl  Task Id  Cancel Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/crawl/settings": {
+            "get": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Get Crawl Settings",
+                "description": "Retrieve current crawl settings for the user.",
+                "operationId": "get_crawl_settings_crawl_settings_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Get Crawl Settings Crawl Settings Get"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Update Crawl Settings",
+                "description": "Update crawl settings for the user.",
+                "operationId": "update_crawl_settings_crawl_settings_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "additionalProperties": true,
+                                "type": "object",
+                                "title": "Settings"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Update Crawl Settings Crawl Settings Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
                             }
                         }
                     }
@@ -1379,6 +1783,88 @@
                 "title": "CollectionUpdate",
                 "description": "Schema for updating an existing collection."
             },
+            "CrawlRequest": {
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "maxLength": 2083,
+                        "minLength": 1,
+                        "format": "uri",
+                        "title": "Url"
+                    },
+                    "crawl_type": {
+                        "type": "string",
+                        "title": "Crawl Type",
+                        "default": "website"
+                    },
+                    "max_pages": {
+                        "type": "integer",
+                        "title": "Max Pages",
+                        "default": 100
+                    },
+                    "max_depth": {
+                        "type": "integer",
+                        "title": "Max Depth",
+                        "default": 1
+                    },
+                    "extract_code_examples": {
+                        "type": "boolean",
+                        "title": "Extract Code Examples",
+                        "default": true
+                    },
+                    "max_concurrent": {
+                        "anyOf": [
+                            {
+                                "type": "integer"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Max Concurrent",
+                        "default": 5
+                    },
+                    "urls": {
+                        "anyOf": [
+                            {
+                                "items": {
+                                    "type": "string",
+                                    "maxLength": 2083,
+                                    "minLength": 1,
+                                    "format": "uri"
+                                },
+                                "type": "array"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Urls"
+                    },
+                    "source_display_name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Source Display Name"
+                    },
+                    "skip_discovery": {
+                        "type": "boolean",
+                        "title": "Skip Discovery",
+                        "default": false
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "url"
+                ],
+                "title": "CrawlRequest",
+                "description": "Request model for starting a crawl operation."
+            },
             "DocumentInfo": {
                 "properties": {
                     "id": {
@@ -1475,6 +1961,24 @@
                     "collection_id"
                 ],
                 "title": "DocumentResponse"
+            },
+            "EmbeddingSettings": {
+                "properties": {
+                    "model_name": {
+                        "type": "string",
+                        "title": "Model Name"
+                    },
+                    "instance_url": {
+                        "type": "string",
+                        "title": "Instance Url"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "model_name",
+                    "instance_url"
+                ],
+                "title": "EmbeddingSettings"
             },
             "HTTPValidationError": {
                 "properties": {

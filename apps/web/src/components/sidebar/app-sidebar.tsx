@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Wrench, Bot, MessageCircle, Brain } from "lucide-react";
+import { Wrench, Bot, MessageCircle, Brain, Shield, Network } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
@@ -14,6 +14,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { SiteHeader } from "./sidebar-header";
+import { useAuthContext } from "@/providers/Auth";
 
 // This is sample data.
 const data = {
@@ -43,10 +44,22 @@ const data = {
       url: "/rag",
       icon: Brain,
     },
+    {
+      title: "organization",
+      url: "/organization",
+      icon: Network,
+    },
+    {
+      title: "admin",
+      url: "/admin",
+      icon: Shield,
+      isAdminOnly: true
+    },
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuthContext();
   return (
     <Sidebar
       collapsible="icon"
@@ -56,7 +69,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <div className="absolute inset-0 bg-background/50 backdrop-blur-xl -z-10" />
       <SiteHeader />
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={data.navMain.filter(item => {
+          if (!item.isAdminOnly) return true;
+          // Check if user email is amr2@dr-ai.tech or amr2@admin for manual bypass
+          // or if the profile is synced (best to check user metadata)
+          const adminEmails = ["amr2@dr-ai.tech", "amr2@admin"];
+          return adminEmails.includes(user?.email || "");
+        })} />
       </SidebarContent>
       <SidebarFooter className="gap-2 p-2">
         <div className="flex items-center justify-between px-2 group-data-[collapsible=icon]:hidden">

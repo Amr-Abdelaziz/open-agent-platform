@@ -19,6 +19,17 @@ import {
 import { useAuthContext } from "@/providers/Auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { googleAuthDisabled } from "@/lib/utils";
+import { createProfile } from "@/lib/onboarding";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const DEPARTMENTS = ["Human Resources", "Sales", "Finance", "Legal", "Operations"];
+const JOB_TITLES = ["HR Manager", "Sales Manager", "Accountant", "Legal Counsel", "Product Manager"];
 
 // Form validation schema
 const signupSchema = z
@@ -34,6 +45,8 @@ const signupSchema = z
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
       .regex(/[0-9]/, "Password must contain at least one number"),
     confirmPassword: z.string(),
+    department: z.string().min(1, "Department is required"),
+    jobTitle: z.string().min(1, "Job title is required"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -53,6 +66,8 @@ export default function SignupInterface() {
     email: "",
     password: "",
     confirmPassword: "",
+    department: "",
+    jobTitle: "",
   });
 
   const [errors, setErrors] = useState<
@@ -105,6 +120,8 @@ export default function SignupInterface() {
           last_name: formValues.lastName,
           company_name: formValues.companyName || null,
           name: `${formValues.firstName} ${formValues.lastName}`.trim(),
+          department: formValues.department,
+          job_title: formValues.jobTitle,
         },
       });
 
@@ -229,6 +246,56 @@ export default function SignupInterface() {
               {errors.email && (
                 <p className="text-destructive text-sm">{errors.email}</p>
               )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="department">Department</Label>
+                <Select
+                  value={formValues.department || ""}
+                  onValueChange={(value) =>
+                    setFormValues((prev) => ({ ...prev, department: value }))
+                  }
+                >
+                  <SelectTrigger id="department" className="w-full">
+                    <SelectValue placeholder="Select Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DEPARTMENTS.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.department && (
+                  <p className="text-destructive text-sm">{errors.department}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="jobTitle">Job Title</Label>
+                <Select
+                  value={formValues.jobTitle || ""}
+                  onValueChange={(value) =>
+                    setFormValues((prev) => ({ ...prev, jobTitle: value }))
+                  }
+                >
+                  <SelectTrigger id="jobTitle" className="w-full">
+                    <SelectValue placeholder="Select Job Title" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {JOB_TITLES.map((title) => (
+                      <SelectItem key={title} value={title}>
+                        {title}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.jobTitle && (
+                  <p className="text-destructive text-sm">{errors.jobTitle}</p>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">

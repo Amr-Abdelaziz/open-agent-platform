@@ -2,8 +2,8 @@
 # yarn lockfile v1
 
 
-"@alcalzone/ansi-tokenize@^0.2.0":
-  version "0.2.3"
+"@alcalzone/ansi-tokenize@^0.2.1":
+  version "0.2.2"
   dependencies:
     ansi-styles "^6.2.1"
     is-fullwidth-code-point "^5.0.0"
@@ -11,23 +11,15 @@
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
 
-"@ark/schema@0.55.0":
-  version "0.55.0"
+"@ark/schema@0.53.0":
+  version "0.53.0"
   dependencies:
-    "@ark/util" "0.55.0"
+    "@ark/util" "0.53.0"
 
-"@ark/schema@0.56.0":
-  version "0.56.0"
-  dependencies:
-    "@ark/util" "0.56.0"
+"@ark/util@0.53.0":
+  version "0.53.0"
 
-"@ark/util@0.55.0":
-  version "0.55.0"
-
-"@ark/util@0.56.0":
-  version "0.56.0"
-
-"@asyncapi/parser@3.4.0":
+"@asyncapi/parser@^3.4.0":
   version "3.4.0"
   dependencies:
     "@asyncapi/specs" "^6.8.0"
@@ -227,44 +219,44 @@
 "@inquirer/ansi@^1.0.2":
   version "1.0.2"
 
-"@inquirer/checkbox@^4.3.0", "@inquirer/checkbox@^4.3.2":
-  version "4.3.2"
+"@inquirer/checkbox@^4.3.1":
+  version "4.3.1"
   dependencies:
     "@inquirer/ansi" "^1.0.2"
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/figures" "^1.0.15"
     "@inquirer/type" "^3.0.10"
     yoctocolors-cjs "^2.1.3"
 
-"@inquirer/confirm@^5.1.19", "@inquirer/confirm@^5.1.21":
-  version "5.1.21"
+"@inquirer/confirm@^5.1.20":
+  version "5.1.20"
   dependencies:
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/type" "^3.0.10"
 
-"@inquirer/core@^10.1.2", "@inquirer/core@^10.3.2":
-  version "10.3.2"
+"@inquirer/core@^10.3.1":
+  version "10.3.1"
   dependencies:
     "@inquirer/ansi" "^1.0.2"
     "@inquirer/figures" "^1.0.15"
     "@inquirer/type" "^3.0.10"
     cli-width "^4.1.0"
-    mute-stream "^2.0.0"
+    mute-stream "^3.0.0"
     signal-exit "^4.1.0"
     wrap-ansi "^6.2.0"
     yoctocolors-cjs "^2.1.3"
 
-"@inquirer/editor@^4.2.21", "@inquirer/editor@^4.2.23":
-  version "4.2.23"
+"@inquirer/editor@^4.2.22":
+  version "4.2.22"
   dependencies:
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/external-editor" "^1.0.3"
     "@inquirer/type" "^3.0.10"
 
-"@inquirer/expand@^4.0.21", "@inquirer/expand@^4.0.23":
-  version "4.0.23"
+"@inquirer/expand@^4.0.22":
+  version "4.0.22"
   dependencies:
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/type" "^3.0.10"
     yoctocolors-cjs "^2.1.3"
 
@@ -277,79 +269,75 @@
 "@inquirer/figures@^1.0.15":
   version "1.0.15"
 
-"@inquirer/input@^4.2.5", "@inquirer/input@^4.3.1":
-  version "4.3.1"
+"@inquirer/input@^4.3.0":
+  version "4.3.0"
   dependencies:
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/type" "^3.0.10"
 
-"@inquirer/number@^3.0.21", "@inquirer/number@^3.0.23":
-  version "3.0.23"
+"@inquirer/number@^3.0.22":
+  version "3.0.22"
   dependencies:
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/type" "^3.0.10"
 
-"@inquirer/password@^4.0.21", "@inquirer/password@^4.0.23":
-  version "4.0.23"
+"@inquirer/password@^4.0.22":
+  version "4.0.22"
   dependencies:
     "@inquirer/ansi" "^1.0.2"
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/type" "^3.0.10"
 
-"@inquirer/prompts@^7.2.1":
-  version "7.10.1"
+"@inquirer/prompts@^7.10.0", "@inquirer/prompts@^7.9.0":
+  version "7.10.0"
   dependencies:
-    "@inquirer/checkbox" "^4.3.2"
-    "@inquirer/confirm" "^5.1.21"
-    "@inquirer/editor" "^4.2.23"
-    "@inquirer/expand" "^4.0.23"
-    "@inquirer/input" "^4.3.1"
-    "@inquirer/number" "^3.0.23"
-    "@inquirer/password" "^4.0.23"
-    "@inquirer/rawlist" "^4.1.11"
-    "@inquirer/search" "^3.2.2"
-    "@inquirer/select" "^4.4.2"
+    "@inquirer/checkbox" "^4.3.1"
+    "@inquirer/confirm" "^5.1.20"
+    "@inquirer/editor" "^4.2.22"
+    "@inquirer/expand" "^4.0.22"
+    "@inquirer/input" "^4.3.0"
+    "@inquirer/number" "^3.0.22"
+    "@inquirer/password" "^4.0.22"
+    "@inquirer/rawlist" "^4.1.10"
+    "@inquirer/search" "^3.2.1"
+    "@inquirer/select" "^4.4.1"
 
-"@inquirer/prompts@7.9.0":
-  version "7.9.0"
+"@inquirer/rawlist@^4.1.10":
+  version "4.1.10"
   dependencies:
-    "@inquirer/checkbox" "^4.3.0"
-    "@inquirer/confirm" "^5.1.19"
-    "@inquirer/editor" "^4.2.21"
-    "@inquirer/expand" "^4.0.21"
-    "@inquirer/input" "^4.2.5"
-    "@inquirer/number" "^3.0.21"
-    "@inquirer/password" "^4.0.21"
-    "@inquirer/rawlist" "^4.1.9"
-    "@inquirer/search" "^3.2.0"
-    "@inquirer/select" "^4.4.0"
-
-"@inquirer/rawlist@^4.1.11", "@inquirer/rawlist@^4.1.9":
-  version "4.1.11"
-  dependencies:
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/type" "^3.0.10"
     yoctocolors-cjs "^2.1.3"
 
-"@inquirer/search@^3.2.0", "@inquirer/search@^3.2.2":
-  version "3.2.2"
+"@inquirer/search@^3.2.1":
+  version "3.2.1"
   dependencies:
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/figures" "^1.0.15"
     "@inquirer/type" "^3.0.10"
     yoctocolors-cjs "^2.1.3"
 
-"@inquirer/select@^4.4.0", "@inquirer/select@^4.4.2":
-  version "4.4.2"
+"@inquirer/select@^4.4.1":
+  version "4.4.1"
   dependencies:
     "@inquirer/ansi" "^1.0.2"
-    "@inquirer/core" "^10.3.2"
+    "@inquirer/core" "^10.3.1"
     "@inquirer/figures" "^1.0.15"
     "@inquirer/type" "^3.0.10"
     yoctocolors-cjs "^2.1.3"
 
-"@inquirer/type@^3.0.10", "@inquirer/type@^3.0.2":
+"@inquirer/type@^3.0.10":
   version "3.0.10"
+
+"@isaacs/cliui@^8.0.2":
+  version "8.0.2"
+  dependencies:
+    string-width "^5.1.2"
+    string-width-cjs "npm:string-width@^4.2.0"
+    strip-ansi "^7.0.1"
+    strip-ansi-cjs "npm:strip-ansi@^6.0.1"
+    wrap-ansi "^8.1.0"
+    wrap-ansi-cjs "npm:wrap-ansi@^7.0.0"
 
 "@jridgewell/gen-mapping@^0.3.2", "@jridgewell/gen-mapping@^0.3.5":
   version "0.3.13"
@@ -445,98 +433,92 @@
   dependencies:
     "@types/mdx" "^2.0.0"
 
-"@mintlify/cli@4.0.864":
-  version "4.0.864"
+"@mintlify/cli@4.0.792":
+  version "4.0.792"
   dependencies:
-    "@inquirer/prompts" "7.9.0"
-    "@mintlify/common" "1.0.653"
-    "@mintlify/link-rot" "3.0.804"
-    "@mintlify/models" "0.0.251"
-    "@mintlify/prebuild" "1.0.785"
-    "@mintlify/previewing" "4.0.839"
-    "@mintlify/validation" "0.1.551"
-    adm-zip "0.5.16"
-    chalk "5.2.0"
-    color "4.2.3"
-    detect-port "1.5.1"
-    front-matter "4.0.2"
-    fs-extra "11.2.0"
-    ink "6.3.0"
-    inquirer "12.3.0"
-    js-yaml "4.1.0"
-    mdast-util-mdx-jsx "3.2.0"
-    react "19.2.3"
-    semver "7.7.2"
-    unist-util-visit "5.0.0"
-    yargs "17.7.1"
+    "@inquirer/prompts" "^7.9.0"
+    "@mintlify/common" "1.0.594"
+    "@mintlify/link-rot" "3.0.735"
+    "@mintlify/models" "0.0.238"
+    "@mintlify/prebuild" "1.0.722"
+    "@mintlify/previewing" "4.0.771"
+    "@mintlify/validation" "0.1.513"
+    adm-zip "^0.5.10"
+    chalk "^5.2.0"
+    color "^4.2.3"
+    detect-port "^1.5.1"
+    fs-extra "^11.2.0"
+    gray-matter "^4.0.3"
+    ink "^6.0.1"
+    inquirer "^12.3.0"
+    js-yaml "^4.1.0"
+    mdast-util-mdx-jsx "^3.2.0"
+    react "^19.1.0"
+    semver "^7.7.2"
+    unist-util-visit "^5.0.0"
+    yargs "^17.6.0"
 
-"@mintlify/common@1.0.653":
-  version "1.0.653"
+"@mintlify/common@1.0.594":
+  version "1.0.594"
   dependencies:
-    "@asyncapi/parser" "3.4.0"
-    "@mintlify/mdx" "^3.0.4"
-    "@mintlify/models" "0.0.251"
+    "@asyncapi/parser" "^3.4.0"
+    "@mintlify/mdx" "^3.0.1"
+    "@mintlify/models" "0.0.238"
     "@mintlify/openapi-parser" "^0.0.8"
-    "@mintlify/validation" "0.1.551"
-    "@sindresorhus/slugify" "2.2.0"
-    "@types/mdast" "4.0.4"
-    acorn "8.11.2"
-    acorn-jsx "5.3.2"
-    color-blend "4.0.0"
-    estree-util-to-js "2.0.0"
-    estree-walker "3.0.3"
-    front-matter "4.0.2"
-    hast-util-from-html "2.0.3"
-    hast-util-to-html "9.0.4"
-    hast-util-to-text "4.0.2"
-    hex-rgb "5.0.0"
-    ignore "7.0.5"
-    js-yaml "4.1.0"
-    lodash "4.17.21"
-    mdast-util-from-markdown "2.0.2"
-    mdast-util-gfm "3.0.0"
-    mdast-util-mdx "3.0.0"
-    mdast-util-mdx-jsx "3.1.3"
-    micromark-extension-gfm "3.0.0"
-    micromark-extension-mdx-jsx "3.0.1"
-    micromark-extension-mdxjs "3.0.0"
-    openapi-types "12.1.3"
-    postcss "8.5.6"
-    rehype-stringify "10.0.1"
-    remark "15.0.1"
-    remark-frontmatter "5.0.0"
-    remark-gfm "4.0.0"
-    remark-math "6.0.0"
-    remark-mdx "3.1.0"
-    remark-parse "11.0.0"
-    remark-rehype "11.1.1"
-    remark-stringify "11.0.0"
-    tailwindcss "3.4.4"
-    unified "11.0.5"
-    unist-builder "4.0.0"
-    unist-util-map "4.0.0"
-    unist-util-remove "4.0.0"
-    unist-util-remove-position "5.0.0"
-    unist-util-visit "5.0.0"
-    unist-util-visit-parents "6.0.1"
-    vfile "6.0.3"
+    "@mintlify/validation" "0.1.513"
+    "@sindresorhus/slugify" "^2.1.1"
+    acorn "^8.11.2"
+    acorn-jsx "^5.3.2"
+    color-blend "^4.0.0"
+    estree-util-to-js "^2.0.0"
+    estree-walker "^3.0.3"
+    gray-matter "^4.0.3"
+    hast-util-from-html "^2.0.3"
+    hast-util-to-html "^9.0.4"
+    hast-util-to-text "^4.0.2"
+    hex-rgb "^5.0.0"
+    js-yaml "^4.1.0"
+    lodash "^4.17.21"
+    mdast-util-from-markdown "^2.0.2"
+    mdast-util-gfm "^3.0.0"
+    mdast-util-mdx "^3.0.0"
+    mdast-util-mdx-jsx "^3.1.3"
+    micromark-extension-gfm "^3.0.0"
+    micromark-extension-mdx-jsx "^3.0.1"
+    micromark-extension-mdxjs "^3.0.0"
+    openapi-types "^12.0.0"
+    postcss "^8.5.6"
+    remark "^15.0.1"
+    remark-frontmatter "^5.0.0"
+    remark-gfm "^4.0.0"
+    remark-math "^6.0.0"
+    remark-mdx "^3.1.0"
+    remark-stringify "^11.0.0"
+    tailwindcss "^3.4.4"
+    unified "^11.0.5"
+    unist-builder "^4.0.0"
+    unist-util-map "^4.0.0"
+    unist-util-remove "^4.0.0"
+    unist-util-remove-position "^5.0.0"
+    unist-util-visit "^5.0.0"
+    unist-util-visit-parents "^6.0.1"
+    vfile "^6.0.3"
 
-"@mintlify/link-rot@3.0.804":
-  version "3.0.804"
+"@mintlify/link-rot@3.0.735":
+  version "3.0.735"
   dependencies:
-    "@mintlify/common" "1.0.653"
-    "@mintlify/prebuild" "1.0.785"
-    "@mintlify/previewing" "4.0.839"
-    "@mintlify/validation" "0.1.551"
-    fs-extra "11.1.0"
-    unist-util-visit "4.1.2"
+    "@mintlify/common" "1.0.594"
+    "@mintlify/prebuild" "1.0.722"
+    "@mintlify/previewing" "4.0.771"
+    "@mintlify/validation" "0.1.513"
+    fs-extra "^11.1.0"
+    unist-util-visit "^4.1.1"
 
-"@mintlify/mdx@^3.0.4":
-  version "3.0.4"
+"@mintlify/mdx@^3.0.1":
+  version "3.0.1"
   dependencies:
     "@shikijs/transformers" "^3.11.0"
     "@shikijs/twoslash" "^3.12.2"
-    arktype "^2.1.26"
     hast-util-to-string "^3.0.1"
     mdast-util-from-markdown "^2.0.2"
     mdast-util-gfm "^3.1.0"
@@ -551,11 +533,11 @@
     unified "^11.0.0"
     unist-util-visit "^5.0.0"
 
-"@mintlify/models@0.0.251":
-  version "0.0.251"
+"@mintlify/models@0.0.238":
+  version "0.0.238"
   dependencies:
-    axios "1.10.0"
-    openapi-types "12.1.3"
+    axios "^1.8.3"
+    openapi-types "^12.0.0"
 
 "@mintlify/openapi-parser@^0.0.8":
   version "0.0.8"
@@ -567,83 +549,83 @@
     leven "^4.0.0"
     yaml "^2.4.5"
 
-"@mintlify/prebuild@1.0.785":
-  version "1.0.785"
+"@mintlify/prebuild@1.0.722":
+  version "1.0.722"
   dependencies:
-    "@mintlify/common" "1.0.653"
+    "@mintlify/common" "1.0.594"
     "@mintlify/openapi-parser" "^0.0.8"
-    "@mintlify/scraping" "4.0.514"
-    "@mintlify/validation" "0.1.551"
-    chalk "5.3.0"
-    favicons "7.2.0"
-    front-matter "4.0.2"
-    fs-extra "11.1.0"
-    js-yaml "4.1.0"
-    openapi-types "12.1.3"
-    sharp "0.33.5"
-    sharp-ico "0.1.5"
-    unist-util-visit "4.1.2"
-    uuid "11.1.0"
+    "@mintlify/scraping" "4.0.454"
+    "@mintlify/validation" "0.1.513"
+    chalk "^5.3.0"
+    favicons "^7.2.0"
+    fs-extra "^11.1.0"
+    gray-matter "^4.0.3"
+    js-yaml "^4.1.0"
+    openapi-types "^12.0.0"
+    sharp "^0.33.1"
+    sharp-ico "^0.1.5"
+    unist-util-visit "^4.1.1"
+    uuid "^11.1.0"
 
-"@mintlify/previewing@4.0.839":
-  version "4.0.839"
+"@mintlify/previewing@4.0.771":
+  version "4.0.771"
   dependencies:
-    "@mintlify/common" "1.0.653"
-    "@mintlify/prebuild" "1.0.785"
-    "@mintlify/validation" "0.1.551"
-    better-opn "3.0.2"
-    chalk "5.2.0"
-    chokidar "3.5.3"
-    express "4.18.2"
-    front-matter "4.0.2"
-    fs-extra "11.1.0"
-    got "13.0.0"
-    ink "6.3.0"
-    ink-spinner "5.0.0"
-    is-online "10.0.0"
-    js-yaml "4.1.0"
-    openapi-types "12.1.3"
-    react "19.2.3"
-    socket.io "4.7.2"
-    tar "6.1.15"
-    unist-util-visit "4.1.2"
-    yargs "17.7.1"
+    "@mintlify/common" "1.0.594"
+    "@mintlify/prebuild" "1.0.722"
+    "@mintlify/validation" "0.1.513"
+    better-opn "^3.0.2"
+    chalk "^5.1.0"
+    chokidar "^3.5.3"
+    express "^4.18.2"
+    fs-extra "^11.1.0"
+    got "^13.0.0"
+    gray-matter "^4.0.3"
+    ink "^6.0.1"
+    ink-spinner "^5.0.0"
+    is-online "^10.0.0"
+    js-yaml "^4.1.0"
+    openapi-types "^12.0.0"
+    react "^19.1.0"
+    socket.io "^4.7.2"
+    tar "^6.1.15"
+    unist-util-visit "^4.1.1"
+    yargs "^17.6.0"
 
-"@mintlify/scraping@4.0.514":
-  version "4.0.514"
+"@mintlify/scraping@4.0.454":
+  version "4.0.454"
   dependencies:
-    "@mintlify/common" "1.0.653"
+    "@mintlify/common" "1.0.594"
     "@mintlify/openapi-parser" "^0.0.8"
-    fs-extra "11.1.1"
-    hast-util-to-mdast "10.1.0"
-    js-yaml "4.1.0"
-    mdast-util-mdx-jsx "3.1.3"
-    neotraverse "0.6.18"
-    puppeteer "22.14.0"
-    rehype-parse "9.0.1"
-    remark-gfm "4.0.0"
-    remark-mdx "3.0.1"
-    remark-parse "11.0.0"
-    remark-stringify "11.0.0"
-    unified "11.0.5"
-    unist-util-visit "5.0.0"
-    yargs "17.7.1"
-    zod "3.21.4"
+    fs-extra "^11.1.1"
+    hast-util-to-mdast "^10.1.0"
+    js-yaml "^4.1.0"
+    mdast-util-mdx-jsx "^3.1.3"
+    neotraverse "^0.6.18"
+    puppeteer "^22.14.0"
+    rehype-parse "^9.0.0"
+    remark-gfm "^4.0.0"
+    remark-mdx "^3.0.1"
+    remark-parse "^11.0.0"
+    remark-stringify "^11.0.0"
+    unified "^11.0.5"
+    unist-util-visit "^5.0.0"
+    yargs "^17.6.0"
+    zod "^3.20.6"
 
-"@mintlify/validation@0.1.551":
-  version "0.1.551"
+"@mintlify/validation@0.1.513":
+  version "0.1.513"
   dependencies:
-    "@mintlify/mdx" "^3.0.4"
-    "@mintlify/models" "0.0.251"
-    arktype "2.1.27"
-    js-yaml "4.1.0"
-    lcm "0.0.3"
-    lodash "4.17.21"
-    object-hash "3.0.0"
-    openapi-types "12.1.3"
-    uuid "11.1.0"
-    zod "3.21.4"
-    zod-to-json-schema "3.20.4"
+    "@mintlify/mdx" "^3.0.1"
+    "@mintlify/models" "0.0.238"
+    arktype "^2.1.20"
+    js-yaml "^4.1.0"
+    lcm "^0.0.3"
+    lodash "^4.17.21"
+    object-hash "^3.0.0"
+    openapi-types "^12.0.0"
+    uuid "^11.1.0"
+    zod "^3.20.6"
+    zod-to-json-schema "^3.20.3"
 
 "@modelcontextprotocol/sdk@^1.11.4":
   version "1.21.1"
@@ -698,6 +680,9 @@
   version "3.2.0"
   dependencies:
     fast-deep-equal "^3.1.3"
+
+"@pkgjs/parseargs@^0.11.0":
+  version "0.11.0"
 
 "@puppeteer/browsers@2.3.0":
   version "2.3.0"
@@ -1314,52 +1299,52 @@
 "@rushstack/eslint-patch@^1.10.3":
   version "1.14.1"
 
-"@shikijs/core@3.21.0":
-  version "3.21.0"
+"@shikijs/core@3.15.0":
+  version "3.15.0"
   dependencies:
-    "@shikijs/types" "3.21.0"
+    "@shikijs/types" "3.15.0"
     "@shikijs/vscode-textmate" "^10.0.2"
     "@types/hast" "^3.0.4"
     hast-util-to-html "^9.0.5"
 
-"@shikijs/engine-javascript@3.21.0":
-  version "3.21.0"
+"@shikijs/engine-javascript@3.15.0":
+  version "3.15.0"
   dependencies:
-    "@shikijs/types" "3.21.0"
+    "@shikijs/types" "3.15.0"
     "@shikijs/vscode-textmate" "^10.0.2"
-    oniguruma-to-es "^4.3.4"
+    oniguruma-to-es "^4.3.3"
 
-"@shikijs/engine-oniguruma@3.21.0":
-  version "3.21.0"
+"@shikijs/engine-oniguruma@3.15.0":
+  version "3.15.0"
   dependencies:
-    "@shikijs/types" "3.21.0"
+    "@shikijs/types" "3.15.0"
     "@shikijs/vscode-textmate" "^10.0.2"
 
-"@shikijs/langs@3.21.0":
-  version "3.21.0"
+"@shikijs/langs@3.15.0":
+  version "3.15.0"
   dependencies:
-    "@shikijs/types" "3.21.0"
+    "@shikijs/types" "3.15.0"
 
-"@shikijs/themes@3.21.0":
-  version "3.21.0"
+"@shikijs/themes@3.15.0":
+  version "3.15.0"
   dependencies:
-    "@shikijs/types" "3.21.0"
+    "@shikijs/types" "3.15.0"
 
 "@shikijs/transformers@^3.11.0":
-  version "3.21.0"
+  version "3.15.0"
   dependencies:
-    "@shikijs/core" "3.21.0"
-    "@shikijs/types" "3.21.0"
+    "@shikijs/core" "3.15.0"
+    "@shikijs/types" "3.15.0"
 
 "@shikijs/twoslash@^3.12.2":
-  version "3.21.0"
+  version "3.15.0"
   dependencies:
-    "@shikijs/core" "3.21.0"
-    "@shikijs/types" "3.21.0"
-    twoslash "^0.3.6"
+    "@shikijs/core" "3.15.0"
+    "@shikijs/types" "3.15.0"
+    twoslash "^0.3.4"
 
-"@shikijs/types@3.21.0":
-  version "3.21.0"
+"@shikijs/types@3.15.0":
+  version "3.15.0"
   dependencies:
     "@shikijs/vscode-textmate" "^10.0.2"
     "@types/hast" "^3.0.4"
@@ -1370,8 +1355,8 @@
 "@sindresorhus/is@^5.2.0":
   version "5.6.0"
 
-"@sindresorhus/slugify@2.2.0":
-  version "2.2.0"
+"@sindresorhus/slugify@^2.1.1":
+  version "2.2.1"
   dependencies:
     "@sindresorhus/transliterate" "^1.0.0"
     escape-string-regexp "^5.0.0"
@@ -1413,17 +1398,7 @@
     tslib "^2.6.0"
     urijs "^1.19.11"
 
-"@stoplight/json@^3.17.0", "@stoplight/json@^3.17.1", "@stoplight/json@^3.20.1", "@stoplight/json@^3.21.0", "@stoplight/json@~3.21.0":
-  version "3.21.7"
-  dependencies:
-    "@stoplight/ordered-object-literal" "^1.0.3"
-    "@stoplight/path" "^1.3.2"
-    "@stoplight/types" "^13.6.0"
-    jsonc-parser "~2.2.1"
-    lodash "^4.17.21"
-    safe-stable-stringify "^1.1"
-
-"@stoplight/json@3.21.0":
+"@stoplight/json@^3.17.0", "@stoplight/json@^3.17.1", "@stoplight/json@^3.20.1", "@stoplight/json@^3.21.0", "@stoplight/json@~3.21.0", "@stoplight/json@3.21.0":
   version "3.21.0"
   dependencies:
     "@stoplight/ordered-object-literal" "^1.0.3"
@@ -1638,14 +1613,6 @@
 "@tootallnate/quickjs-emscripten@^0.23.0":
   version "0.23.0"
 
-"@types/acorn@^4.0.0":
-  version "4.0.6"
-  dependencies:
-    "@types/estree" "*"
-
-"@types/cookie@^0.4.1":
-  version "0.4.1"
-
 "@types/cors@^2.8.12":
   version "2.8.19"
   dependencies:
@@ -1694,7 +1661,7 @@
 "@types/lodash@^4.17.16":
   version "4.17.20"
 
-"@types/mdast@^4.0.0", "@types/mdast@^4.0.4", "@types/mdast@4.0.4":
+"@types/mdast@^4.0.0", "@types/mdast@^4.0.4":
   version "4.0.4"
   dependencies:
     "@types/unist" "*"
@@ -1710,15 +1677,10 @@
   dependencies:
     "@types/unist" "*"
 
-"@types/node@*", "@types/node@>=18", "@types/node@22.15.2":
+"@types/node@*", "@types/node@>=10.0.0", "@types/node@>=18", "@types/node@22.15.2":
   version "22.15.2"
   dependencies:
     undici-types "~6.21.0"
-
-"@types/node@>=10.0.0":
-  version "25.0.3"
-  dependencies:
-    undici-types "~7.16.0"
 
 "@types/phoenix@^1.6.6":
   version "1.6.6"
@@ -1842,7 +1804,7 @@
     "@typescript-eslint/types" "8.46.3"
     eslint-visitor-keys "^4.2.1"
 
-"@typescript/vfs@^1.6.2":
+"@typescript/vfs@^1.6.1":
   version "1.6.2"
   dependencies:
     debug "^4.1.1"
@@ -1873,19 +1835,13 @@ accepts@~1.3.4, accepts@~1.3.8:
 acorn-jsx@^5.0.0, acorn-jsx@^5.3.2:
   version "5.3.2"
 
-acorn-jsx@5.3.2:
-  version "5.3.2"
-
-"acorn@^6.0.0 || ^7.0.0 || ^8.0.0", acorn@^8.0.0, acorn@^8.15.0:
+"acorn@^6.0.0 || ^7.0.0 || ^8.0.0", acorn@^8.0.0, acorn@^8.11.2, acorn@^8.15.0:
   version "8.15.0"
-
-acorn@8.11.2:
-  version "8.11.2"
 
 address@^1.0.1:
   version "1.2.2"
 
-adm-zip@0.5.16:
+adm-zip@^0.5.10:
   version "0.5.16"
 
 agent-base@^7.1.0, agent-base@^7.1.2:
@@ -1929,11 +1885,6 @@ ajv@^8.0.0, ajv@^8.0.1, ajv@^8.17.1, ajv@^8.5.0, ajv@>=8:
     json-schema-traverse "^1.0.0"
     require-from-string "^2.0.2"
 
-ansi-escapes@^4.3.2:
-  version "4.3.2"
-  dependencies:
-    type-fest "^0.21.3"
-
 ansi-escapes@^7.0.0:
   version "7.2.0"
   dependencies:
@@ -1958,7 +1909,7 @@ ansi-styles@^4.1.0:
 ansi-styles@^5.0.0:
   version "5.2.0"
 
-ansi-styles@^6.0.0, ansi-styles@^6.2.1:
+ansi-styles@^6.0.0, ansi-styles@^6.1.0, ansi-styles@^6.2.1:
   version "6.2.3"
 
 any-promise@^1.0.0:
@@ -1989,29 +1940,17 @@ aria-hidden@^1.2.4:
 aria-query@^5.3.2:
   version "5.3.2"
 
-arkregex@0.0.3:
-  version "0.0.3"
+arkregex@0.0.2:
+  version "0.0.2"
   dependencies:
-    "@ark/util" "0.55.0"
+    "@ark/util" "0.53.0"
 
-arkregex@0.0.5:
-  version "0.0.5"
+arktype@^2.1.20:
+  version "2.1.25"
   dependencies:
-    "@ark/util" "0.56.0"
-
-arktype@^2.1.26:
-  version "2.1.29"
-  dependencies:
-    "@ark/schema" "0.56.0"
-    "@ark/util" "0.56.0"
-    arkregex "0.0.5"
-
-arktype@2.1.27:
-  version "2.1.27"
-  dependencies:
-    "@ark/schema" "0.55.0"
-    "@ark/util" "0.55.0"
-    arkregex "0.0.3"
+    "@ark/schema" "0.53.0"
+    "@ark/util" "0.53.0"
+    arkregex "0.0.2"
 
 array-buffer-byte-length@^1.0.1, array-buffer-byte-length@^1.0.2:
   version "1.0.2"
@@ -2135,11 +2074,11 @@ avsc@^5.7.5:
 axe-core@^4.10.0:
   version "4.11.0"
 
-axios@1.10.0:
-  version "1.10.0"
+axios@^1.8.3:
+  version "1.13.2"
   dependencies:
     follow-redirects "^1.15.6"
-    form-data "^4.0.0"
+    form-data "^4.0.4"
     proxy-from-env "^1.1.0"
 
 axobject-query@^4.1.0:
@@ -2158,7 +2097,7 @@ bare-events@*, bare-events@^2.5.4, bare-events@^2.7.0:
   version "2.8.2"
 
 bare-fs@^4.0.1:
-  version "4.5.2"
+  version "4.5.0"
   dependencies:
     bare-events "^2.5.4"
     bare-path "^3.0.0"
@@ -2194,9 +2133,9 @@ baseline-browser-mapping@^2.8.19:
   version "2.8.25"
 
 basic-ftp@^5.0.2:
-  version "5.1.0"
+  version "5.0.5"
 
-better-opn@3.0.2:
+better-opn@^3.0.2:
   version "3.0.2"
   dependencies:
     open "^8.0.4"
@@ -2217,19 +2156,19 @@ body-parser@^2.2.0:
     raw-body "^3.0.0"
     type-is "^2.0.0"
 
-body-parser@1.20.1:
-  version "1.20.1"
+body-parser@1.20.3:
+  version "1.20.3"
   dependencies:
     bytes "3.1.2"
-    content-type "~1.0.4"
+    content-type "~1.0.5"
     debug "2.6.9"
     depd "2.0.0"
     destroy "1.2.0"
     http-errors "2.0.0"
     iconv-lite "0.4.24"
     on-finished "2.4.1"
-    qs "6.11.0"
-    raw-body "2.5.1"
+    qs "6.13.0"
+    raw-body "2.5.2"
     type-is "~1.6.18"
     unpipe "1.0.0"
 
@@ -2331,14 +2270,8 @@ chalk@^4.1.2:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chalk@^5.6.0:
+chalk@^5.1.0, chalk@^5.2.0, chalk@^5.3.0, chalk@^5.6.0:
   version "5.6.2"
-
-chalk@5.2.0:
-  version "5.2.0"
-
-chalk@5.3.0:
-  version "5.3.0"
 
 character-entities-html4@^2.0.0:
   version "2.1.0"
@@ -2364,21 +2297,8 @@ character-reference-invalid@^2.0.0:
 chardet@^2.1.1:
   version "2.1.1"
 
-chokidar@^3.5.3:
+chokidar@^3.5.3, chokidar@^3.6.0:
   version "3.6.0"
-  dependencies:
-    anymatch "~3.1.2"
-    braces "~3.0.2"
-    glob-parent "~5.1.2"
-    is-binary-path "~2.1.0"
-    is-glob "~4.0.1"
-    normalize-path "~3.0.0"
-    readdirp "~3.6.0"
-  optionalDependencies:
-    fsevents "~2.3.2"
-
-chokidar@3.5.3:
-  version "3.5.3"
   dependencies:
     anymatch "~3.1.2"
     braces "~3.0.2"
@@ -2393,8 +2313,8 @@ chokidar@3.5.3:
 chownr@^2.0.0:
   version "2.0.0"
 
-chromium-bidi@0.6.2:
-  version "0.6.2"
+chromium-bidi@0.6.3:
+  version "0.6.3"
   dependencies:
     mitt "3.0.1"
     urlpattern-polyfill "10.0.0"
@@ -2459,7 +2379,7 @@ code-excerpt@^4.0.0:
 collapse-white-space@^2.0.0:
   version "2.1.0"
 
-color-blend@4.0.0:
+color-blend@^4.0.0:
   version "4.0.0"
 
 color-convert@^2.0.1:
@@ -2476,7 +2396,7 @@ color-string@^1.9.0:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
-color@^4.2.3, color@4.2.3:
+color@^4.2.3:
   version "4.2.3"
   dependencies:
     color-convert "^2.0.1"
@@ -2517,7 +2437,7 @@ content-disposition@0.5.4:
   dependencies:
     safe-buffer "5.2.1"
 
-content-type@^1.0.5, content-type@~1.0.4:
+content-type@^1.0.5, content-type@~1.0.4, content-type@~1.0.5:
   version "1.0.5"
 
 convert-to-spaces@^2.0.1:
@@ -2529,14 +2449,14 @@ cookie-signature@^1.2.1:
 cookie-signature@1.0.6:
   version "1.0.6"
 
-cookie@^0.7.1, cookie@0.5.0:
+cookie@^0.7.1, cookie@~0.7.2:
   version "0.7.2"
 
 cookie@^1.0.1:
   version "1.0.2"
 
-cookie@~0.4.1:
-  version "0.4.2"
+cookie@0.7.1:
+  version "0.7.1"
 
 cors@^2.8.5, cors@~2.8.5:
   version "2.8.5"
@@ -2600,7 +2520,7 @@ debug@^3.2.7:
   dependencies:
     ms "^2.1.1"
 
-debug@^4.0.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.4.0, debug@~4.4.1, debug@4:
+debug@^4.0.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.4, debug@^4.3.5, debug@^4.3.6, debug@^4.4.0, debug@4:
   version "4.4.3"
   dependencies:
     ms "^2.1.3"
@@ -2611,6 +2531,11 @@ debug@~4.3.1:
     ms "^2.1.3"
 
 debug@~4.3.2:
+  version "4.3.7"
+  dependencies:
+    ms "^2.1.3"
+
+debug@~4.3.4:
   version "4.3.7"
   dependencies:
     ms "^2.1.3"
@@ -2697,8 +2622,8 @@ detect-libc@^2.0.3, detect-libc@^2.1.2:
 detect-node-es@^1.1.0:
   version "1.1.0"
 
-detect-port@1.5.1:
-  version "1.5.1"
+detect-port@^1.5.1:
+  version "1.6.1"
   dependencies:
     address "^1.0.1"
     debug "4"
@@ -2742,6 +2667,9 @@ dunder-proto@^1.0.0, dunder-proto@^1.0.1:
     es-errors "^1.3.0"
     gopd "^1.2.0"
 
+eastasianwidth@^0.2.0:
+  version "0.2.0"
+
 ee-first@1.1.1:
   version "1.1.1"
 
@@ -2751,11 +2679,17 @@ electron-to-chromium@^1.5.238:
 emoji-regex@^10.3.0:
   version "10.6.0"
 
-emoji-regex@^8.0.0, emoji-regex@^9.2.2:
+emoji-regex@^8.0.0:
+  version "8.0.0"
+
+emoji-regex@^9.2.2:
   version "9.2.2"
 
-encodeurl@^2.0.0, encodeurl@~1.0.2:
+encodeurl@^2.0.0, encodeurl@~2.0.0:
   version "2.0.0"
+
+encodeurl@~1.0.2:
+  version "1.0.2"
 
 end-of-stream@^1.1.0:
   version "1.4.5"
@@ -2765,15 +2699,14 @@ end-of-stream@^1.1.0:
 engine.io-parser@~5.2.1:
   version "5.2.3"
 
-engine.io@~6.5.2:
-  version "6.5.5"
+engine.io@~6.6.0:
+  version "6.6.4"
   dependencies:
-    "@types/cookie" "^0.4.1"
     "@types/cors" "^2.8.12"
     "@types/node" ">=10.0.0"
     accepts "~1.3.4"
     base64id "2.0.0"
-    cookie "~0.4.1"
+    cookie "~0.7.2"
     cors "~2.8.5"
     debug "~4.3.1"
     engine.io-parser "~5.2.1"
@@ -2921,7 +2854,7 @@ es-to-primitive@^1.3.0:
     is-symbol "^1.0.4"
 
 es-toolkit@^1.39.10:
-  version "1.43.0"
+  version "1.41.0"
 
 esast-util-from-estree@^2.0.0:
   version "2.0.0"
@@ -3165,7 +3098,7 @@ estree-util-scope@^1.0.0:
     "@types/estree" "^1.0.0"
     devlop "^1.0.0"
 
-estree-util-to-js@^2.0.0, estree-util-to-js@2.0.0:
+estree-util-to-js@^2.0.0:
   version "2.0.0"
   dependencies:
     "@types/estree-jsx" "^1.0.0"
@@ -3178,7 +3111,7 @@ estree-util-visit@^2.0.0:
     "@types/estree-jsx" "^1.0.0"
     "@types/unist" "^3.0.0"
 
-estree-walker@^3.0.0, estree-walker@3.0.3:
+estree-walker@^3.0.0, estree-walker@^3.0.3:
   version "3.0.3"
   dependencies:
     "@types/estree" "^1.0.0"
@@ -3211,6 +3144,41 @@ eventsource@^3.0.2:
 express-rate-limit@^7.5.0:
   version "7.5.1"
 
+express@^4.18.2:
+  version "4.21.2"
+  dependencies:
+    accepts "~1.3.8"
+    array-flatten "1.1.1"
+    body-parser "1.20.3"
+    content-disposition "0.5.4"
+    content-type "~1.0.4"
+    cookie "0.7.1"
+    cookie-signature "1.0.6"
+    debug "2.6.9"
+    depd "2.0.0"
+    encodeurl "~2.0.0"
+    escape-html "~1.0.3"
+    etag "~1.8.1"
+    finalhandler "1.3.1"
+    fresh "0.5.2"
+    http-errors "2.0.0"
+    merge-descriptors "1.0.3"
+    methods "~1.1.2"
+    on-finished "2.4.1"
+    parseurl "~1.3.3"
+    path-to-regexp "0.1.12"
+    proxy-addr "~2.0.7"
+    qs "6.13.0"
+    range-parser "~1.2.1"
+    safe-buffer "5.2.1"
+    send "0.19.0"
+    serve-static "1.16.2"
+    setprototypeof "1.2.0"
+    statuses "2.0.1"
+    type-is "~1.6.18"
+    utils-merge "1.0.1"
+    vary "~1.1.2"
+
 express@^5.0.1, "express@>= 4.11":
   version "5.1.0"
   dependencies:
@@ -3242,40 +3210,10 @@ express@^5.0.1, "express@>= 4.11":
     type-is "^2.0.1"
     vary "^1.1.2"
 
-express@4.18.2:
-  version "4.18.2"
+extend-shallow@^2.0.1:
+  version "2.0.1"
   dependencies:
-    accepts "~1.3.8"
-    array-flatten "1.1.1"
-    body-parser "1.20.1"
-    content-disposition "0.5.4"
-    content-type "~1.0.4"
-    cookie "0.5.0"
-    cookie-signature "1.0.6"
-    debug "2.6.9"
-    depd "2.0.0"
-    encodeurl "~1.0.2"
-    escape-html "~1.0.3"
-    etag "~1.8.1"
-    finalhandler "1.2.0"
-    fresh "0.5.2"
-    http-errors "2.0.0"
-    merge-descriptors "1.0.1"
-    methods "~1.1.2"
-    on-finished "2.4.1"
-    parseurl "~1.3.3"
-    path-to-regexp "0.1.7"
-    proxy-addr "~2.0.7"
-    qs "6.11.0"
-    range-parser "~1.2.1"
-    safe-buffer "5.2.1"
-    send "0.18.0"
-    serve-static "1.15.0"
-    setprototypeof "1.2.0"
-    statuses "2.0.1"
-    type-is "~1.6.18"
-    utils-merge "1.0.1"
-    vary "~1.1.2"
+    is-extendable "^0.1.0"
 
 extend@^3.0.0:
   version "3.0.2"
@@ -3295,7 +3233,7 @@ fast-deep-equal@^3.1.1, fast-deep-equal@^3.1.3:
 fast-fifo@^1.2.0, fast-fifo@^1.3.2:
   version "1.3.2"
 
-fast-glob@^3.3.0, fast-glob@^3.3.2:
+fast-glob@^3.3.2:
   version "3.3.3"
   dependencies:
     "@nodelib/fs.stat" "^2.0.2"
@@ -3340,7 +3278,7 @@ fault@^2.0.0:
   dependencies:
     format "^0.2.0"
 
-favicons@7.2.0:
+favicons@^7.2.0:
   version "7.2.0"
   dependencies:
     escape-html "^1.0.3"
@@ -3375,11 +3313,11 @@ finalhandler@^2.1.0:
     parseurl "^1.3.3"
     statuses "^2.0.1"
 
-finalhandler@1.2.0:
-  version "1.2.0"
+finalhandler@1.3.1:
+  version "1.3.1"
   dependencies:
     debug "2.6.9"
-    encodeurl "~1.0.2"
+    encodeurl "~2.0.0"
     escape-html "~1.0.3"
     on-finished "2.4.1"
     parseurl "~1.3.3"
@@ -3409,11 +3347,17 @@ for-each@^0.3.3, for-each@^0.3.5:
   dependencies:
     is-callable "^1.2.7"
 
+foreground-child@^3.1.0:
+  version "3.3.1"
+  dependencies:
+    cross-spawn "^7.0.6"
+    signal-exit "^4.0.1"
+
 form-data-encoder@^2.1.2:
   version "2.1.4"
 
-form-data@^4.0.0:
-  version "4.0.5"
+form-data@^4.0.4:
+  version "4.0.4"
   dependencies:
     asynckit "^0.4.0"
     combined-stream "^1.0.8"
@@ -3443,27 +3387,8 @@ fresh@^2.0.0:
 fresh@0.5.2:
   version "0.5.2"
 
-front-matter@4.0.2:
-  version "4.0.2"
-  dependencies:
-    js-yaml "^3.13.1"
-
-fs-extra@11.1.0:
-  version "11.1.0"
-  dependencies:
-    graceful-fs "^4.2.0"
-    jsonfile "^6.0.1"
-    universalify "^2.0.0"
-
-fs-extra@11.1.1:
-  version "11.1.1"
-  dependencies:
-    graceful-fs "^4.2.0"
-    jsonfile "^6.0.1"
-    universalify "^2.0.0"
-
-fs-extra@11.2.0:
-  version "11.2.0"
+fs-extra@^11.1.0, fs-extra@^11.1.1, fs-extra@^11.2.0:
+  version "11.3.2"
   dependencies:
     graceful-fs "^4.2.0"
     jsonfile "^6.0.1"
@@ -3562,6 +3487,16 @@ glob-parent@^6.0.2:
   dependencies:
     is-glob "^4.0.3"
 
+glob@^10.3.10:
+  version "10.4.5"
+  dependencies:
+    foreground-child "^3.1.0"
+    jackspeak "^3.1.2"
+    minimatch "^9.0.4"
+    minipass "^7.1.2"
+    package-json-from-dist "^1.0.0"
+    path-scurry "^1.11.1"
+
 globals@^14.0.0:
   version "14.0.0"
 
@@ -3592,7 +3527,7 @@ got@^12.0.0, got@^12.1.0:
     p-cancelable "^3.0.0"
     responselike "^3.0.0"
 
-got@13.0.0:
+got@^13.0.0:
   version "13.0.0"
   dependencies:
     "@sindresorhus/is" "^5.2.0"
@@ -3612,6 +3547,14 @@ graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.4:
 
 graphemer@^1.4.0:
   version "1.4.0"
+
+gray-matter@^4.0.3:
+  version "4.0.3"
+  dependencies:
+    js-yaml "^3.13.1"
+    kind-of "^6.0.2"
+    section-matter "^1.0.0"
+    strip-bom-string "^1.0.0"
 
 has-bigints@^1.0.2:
   version "1.1.0"
@@ -3663,7 +3606,7 @@ hast-util-from-html-isomorphic@^2.0.0:
     hast-util-from-html "^2.0.0"
     unist-util-remove-position "^5.0.0"
 
-hast-util-from-html@^2.0.0, hast-util-from-html@2.0.3:
+hast-util-from-html@^2.0.0, hast-util-from-html@^2.0.3:
   version "2.0.3"
   dependencies:
     "@types/hast" "^3.0.0"
@@ -3763,7 +3706,7 @@ hast-util-to-estree@^3.0.0:
     unist-util-position "^5.0.0"
     zwitch "^2.0.0"
 
-hast-util-to-html@^9.0.0, hast-util-to-html@^9.0.5:
+hast-util-to-html@^9.0.0, hast-util-to-html@^9.0.4, hast-util-to-html@^9.0.5:
   version "9.0.5"
   dependencies:
     "@types/hast" "^3.0.0"
@@ -3774,21 +3717,6 @@ hast-util-to-html@^9.0.0, hast-util-to-html@^9.0.5:
     html-void-elements "^3.0.0"
     mdast-util-to-hast "^13.0.0"
     property-information "^7.0.0"
-    space-separated-tokens "^2.0.0"
-    stringify-entities "^4.0.0"
-    zwitch "^2.0.4"
-
-hast-util-to-html@9.0.4:
-  version "9.0.4"
-  dependencies:
-    "@types/hast" "^3.0.0"
-    "@types/unist" "^3.0.0"
-    ccount "^2.0.0"
-    comma-separated-tokens "^2.0.0"
-    hast-util-whitespace "^3.0.0"
-    html-void-elements "^3.0.0"
-    mdast-util-to-hast "^13.0.0"
-    property-information "^6.0.0"
     space-separated-tokens "^2.0.0"
     stringify-entities "^4.0.0"
     zwitch "^2.0.4"
@@ -3812,8 +3740,8 @@ hast-util-to-jsx-runtime@^2.0.0:
     unist-util-position "^5.0.0"
     vfile-message "^4.0.0"
 
-hast-util-to-mdast@10.1.0:
-  version "10.1.0"
+hast-util-to-mdast@^10.1.0:
+  version "10.1.2"
   dependencies:
     "@types/hast" "^3.0.0"
     "@types/mdast" "^4.0.0"
@@ -3846,7 +3774,7 @@ hast-util-to-string@^3.0.1:
   dependencies:
     "@types/hast" "^3.0.0"
 
-hast-util-to-text@^4.0.0, hast-util-to-text@4.0.2:
+hast-util-to-text@^4.0.0, hast-util-to-text@^4.0.2:
   version "4.0.2"
   dependencies:
     "@types/hast" "^3.0.0"
@@ -3877,7 +3805,7 @@ hastscript@^9.0.0:
     property-information "^7.0.0"
     space-separated-tokens "^2.0.0"
 
-hex-rgb@5.0.0:
+hex-rgb@^5.0.0:
   version "5.0.0"
 
 highlight.js@^10.4.1, highlight.js@~10.7.0:
@@ -3931,7 +3859,7 @@ iconv-lite@^0.6.3:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
 iconv-lite@^0.7.0:
-  version "0.7.1"
+  version "0.7.0"
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
@@ -3948,7 +3876,7 @@ iconv-lite@0.7.0:
 ieee754@^1.1.13:
   version "1.2.1"
 
-ignore@^5.2.0, ignore@7.0.5:
+ignore@^5.2.0:
   version "5.3.2"
 
 ignore@^7.0.0:
@@ -3972,15 +3900,15 @@ indent-string@^5.0.0:
 inherits@2.0.4:
   version "2.0.4"
 
-ink-spinner@5.0.0:
+ink-spinner@^5.0.0:
   version "5.0.0"
   dependencies:
     cli-spinners "^2.7.0"
 
-ink@>=4.0.0, ink@6.3.0:
-  version "6.3.0"
+ink@^6.0.1, ink@>=4.0.0:
+  version "6.4.0"
   dependencies:
-    "@alcalzone/ansi-tokenize" "^0.2.0"
+    "@alcalzone/ansi-tokenize" "^0.2.1"
     ansi-escapes "^7.0.0"
     ansi-styles "^6.2.1"
     auto-bind "^5.0.1"
@@ -4007,16 +3935,16 @@ ink@>=4.0.0, ink@6.3.0:
 inline-style-parser@0.2.6:
   version "0.2.6"
 
-inquirer@12.3.0:
-  version "12.3.0"
+inquirer@^12.3.0:
+  version "12.11.0"
   dependencies:
-    "@inquirer/core" "^10.1.2"
-    "@inquirer/prompts" "^7.2.1"
-    "@inquirer/type" "^3.0.2"
-    ansi-escapes "^4.3.2"
-    mute-stream "^2.0.0"
-    run-async "^3.0.0"
-    rxjs "^7.8.1"
+    "@inquirer/ansi" "^1.0.2"
+    "@inquirer/core" "^10.3.1"
+    "@inquirer/prompts" "^7.10.0"
+    "@inquirer/type" "^3.0.10"
+    mute-stream "^3.0.0"
+    run-async "^4.0.6"
+    rxjs "^7.8.2"
 
 internal-slot@^1.1.0:
   version "1.1.0"
@@ -4125,6 +4053,9 @@ is-decimal@^2.0.0:
 is-docker@^2.0.0, is-docker@^2.1.1:
   version "2.2.1"
 
+is-extendable@^0.1.0:
+  version "0.1.1"
+
 is-extglob@^2.1.1:
   version "2.1.1"
 
@@ -4187,7 +4118,7 @@ is-number-object@^1.1.1:
 is-number@^7.0.0:
   version "7.0.0"
 
-is-online@10.0.0:
+is-online@^10.0.0:
   version "10.0.0"
   dependencies:
     got "^12.1.0"
@@ -4270,7 +4201,14 @@ iterator.prototype@^1.1.4:
     has-symbols "^1.1.0"
     set-function-name "^2.0.2"
 
-jiti@*, jiti@^1.21.0:
+jackspeak@^3.1.2:
+  version "3.4.3"
+  dependencies:
+    "@isaacs/cliui" "^8.0.2"
+  optionalDependencies:
+    "@pkgjs/parseargs" "^0.11.0"
+
+jiti@*, jiti@^1.21.7, jiti@>=1.21.0:
   version "1.21.7"
 
 jiti@^2.6.1:
@@ -4285,12 +4223,12 @@ js-tiktoken@^1.0.12:
   version "4.0.0"
 
 js-yaml@^3.13.1:
-  version "3.14.2"
+  version "3.14.1"
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
-js-yaml@^4.1.0, js-yaml@4.1.0:
+js-yaml@^4.1.0:
   version "4.1.0"
   dependencies:
     argparse "^2.0.1"
@@ -4358,6 +4296,9 @@ keyv@^4.5.3, keyv@^4.5.4:
   dependencies:
     json-buffer "3.0.1"
 
+kind-of@^6.0.0, kind-of@^6.0.2:
+  version "6.0.3"
+
 langgraph-nextjs-api-passthrough@^0.1.0:
   version "0.1.4"
 
@@ -4380,7 +4321,7 @@ language-tags@^1.0.9:
   dependencies:
     language-subtag-registry "^0.3.20"
 
-lcm@0.0.3:
+lcm@^0.0.3:
   version "0.0.3"
   dependencies:
     gcd "^0.0.1"
@@ -4417,10 +4358,7 @@ lightningcss@1.30.2:
     lightningcss-win32-arm64-msvc "1.30.2"
     lightningcss-win32-x64-msvc "1.30.2"
 
-lilconfig@^2.1.0:
-  version "2.1.0"
-
-lilconfig@^3.0.0:
+lilconfig@^3.1.1, lilconfig@^3.1.3:
   version "3.1.3"
 
 lines-and-columns@^1.1.6:
@@ -4437,7 +4375,7 @@ lodash.merge@^4.6.2:
 lodash.topath@^4.5.2:
   version "4.5.2"
 
-lodash@^4.17.21, lodash@~4.17.21, lodash@4.17.21:
+lodash@^4.17.21, lodash@~4.17.21:
   version "4.17.21"
 
 longest-streak@^3.0.0:
@@ -4456,6 +4394,9 @@ lowlight@^1.17.0:
   dependencies:
     fault "^1.0.0"
     highlight.js "~10.7.0"
+
+lru-cache@^10.2.0:
+  version "10.4.3"
 
 lru-cache@^7.14.1:
   version "7.18.3"
@@ -4485,7 +4426,7 @@ mdast-util-find-and-replace@^3.0.0:
     unist-util-is "^6.0.0"
     unist-util-visit-parents "^6.0.0"
 
-mdast-util-from-markdown@^2.0.0, mdast-util-from-markdown@^2.0.2, mdast-util-from-markdown@2.0.2:
+mdast-util-from-markdown@^2.0.0, mdast-util-from-markdown@^2.0.2:
   version "2.0.2"
   dependencies:
     "@types/mdast" "^4.0.0"
@@ -4564,17 +4505,6 @@ mdast-util-gfm@^3.0.0, mdast-util-gfm@^3.1.0:
     mdast-util-gfm-task-list-item "^2.0.0"
     mdast-util-to-markdown "^2.0.0"
 
-mdast-util-gfm@3.0.0:
-  version "3.0.0"
-  dependencies:
-    mdast-util-from-markdown "^2.0.0"
-    mdast-util-gfm-autolink-literal "^2.0.0"
-    mdast-util-gfm-footnote "^2.0.0"
-    mdast-util-gfm-strikethrough "^2.0.0"
-    mdast-util-gfm-table "^2.0.0"
-    mdast-util-gfm-task-list-item "^2.0.0"
-    mdast-util-to-markdown "^2.0.0"
-
 mdast-util-math@^3.0.0:
   version "3.0.0"
   dependencies:
@@ -4596,7 +4526,7 @@ mdast-util-mdx-expression@^2.0.0:
     mdast-util-from-markdown "^2.0.0"
     mdast-util-to-markdown "^2.0.0"
 
-mdast-util-mdx-jsx@^3.0.0, mdast-util-mdx-jsx@^3.2.0, mdast-util-mdx-jsx@3.2.0:
+mdast-util-mdx-jsx@^3.0.0, mdast-util-mdx-jsx@^3.1.3, mdast-util-mdx-jsx@^3.2.0:
   version "3.2.0"
   dependencies:
     "@types/estree-jsx" "^1.0.0"
@@ -4612,23 +4542,7 @@ mdast-util-mdx-jsx@^3.0.0, mdast-util-mdx-jsx@^3.2.0, mdast-util-mdx-jsx@3.2.0:
     unist-util-stringify-position "^4.0.0"
     vfile-message "^4.0.0"
 
-mdast-util-mdx-jsx@3.1.3:
-  version "3.1.3"
-  dependencies:
-    "@types/estree-jsx" "^1.0.0"
-    "@types/hast" "^3.0.0"
-    "@types/mdast" "^4.0.0"
-    "@types/unist" "^3.0.0"
-    ccount "^2.0.0"
-    devlop "^1.1.0"
-    mdast-util-from-markdown "^2.0.0"
-    mdast-util-to-markdown "^2.0.0"
-    parse-entities "^4.0.0"
-    stringify-entities "^4.0.0"
-    unist-util-stringify-position "^4.0.0"
-    vfile-message "^4.0.0"
-
-mdast-util-mdx@^3.0.0, mdast-util-mdx@3.0.0:
+mdast-util-mdx@^3.0.0:
   version "3.0.0"
   dependencies:
     mdast-util-from-markdown "^2.0.0"
@@ -4693,8 +4607,8 @@ media-typer@0.3.0:
 merge-descriptors@^2.0.0:
   version "2.0.0"
 
-merge-descriptors@1.0.1:
-  version "1.0.1"
+merge-descriptors@1.0.3:
+  version "1.0.3"
 
 merge2@^1.3.0:
   version "1.4.1"
@@ -4783,7 +4697,7 @@ micromark-extension-gfm-task-list-item@^2.0.0:
     micromark-util-symbol "^2.0.0"
     micromark-util-types "^2.0.0"
 
-micromark-extension-gfm@^3.0.0, micromark-extension-gfm@3.0.0:
+micromark-extension-gfm@^3.0.0:
   version "3.0.0"
   dependencies:
     micromark-extension-gfm-autolink-literal "^2.0.0"
@@ -4818,24 +4732,9 @@ micromark-extension-mdx-expression@^3.0.0:
     micromark-util-symbol "^2.0.0"
     micromark-util-types "^2.0.0"
 
-micromark-extension-mdx-jsx@^3.0.0:
+micromark-extension-mdx-jsx@^3.0.0, micromark-extension-mdx-jsx@^3.0.1:
   version "3.0.2"
   dependencies:
-    "@types/estree" "^1.0.0"
-    devlop "^1.0.0"
-    estree-util-is-identifier-name "^3.0.0"
-    micromark-factory-mdx-expression "^2.0.0"
-    micromark-factory-space "^2.0.0"
-    micromark-util-character "^2.0.0"
-    micromark-util-events-to-acorn "^2.0.0"
-    micromark-util-symbol "^2.0.0"
-    micromark-util-types "^2.0.0"
-    vfile-message "^4.0.0"
-
-micromark-extension-mdx-jsx@3.0.1:
-  version "3.0.1"
-  dependencies:
-    "@types/acorn" "^4.0.0"
     "@types/estree" "^1.0.0"
     devlop "^1.0.0"
     estree-util-is-identifier-name "^3.0.0"
@@ -4865,7 +4764,7 @@ micromark-extension-mdxjs-esm@^3.0.0:
     unist-util-position-from-estree "^2.0.0"
     vfile-message "^4.0.0"
 
-micromark-extension-mdxjs@^3.0.0, micromark-extension-mdxjs@3.0.0:
+micromark-extension-mdxjs@^3.0.0:
   version "3.0.0"
   dependencies:
     acorn "^8.0.0"
@@ -5033,7 +4932,7 @@ micromark@^4.0.0:
     micromark-util-symbol "^2.0.0"
     micromark-util-types "^2.0.0"
 
-micromatch@^4.0.4, micromatch@^4.0.5, micromatch@^4.0.8:
+micromatch@^4.0.4, micromatch@^4.0.8:
   version "4.0.8"
   dependencies:
     braces "^3.0.3"
@@ -5095,8 +4994,11 @@ minipass@^3.0.0:
   dependencies:
     yallist "^4.0.0"
 
-minipass@^5.0.0:
+minipass@^5.0.0, "minipass@^5.0.0 || ^6.0.2 || ^7.0.0":
   version "5.0.0"
+
+minipass@^7.1.2:
+  version "7.1.2"
 
 minizlib@^2.1.1:
   version "2.1.2"
@@ -5105,9 +5007,9 @@ minizlib@^2.1.1:
     yallist "^4.0.0"
 
 mint@^4.1.19:
-  version "4.2.260"
+  version "4.2.188"
   dependencies:
-    "@mintlify/cli" "4.0.864"
+    "@mintlify/cli" "4.0.792"
 
 mitt@3.0.1:
   version "3.0.1"
@@ -5132,8 +5034,8 @@ ms@2.0.0:
 mustache@^4.2.0:
   version "4.2.0"
 
-mute-stream@^2.0.0:
-  version "2.0.0"
+mute-stream@^3.0.0:
+  version "3.0.0"
 
 mz@^2.7.0:
   version "2.7.0"
@@ -5157,7 +5059,7 @@ negotiator@^1.0.0:
 negotiator@0.6.3:
   version "0.6.3"
 
-neotraverse@0.6.18:
+neotraverse@^0.6.18:
   version "0.6.18"
 
 netmask@^2.0.2:
@@ -5212,13 +5114,13 @@ nlcst-to-string@^4.0.0:
   dependencies:
     "@types/nlcst" "^2.0.0"
 
-node-fetch@^2.6.0, node-fetch@^2.7.0:
-  version "2.7.0"
+node-fetch@^2.6.0, node-fetch@2.6.7:
+  version "2.6.7"
   dependencies:
     whatwg-url "^5.0.0"
 
-node-fetch@2.6.7:
-  version "2.6.7"
+node-fetch@^2.7.0:
+  version "2.7.0"
   dependencies:
     whatwg-url "^5.0.0"
 
@@ -5232,7 +5134,7 @@ normalize-range@^0.1.2:
   version "0.1.2"
 
 normalize-url@^8.0.0:
-  version "8.1.1"
+  version "8.1.0"
 
 nuqs@^2.4.1:
   version "2.7.3"
@@ -5242,7 +5144,7 @@ nuqs@^2.4.1:
 object-assign@^4, object-assign@^4.0.1, object-assign@^4.1.1:
   version "4.1.1"
 
-object-hash@^3.0.0, object-hash@3.0.0:
+object-hash@^3.0.0:
   version "3.0.0"
 
 object-inspect@^1.13.3, object-inspect@^1.13.4:
@@ -5310,8 +5212,8 @@ onetime@^5.1.0:
 oniguruma-parser@^0.12.1:
   version "0.12.1"
 
-oniguruma-to-es@^4.3.4:
-  version "4.3.4"
+oniguruma-to-es@^4.3.3:
+  version "4.3.3"
   dependencies:
     oniguruma-parser "^0.12.1"
     regex "^6.0.1"
@@ -5324,7 +5226,7 @@ open@^8.0.4:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-openapi-types@12.1.3:
+openapi-types@^12.0.0:
   version "12.1.3"
 
 optionator@^0.9.3:
@@ -5410,6 +5312,9 @@ pac-resolver@^7.0.1:
     degenerator "^5.0.0"
     netmask "^2.0.2"
 
+package-json-from-dist@^1.0.0:
+  version "1.0.1"
+
 parent-module@^1.0.0:
   version "1.0.1"
   dependencies:
@@ -5474,11 +5379,17 @@ path-key@^3.1.0:
 path-parse@^1.0.7:
   version "1.0.7"
 
+path-scurry@^1.11.1:
+  version "1.11.1"
+  dependencies:
+    lru-cache "^10.2.0"
+    minipass "^5.0.0 || ^6.0.2 || ^7.0.0"
+
 path-to-regexp@^8.0.0:
   version "8.3.0"
 
-path-to-regexp@0.1.7:
-  version "0.1.7"
+path-to-regexp@0.1.12:
+  version "0.1.12"
 
 pend@~1.2.0:
   version "1.2.0"
@@ -5525,18 +5436,17 @@ postcss-js@^4.0.1:
   dependencies:
     camelcase-css "^2.0.1"
 
-postcss-load-config@^4.0.1:
-  version "4.0.2"
+"postcss-load-config@^4.0.2 || ^5.0 || ^6.0":
+  version "6.0.1"
   dependencies:
-    lilconfig "^3.0.0"
-    yaml "^2.3.4"
+    lilconfig "^3.1.1"
 
-postcss-nested@^6.0.1:
+postcss-nested@^6.2.0:
   version "6.2.0"
   dependencies:
     postcss-selector-parser "^6.1.1"
 
-postcss-selector-parser@^6.0.11, postcss-selector-parser@^6.1.1:
+postcss-selector-parser@^6.1.1, postcss-selector-parser@^6.1.2:
   version "6.1.2"
   dependencies:
     cssesc "^3.0.0"
@@ -5545,7 +5455,7 @@ postcss-selector-parser@^6.0.11, postcss-selector-parser@^6.1.1:
 postcss-value-parser@^4.0.0, postcss-value-parser@^4.2.0:
   version "4.2.0"
 
-postcss@^8.0.0, postcss@^8.1.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.23, postcss@^8.4.41, postcss@^8.5.3, postcss@>=8.0.9, postcss@8.5.6:
+postcss@^8.0.0, postcss@^8.1.0, postcss@^8.2.14, postcss@^8.4.21, postcss@^8.4.41, postcss@^8.4.47, postcss@^8.5.3, postcss@^8.5.6, postcss@>=8.0.9:
   version "8.5.6"
   dependencies:
     nanoid "^3.3.11"
@@ -5632,32 +5542,32 @@ pump@^3.0.0:
 punycode@^2.1.0:
   version "2.3.1"
 
-puppeteer-core@22.14.0:
-  version "22.14.0"
+puppeteer-core@22.15.0:
+  version "22.15.0"
   dependencies:
     "@puppeteer/browsers" "2.3.0"
-    chromium-bidi "0.6.2"
-    debug "^4.3.5"
+    chromium-bidi "0.6.3"
+    debug "^4.3.6"
     devtools-protocol "0.0.1312386"
     ws "^8.18.0"
 
-puppeteer@22.14.0:
-  version "22.14.0"
+puppeteer@^22.14.0:
+  version "22.15.0"
   dependencies:
     "@puppeteer/browsers" "2.3.0"
     cosmiconfig "^9.0.0"
     devtools-protocol "0.0.1312386"
-    puppeteer-core "22.14.0"
+    puppeteer-core "22.15.0"
 
 qs@^6.14.0:
   version "6.14.0"
   dependencies:
     side-channel "^1.1.0"
 
-qs@6.11.0:
-  version "6.11.0"
+qs@6.13.0:
+  version "6.13.0"
   dependencies:
-    side-channel "^1.0.4"
+    side-channel "^1.0.6"
 
 queue-microtask@^1.2.2:
   version "1.2.3"
@@ -5676,8 +5586,8 @@ raw-body@^3.0.0:
     iconv-lite "0.7.0"
     unpipe "1.0.0"
 
-raw-body@2.5.1:
-  version "2.5.1"
+raw-body@2.5.2:
+  version "2.5.2"
   dependencies:
     bytes "3.1.2"
     http-errors "2.0.0"
@@ -5690,7 +5600,7 @@ raw-body@2.5.1:
     scheduler "^0.27.0"
 
 react-hook-form@^7.56.3:
-  version "7.70.0"
+  version "7.66.0"
 
 react-is@^16.13.1:
   version "16.13.1"
@@ -5749,7 +5659,7 @@ react-syntax-highlighter@^15.6.1:
     prismjs "^1.30.0"
     refractor "^3.6.0"
 
-"react@^16.14.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^16.x || ^17.x || ^18.x || ^19.0.0 || ^19.0.0-rc", "react@^18 || ^19", "react@^18 || ^19 || ^19.0.0-rc", "react@^18.0.0 || ^19.0.0", "react@^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", react@^18.3.1, react@^19.0.0, react@^19.1.0, react@^19.2.0, "react@>= 0.14.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0 || ^19.0.0-0", "react@>= 18.3.0 < 19.0.0", react@>=16, react@>=16.8.0, react@>=18, react@>=18.0.0, "react@>=18.2.0 || ^19.0.0-0", react@>=19.0.0, react@19.2.3:
+"react@^16.14.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc", "react@^16.8 || ^17.0 || ^18.0", "react@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react@^16.8.0 || ^17 || ^18 || ^19", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^16.x || ^17.x || ^18.x || ^19.0.0 || ^19.0.0-rc", "react@^18 || ^19", "react@^18 || ^19 || ^19.0.0-rc", "react@^18.0.0 || ^19.0.0", "react@^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0", react@^18.3.1, react@^19.0.0, react@^19.1.0, react@^19.2.0, "react@>= 0.14.0", "react@>= 16.8.0 || 17.x.x || ^18.0.0-0 || ^19.0.0-0", "react@>= 18.3.0 < 19.0.0", react@>=16, react@>=16.8.0, react@>=18, react@>=18.0.0, "react@>=18.2.0 || ^19.0.0-0", react@>=19.0.0:
   version "19.2.0"
 
 read-cache@^1.0.0:
@@ -5822,7 +5732,7 @@ regex-utilities@^2.3.0:
   version "2.3.0"
 
 regex@^6.0.1:
-  version "6.1.0"
+  version "6.0.1"
   dependencies:
     regex-utilities "^2.3.0"
 
@@ -5853,7 +5763,7 @@ rehype-minify-whitespace@^6.0.0:
     "@types/hast" "^3.0.0"
     hast-util-minify-whitespace "^1.0.0"
 
-rehype-parse@9.0.1:
+rehype-parse@^9.0.0:
   version "9.0.1"
   dependencies:
     "@types/hast" "^3.0.0"
@@ -5874,14 +5784,7 @@ rehype-recma@^1.0.0:
     "@types/hast" "^3.0.0"
     hast-util-to-estree "^3.0.0"
 
-rehype-stringify@10.0.1:
-  version "10.0.1"
-  dependencies:
-    "@types/hast" "^3.0.0"
-    hast-util-to-html "^9.0.0"
-    unified "^11.0.0"
-
-remark-frontmatter@5.0.0:
+remark-frontmatter@^5.0.0:
   version "5.0.0"
   dependencies:
     "@types/mdast" "^4.0.0"
@@ -5899,17 +5802,7 @@ remark-gfm@^4.0.0, remark-gfm@^4.0.1:
     remark-stringify "^11.0.0"
     unified "^11.0.0"
 
-remark-gfm@4.0.0:
-  version "4.0.0"
-  dependencies:
-    "@types/mdast" "^4.0.0"
-    mdast-util-gfm "^3.0.0"
-    micromark-extension-gfm "^3.0.0"
-    remark-parse "^11.0.0"
-    remark-stringify "^11.0.0"
-    unified "^11.0.0"
-
-remark-math@^6.0.0, remark-math@6.0.0:
+remark-math@^6.0.0:
   version "6.0.0"
   dependencies:
     "@types/mdast" "^4.0.0"
@@ -5918,31 +5811,19 @@ remark-math@^6.0.0, remark-math@6.0.0:
     unified "^11.0.0"
 
 remark-mdx-remove-esm@^1.2.1:
-  version "1.2.2"
+  version "1.2.1"
   dependencies:
     "@types/mdast" "^4.0.4"
     mdast-util-mdxjs-esm "^2.0.1"
     unist-util-remove "^4.0.0"
 
-remark-mdx@^3.0.0:
+remark-mdx@^3.0.0, remark-mdx@^3.0.1, remark-mdx@^3.1.0:
   version "3.1.1"
   dependencies:
     mdast-util-mdx "^3.0.0"
     micromark-extension-mdxjs "^3.0.0"
 
-remark-mdx@3.0.1:
-  version "3.0.1"
-  dependencies:
-    mdast-util-mdx "^3.0.0"
-    micromark-extension-mdxjs "^3.0.0"
-
-remark-mdx@3.1.0:
-  version "3.1.0"
-  dependencies:
-    mdast-util-mdx "^3.0.0"
-    micromark-extension-mdxjs "^3.0.0"
-
-remark-parse@^11.0.0, remark-parse@11.0.0:
+remark-parse@^11.0.0:
   version "11.0.0"
   dependencies:
     "@types/mdast" "^4.0.0"
@@ -5959,15 +5840,6 @@ remark-rehype@^11.0.0:
     unified "^11.0.0"
     vfile "^6.0.0"
 
-remark-rehype@11.1.1:
-  version "11.1.1"
-  dependencies:
-    "@types/hast" "^3.0.0"
-    "@types/mdast" "^4.0.0"
-    mdast-util-to-hast "^13.0.0"
-    unified "^11.0.0"
-    vfile "^6.0.0"
-
 remark-smartypants@^3.0.2:
   version "3.0.2"
   dependencies:
@@ -5976,14 +5848,14 @@ remark-smartypants@^3.0.2:
     unified "^11.0.4"
     unist-util-visit "^5.0.0"
 
-remark-stringify@^11.0.0, remark-stringify@11.0.0:
+remark-stringify@^11.0.0:
   version "11.0.0"
   dependencies:
     "@types/mdast" "^4.0.0"
     mdast-util-to-markdown "^2.0.0"
     unified "^11.0.0"
 
-remark@15.0.1:
+remark@^15.0.1:
   version "15.0.1"
   dependencies:
     "@types/mdast" "^4.0.0"
@@ -6006,7 +5878,7 @@ resolve-from@^4.0.0:
 resolve-pkg-maps@^1.0.0:
   version "1.0.0"
 
-resolve@^1.1.7, resolve@^1.22.2, resolve@^1.22.4:
+resolve@^1.1.7, resolve@^1.22.4, resolve@^1.22.8:
   version "1.22.11"
   dependencies:
     is-core-module "^2.16.1"
@@ -6075,15 +5947,15 @@ router@^2.2.0:
     parseurl "^1.3.3"
     path-to-regexp "^8.0.0"
 
-run-async@^3.0.0:
-  version "3.0.0"
+run-async@^4.0.6:
+  version "4.0.6"
 
 run-parallel@^1.1.9:
   version "1.2.0"
   dependencies:
     queue-microtask "^1.2.2"
 
-rxjs@^7.8.1:
+rxjs@^7.8.2:
   version "7.8.2"
   dependencies:
     tslib "^2.1.0"
@@ -6128,14 +6000,17 @@ scheduler@^0.26.0:
 scheduler@^0.27.0:
   version "0.27.0"
 
+section-matter@^1.0.0:
+  version "1.0.0"
+  dependencies:
+    extend-shallow "^2.0.1"
+    kind-of "^6.0.0"
+
 semver@^6.3.1:
   version "6.3.1"
 
-semver@^7.6.0, semver@^7.6.3, semver@^7.7.1, semver@^7.7.3:
+semver@^7.6.0, semver@^7.6.3, semver@^7.7.1, semver@^7.7.2, semver@^7.7.3:
   version "7.7.3"
-
-semver@7.7.2:
-  version "7.7.2"
 
 send@^1.1.0, send@^1.2.0:
   version "1.2.0"
@@ -6152,8 +6027,8 @@ send@^1.1.0, send@^1.2.0:
     range-parser "^1.2.1"
     statuses "^2.0.1"
 
-send@0.18.0:
-  version "0.18.0"
+send@0.19.0:
+  version "0.19.0"
   dependencies:
     debug "2.6.9"
     depd "2.0.0"
@@ -6182,13 +6057,13 @@ serve-static@^2.2.0:
     parseurl "^1.3.3"
     send "^1.2.0"
 
-serve-static@1.15.0:
-  version "1.15.0"
+serve-static@1.16.2:
+  version "1.16.2"
   dependencies:
-    encodeurl "~1.0.2"
+    encodeurl "~2.0.0"
     escape-html "~1.0.3"
     parseurl "~1.3.3"
-    send "0.18.0"
+    send "0.19.0"
 
 set-function-length@^1.2.2:
   version "1.2.2"
@@ -6218,7 +6093,7 @@ set-proto@^1.0.0:
 setprototypeof@1.2.0:
   version "1.2.0"
 
-sharp-ico@0.1.5:
+sharp-ico@^0.1.5:
   version "0.1.5"
   dependencies:
     decode-ico "*"
@@ -6257,7 +6132,7 @@ sharp@*:
     "@img/sharp-win32-ia32" "0.34.5"
     "@img/sharp-win32-x64" "0.34.5"
 
-sharp@^0.33.1, sharp@0.33.5:
+sharp@^0.33.1:
   version "0.33.5"
   dependencies:
     color "^4.2.3"
@@ -6325,14 +6200,14 @@ shebang-regex@^3.0.0:
   version "3.0.0"
 
 shiki@^3.11.0:
-  version "3.21.0"
+  version "3.15.0"
   dependencies:
-    "@shikijs/core" "3.21.0"
-    "@shikijs/engine-javascript" "3.21.0"
-    "@shikijs/engine-oniguruma" "3.21.0"
-    "@shikijs/langs" "3.21.0"
-    "@shikijs/themes" "3.21.0"
-    "@shikijs/types" "3.21.0"
+    "@shikijs/core" "3.15.0"
+    "@shikijs/engine-javascript" "3.15.0"
+    "@shikijs/engine-oniguruma" "3.15.0"
+    "@shikijs/langs" "3.15.0"
+    "@shikijs/themes" "3.15.0"
+    "@shikijs/types" "3.15.0"
     "@shikijs/vscode-textmate" "^10.0.2"
     "@types/hast" "^3.0.4"
 
@@ -6359,7 +6234,7 @@ side-channel-weakmap@^1.0.2:
     object-inspect "^1.13.3"
     side-channel-map "^1.0.1"
 
-side-channel@^1.0.4, side-channel@^1.1.0:
+side-channel@^1.0.6, side-channel@^1.1.0:
   version "1.1.0"
   dependencies:
     es-errors "^1.3.0"
@@ -6368,10 +6243,13 @@ side-channel@^1.0.4, side-channel@^1.1.0:
     side-channel-map "^1.0.1"
     side-channel-weakmap "^1.0.2"
 
-signal-exit@^3.0.2, signal-exit@^3.0.7:
+signal-exit@^3.0.2:
   version "3.0.7"
 
-signal-exit@^4.1.0:
+signal-exit@^3.0.7:
+  version "3.0.7"
+
+signal-exit@^4.0.1, signal-exit@^4.1.0:
   version "4.1.0"
 
 simple-eval@1.0.1:
@@ -6403,25 +6281,25 @@ smart-buffer@^4.2.0:
   version "4.2.0"
 
 socket.io-adapter@~2.5.2:
-  version "2.5.6"
+  version "2.5.5"
   dependencies:
-    debug "~4.4.1"
-    ws "~8.18.3"
+    debug "~4.3.4"
+    ws "~8.17.1"
 
 socket.io-parser@~4.2.4:
-  version "4.2.5"
+  version "4.2.4"
   dependencies:
     "@socket.io/component-emitter" "~3.1.0"
-    debug "~4.4.1"
+    debug "~4.3.1"
 
-socket.io@4.7.2:
-  version "4.7.2"
+socket.io@^4.7.2:
+  version "4.8.1"
   dependencies:
     accepts "~1.3.4"
     base64id "~2.0.0"
     cors "~2.8.5"
     debug "~4.3.2"
-    engine.io "~6.5.2"
+    engine.io "~6.6.0"
     socket.io-adapter "~2.5.2"
     socket.io-parser "~4.2.4"
 
@@ -6486,12 +6364,26 @@ streamx@^2.15.0, streamx@^2.21.0:
     fast-fifo "^1.3.2"
     text-decoder "^1.1.0"
 
+"string-width-cjs@npm:string-width@^4.2.0":
+  version "4.2.3"
+  dependencies:
+    emoji-regex "^8.0.0"
+    is-fullwidth-code-point "^3.0.0"
+    strip-ansi "^6.0.1"
+
 string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
   dependencies:
     emoji-regex "^8.0.0"
     is-fullwidth-code-point "^3.0.0"
     strip-ansi "^6.0.1"
+
+string-width@^5.0.1, string-width@^5.1.2:
+  version "5.1.2"
+  dependencies:
+    eastasianwidth "^0.2.0"
+    emoji-regex "^9.2.2"
+    strip-ansi "^7.0.1"
 
 string-width@^7.0.0, string-width@^7.2.0:
   version "7.2.0"
@@ -6562,15 +6454,28 @@ stringify-entities@^4.0.0:
     character-entities-html4 "^2.0.0"
     character-entities-legacy "^3.0.0"
 
-strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+"strip-ansi-cjs@npm:strip-ansi@^6.0.1":
   version "6.0.1"
   dependencies:
     ansi-regex "^5.0.1"
 
-strip-ansi@^7.1.0:
+strip-ansi@^6.0.0:
+  version "6.0.1"
+  dependencies:
+    ansi-regex "^5.0.1"
+
+strip-ansi@^6.0.1:
+  version "6.0.1"
+  dependencies:
+    ansi-regex "^5.0.1"
+
+strip-ansi@^7.0.1, strip-ansi@^7.1.0:
   version "7.1.2"
   dependencies:
     ansi-regex "^6.0.1"
+
+strip-bom-string@^1.0.0:
+  version "1.0.0"
 
 strip-bom@^3.0.0:
   version "3.0.0"
@@ -6593,15 +6498,15 @@ styled-jsx@5.1.6:
   dependencies:
     client-only "0.0.1"
 
-sucrase@^3.32.0:
-  version "3.35.1"
+sucrase@^3.35.0:
+  version "3.35.0"
   dependencies:
     "@jridgewell/gen-mapping" "^0.3.2"
     commander "^4.0.0"
+    glob "^10.3.10"
     lines-and-columns "^1.1.6"
     mz "^2.7.0"
     pirates "^4.0.1"
-    tinyglobby "^0.2.11"
     ts-interface-checker "^0.1.9"
 
 supports-color@^7.1.0:
@@ -6621,34 +6526,34 @@ tailwind-scrollbar@3.1.0:
 tailwindcss-animate@^1.0.7:
   version "1.0.7"
 
-tailwindcss@^4.0.13, "tailwindcss@>=3.0.0 || insiders", tailwindcss@3.x, tailwindcss@4.1.17:
-  version "4.1.17"
-
-tailwindcss@3.4.4:
-  version "3.4.4"
+tailwindcss@^3.4.4:
+  version "3.4.18"
   dependencies:
     "@alloc/quick-lru" "^5.2.0"
     arg "^5.0.2"
-    chokidar "^3.5.3"
+    chokidar "^3.6.0"
     didyoumean "^1.2.2"
     dlv "^1.1.3"
-    fast-glob "^3.3.0"
+    fast-glob "^3.3.2"
     glob-parent "^6.0.2"
     is-glob "^4.0.3"
-    jiti "^1.21.0"
-    lilconfig "^2.1.0"
-    micromatch "^4.0.5"
+    jiti "^1.21.7"
+    lilconfig "^3.1.3"
+    micromatch "^4.0.8"
     normalize-path "^3.0.0"
     object-hash "^3.0.0"
-    picocolors "^1.0.0"
-    postcss "^8.4.23"
+    picocolors "^1.1.1"
+    postcss "^8.4.47"
     postcss-import "^15.1.0"
     postcss-js "^4.0.1"
-    postcss-load-config "^4.0.1"
-    postcss-nested "^6.0.1"
-    postcss-selector-parser "^6.0.11"
-    resolve "^1.22.2"
-    sucrase "^3.32.0"
+    postcss-load-config "^4.0.2 || ^5.0 || ^6.0"
+    postcss-nested "^6.2.0"
+    postcss-selector-parser "^6.1.2"
+    resolve "^1.22.8"
+    sucrase "^3.35.0"
+
+tailwindcss@^4.0.13, "tailwindcss@>=3.0.0 || insiders", tailwindcss@3.x, tailwindcss@4.1.17:
+  version "4.1.17"
 
 tapable@^2.2.0:
   version "2.3.0"
@@ -6669,8 +6574,8 @@ tar-stream@^3.1.5:
     fast-fifo "^1.2.0"
     streamx "^2.15.0"
 
-tar@6.1.15:
-  version "6.1.15"
+tar@^6.1.15:
+  version "6.2.1"
   dependencies:
     chownr "^2.0.0"
     fs-minipass "^2.0.0"
@@ -6697,7 +6602,7 @@ thenify-all@^1.0.0:
 through@^2.3.8:
   version "2.3.8"
 
-tinyglobby@^0.2.11, tinyglobby@^0.2.13:
+tinyglobby@^0.2.13:
   version "0.2.15"
   dependencies:
     fdir "^6.5.0"
@@ -6762,22 +6667,19 @@ turbo@^2.5.0:
     turbo-windows-64 "2.6.0"
     turbo-windows-arm64 "2.6.0"
 
-twoslash-protocol@0.3.6:
-  version "0.3.6"
+twoslash-protocol@0.3.4:
+  version "0.3.4"
 
-twoslash@^0.3.6:
-  version "0.3.6"
+twoslash@^0.3.4:
+  version "0.3.4"
   dependencies:
-    "@typescript/vfs" "^1.6.2"
-    twoslash-protocol "0.3.6"
+    "@typescript/vfs" "^1.6.1"
+    twoslash-protocol "0.3.4"
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
   dependencies:
     prelude-ls "^1.2.1"
-
-type-fest@^0.21.3:
-  version "0.21.3"
 
 type-fest@^4.27.0, type-fest@^4.31.0:
   version "4.41.0"
@@ -6860,10 +6762,10 @@ unbzip2-stream@^1.4.3:
     buffer "^5.2.1"
     through "^2.3.8"
 
-undici-types@~6.21.0, undici-types@~7.16.0:
+undici-types@~6.21.0:
   version "6.21.0"
 
-unified@^11, unified@^11.0.0, unified@^11.0.4, unified@11.0.5:
+unified@^11, unified@^11.0.0, unified@^11.0.4, unified@^11.0.5:
   version "11.0.5"
   dependencies:
     "@types/unist" "^3.0.0"
@@ -6874,7 +6776,7 @@ unified@^11, unified@^11.0.0, unified@^11.0.4, unified@11.0.5:
     trough "^2.0.0"
     vfile "^6.0.0"
 
-unist-builder@4.0.0:
+unist-builder@^4.0.0:
   version "4.0.0"
   dependencies:
     "@types/unist" "^3.0.0"
@@ -6895,7 +6797,7 @@ unist-util-is@^6.0.0:
   dependencies:
     "@types/unist" "^3.0.0"
 
-unist-util-map@4.0.0:
+unist-util-map@^4.0.0:
   version "4.0.0"
   dependencies:
     "@types/unist" "^3.0.0"
@@ -6916,13 +6818,13 @@ unist-util-position@^5.0.0:
   dependencies:
     "@types/unist" "^3.0.0"
 
-unist-util-remove-position@^5.0.0, unist-util-remove-position@5.0.0:
+unist-util-remove-position@^5.0.0:
   version "5.0.0"
   dependencies:
     "@types/unist" "^3.0.0"
     unist-util-visit "^5.0.0"
 
-unist-util-remove@^4.0.0, unist-util-remove@4.0.0:
+unist-util-remove@^4.0.0:
   version "4.0.0"
   dependencies:
     "@types/unist" "^3.0.0"
@@ -6945,31 +6847,25 @@ unist-util-visit-parents@^5.1.1:
     "@types/unist" "^2.0.0"
     unist-util-is "^5.0.0"
 
-unist-util-visit-parents@^6.0.0:
+unist-util-visit-parents@^6.0.0, unist-util-visit-parents@^6.0.1:
   version "6.0.2"
   dependencies:
     "@types/unist" "^3.0.0"
     unist-util-is "^6.0.0"
 
-unist-util-visit-parents@6.0.1:
-  version "6.0.1"
-  dependencies:
-    "@types/unist" "^3.0.0"
-    unist-util-is "^6.0.0"
-
-unist-util-visit@^5.0.0, unist-util-visit@5.0.0:
-  version "5.0.0"
-  dependencies:
-    "@types/unist" "^3.0.0"
-    unist-util-is "^6.0.0"
-    unist-util-visit-parents "^6.0.0"
-
-unist-util-visit@4.1.2:
+unist-util-visit@^4.1.1:
   version "4.1.2"
   dependencies:
     "@types/unist" "^2.0.0"
     unist-util-is "^5.0.0"
     unist-util-visit-parents "^5.1.1"
+
+unist-util-visit@^5.0.0:
+  version "5.0.0"
+  dependencies:
+    "@types/unist" "^3.0.0"
+    unist-util-is "^6.0.0"
+    unist-util-visit-parents "^6.0.0"
 
 universalify@^2.0.0:
   version "2.0.1"
@@ -7048,7 +6944,7 @@ utils-merge@1.0.1:
 uuid@^10.0.0:
   version "10.0.0"
 
-uuid@^11.1.0, uuid@11.1.0:
+uuid@^11.1.0:
   version "11.1.0"
 
 uuid@^9.0.0:
@@ -7075,7 +6971,7 @@ vfile-message@^4.0.0:
     "@types/unist" "^3.0.0"
     unist-util-stringify-position "^4.0.0"
 
-vfile@^6.0.0, vfile@^6.0.3, vfile@6.0.3:
+vfile@^6.0.0, vfile@^6.0.3:
   version "6.0.3"
   dependencies:
     "@types/unist" "^3.0.0"
@@ -7151,6 +7047,13 @@ widest-line@^5.0.0:
 word-wrap@^1.2.5:
   version "1.2.5"
 
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
+  version "7.0.0"
+  dependencies:
+    ansi-styles "^4.0.0"
+    string-width "^4.1.0"
+    strip-ansi "^6.0.0"
+
 wrap-ansi@^6.2.0:
   version "6.2.0"
   dependencies:
@@ -7164,6 +7067,13 @@ wrap-ansi@^7.0.0:
     ansi-styles "^4.0.0"
     string-width "^4.1.0"
     strip-ansi "^6.0.0"
+
+wrap-ansi@^8.1.0:
+  version "8.1.0"
+  dependencies:
+    ansi-styles "^6.1.0"
+    string-width "^5.0.1"
+    strip-ansi "^7.0.1"
 
 wrap-ansi@^9.0.0:
   version "9.0.2"
@@ -7180,9 +7090,6 @@ ws@^8.18.0, ws@^8.18.2:
 
 ws@~8.17.1:
   version "8.17.1"
-
-ws@~8.18.3:
-  version "8.18.3"
 
 xml2js@^0.6.1:
   version "0.6.2"
@@ -7202,25 +7109,14 @@ y18n@^5.0.5:
 yallist@^4.0.0:
   version "4.0.0"
 
-yaml@^2.0.0, yaml@^2.3.4, yaml@^2.4.5:
-  version "2.8.2"
+yaml@^2.0.0, yaml@^2.4.2, yaml@^2.4.5:
+  version "2.8.1"
 
 yargs-parser@^21.1.1:
   version "21.1.1"
 
-yargs@^17.7.2:
+yargs@^17.6.0, yargs@^17.7.2:
   version "17.7.2"
-  dependencies:
-    cliui "^8.0.1"
-    escalade "^3.1.1"
-    get-caller-file "^2.0.5"
-    require-directory "^2.1.1"
-    string-width "^4.2.3"
-    y18n "^5.0.5"
-    yargs-parser "^21.1.1"
-
-yargs@17.7.1:
-  version "17.7.1"
   dependencies:
     cliui "^8.0.1"
     escalade "^3.1.1"
@@ -7245,23 +7141,23 @@ yoctocolors-cjs@^2.1.3:
 yoga-layout@~3.2.1:
   version "3.2.1"
 
+zod-to-json-schema@^3.20.3:
+  version "3.24.6"
+
 zod-to-json-schema@^3.22.3:
   version "3.24.6"
 
 zod-to-json-schema@^3.24.1:
   version "3.24.6"
 
-zod-to-json-schema@3.20.4:
-  version "3.20.4"
+zod@^3.20.6, zod@^3.24.1, zod@3.23.8:
+  version "3.23.8"
 
-zod@^3.20.0, zod@3.21.4:
-  version "3.21.4"
-
-zod@^3.23.8, zod@^3.24.1, zod@^3.25.32:
+zod@^3.23.8:
   version "3.25.76"
 
-"zod@^3.25 || ^4", zod@3.23.8:
-  version "3.23.8"
+zod@^3.25.32:
+  version "3.25.76"
 
 zustand@^5.0.3:
   version "5.0.8"

@@ -1,0 +1,398 @@
+﻿node.exe :  鈿?Warning: Next.js inferred your workspace root, but it may not be correct.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( 鈿?Warning: Nex...not be correct.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ We detected multiple lockfiles and selected the directory of D:\yarn.lock as the root directory.
+ To silence this warning, set `outputFileTracingRoot` in your Next.js config, or consider removing one of the 
+lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/output#caveats for more information.
+ Detected additional lockfiles: 
+   * D:\gorbit\open-agent-platform\package-lock.json
+
+   鈻?Next.js 15.5.6
+   - Environments: .env
+
+   Creating an optimized production build ...
+ 鈿?Found lockfile missing swc dependencies, patching...
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+ 猕?Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
+[Error: Failed to get registry from "yarn".] {
+  [cause]: [Error: Command failed: yarn config get registry 
+  error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+  
+  Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+  Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+  ] {
+    status: 1,
+    signal: null,
+    output: [
+      null,
+      <Buffer >,
+      <Buffer 65 72 72 6f 72 20 54 68 69 73 20 70 72 6f 6a 65 63 74 27 73 20 70 61 63 6b 61 67 65 2e 6a 73 6f 
+6e 20 64 65 66 69 6e 65 73 20 22 70 61 63 6b 61 67 65 ... 420 more bytes>
+    ],
+    pid: 7100,
+    stdout: <Buffer >,
+    stderr: <Buffer 65 72 72 6f 72 20 54 68 69 73 20 70 72 6f 6a 65 63 74 27 73 20 70 61 63 6b 61 67 65 2e 6a 
+73 6f 6e 20 64 65 66 69 6e 65 73 20 22 70 61 63 6b 61 67 65 ... 420 more bytes>
+  }
+}
+ 鈿?Found lockfile missing swc dependencies, patching...
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+ 猕?Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
+[Error: Failed to get registry from "yarn".] {
+  [cause]: [Error: Command failed: yarn config get registry 
+  error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+  
+  Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+  Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+  ] {
+    status: 1,
+    signal: null,
+    output: [
+      null,
+      <Buffer >,
+      <Buffer 65 72 72 6f 72 20 54 68 69 73 20 70 72 6f 6a 65 63 74 27 73 20 70 61 63 6b 61 67 65 2e 6a 73 6f 
+6e 20 64 65 66 69 6e 65 73 20 22 70 61 63 6b 61 67 65 ... 420 more bytes>
+    ],
+    pid: 24644,
+    stdout: <Buffer >,
+    stderr: <Buffer 65 72 72 6f 72 20 54 68 69 73 20 70 72 6f 6a 65 63 74 27 73 20 70 61 63 6b 61 67 65 2e 6a 
+73 6f 6e 20 64 65 66 69 6e 65 73 20 22 70 61 63 6b 61 67 65 ... 420 more bytes>
+  }
+}
+ 鈿?Found lockfile missing swc dependencies, patching...
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+
+Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+ 猕?Failed to patch lockfile, please try uninstalling and reinstalling next in this workspace
+[Error: Failed to get registry from "yarn".] {
+  [cause]: [Error: Command failed: yarn config get registry 
+  error This project's package.json defines "packageManager": "yarn@3.5.1". However the current global version 
+of Yarn is 1.22.22.
+  
+  Presence of the "packageManager" field indicates that the project is meant to be used with Corepack, a tool 
+included by default with all official Node.js distributions starting from 16.9 and 14.19.
+  Corepack must currently be enabled by running corepack enable in your terminal. For more information, check 
+out https://yarnpkg.com/corepack.
+  ] {
+    status: 1,
+    signal: null,
+    output: [
+      null,
+      <Buffer >,
+      <Buffer 65 72 72 6f 72 20 54 68 69 73 20 70 72 6f 6a 65 63 74 27 73 20 70 61 63 6b 61 67 65 2e 6a 73 6f 
+6e 20 64 65 66 69 6e 65 73 20 22 70 61 63 6b 61 67 65 ... 420 more bytes>
+    ],
+    pid: 24444,
+    stdout: <Buffer >,
+    stderr: <Buffer 65 72 72 6f 72 20 54 68 69 73 20 70 72 6f 6a 65 63 74 27 73 20 70 61 63 6b 61 67 65 2e 6a 
+73 6f 6e 20 64 65 66 69 6e 65 73 20 22 70 61 63 6b 61 67 65 ... 420 more bytes>
+  }
+}
+ 鉁?Compiled successfully in 8.5s
+   Linting and checking validity of types ...
+
+ 鈿?The Next.js plugin was not detected in your ESLint configuration. See 
+https://nextjs.org/docs/app/api-reference/config/eslint#migrating-existing-config
+
+Failed to compile.
+
+./src/app/(app)/layout.tsx
+9:8  Error: 'Script' is defined but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+11:7  Error: 'inter' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+17:14  Warning: Fast refresh only works when a file only exports components. Use a new file to share constants 
+or functions between components.  react-refresh/only-export-components
+
+./src/app/(auth)/layout.tsx
+9:7  Error: 'inter' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+15:14  Warning: Fast refresh only works when a file only exports components. Use a new file to share constants 
+or functions between components.  react-refresh/only-export-components
+
+./src/app/layout.tsx
+20:14  Warning: Fast refresh only works when a file only exports components. Use a new file to share constants 
+or functions between components.  react-refresh/only-export-components
+
+./src/components/agent-inbox/contexts/ThreadContext.tsx
+234:5  Warning: React Hook React.useCallback has missing dependencies: 'agentInboxId', 'inboxParam', and 
+'session.accessToken'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+338:5  Warning: React Hook React.useCallback has missing dependencies: 'agentInboxId' and 
+'session.accessToken'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+460:17  Warning: Fast refresh only works when a file only exports components. Use a new file to share 
+constants or functions between components.  react-refresh/only-export-components
+
+./src/components/agent-inbox/hooks/use-interrupted-actions.tsx
+129:6  Warning: React Hook React.useEffect has a missing dependency: 'threadData'. Either include it or remove 
+the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/agent-inbox/index.tsx
+206:6  Warning: React Hook useEffect has a missing dependency: 'setAgentId'. Either include it or remove the 
+dependency array.  react-hooks/exhaustive-deps
+
+./src/components/agent-inbox/thread-view.tsx
+75:6  Warning: React Hook React.useEffect has a missing dependency: 'setSelectedThreadIdParam'. Either include 
+it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/mode-toggle.tsx
+4:21  Error: 'Languages' is defined but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+19:23  Error: 'theme' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+
+./src/components/sidebar/app-sidebar.tsx
+9:10  Error: 'useLanguage' is defined but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+
+./src/components/ui/badge.tsx
+49:17  Warning: Fast refresh only works when a file only exports components. Use a new file to share constants 
+or functions between components.  react-refresh/only-export-components
+
+./src/components/ui/button.tsx
+64:18  Warning: Fast refresh only works when a file only exports components. Use a new file to share constants 
+or functions between components.  react-refresh/only-export-components
+
+./src/components/ui/sidebar.tsx
+729:3  Warning: Fast refresh only works when a file only exports components. Use a new file to share constants 
+or functions between components.  react-refresh/only-export-components
+
+./src/features/chat/components/configuration-sidebar/index.tsx
+185:6  Warning: React Hook useEffect has missing dependencies: 'getSchemaAndUpdateConfig' and 'loading'. 
+Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/features/chat/providers/Stream.tsx
+132:6  Warning: React Hook useEffect has a missing dependency: 'value'. Either include it or remove the 
+dependency array.  react-hooks/exhaustive-deps
+231:14  Warning: Fast refresh only works when a file only exports components. Use a new file to share 
+constants or functions between components.  react-refresh/only-export-components
+
+./src/features/rag/components/document-preview.tsx
+52:8  Warning: React Hook useEffect has a missing dependency: 'loadDocumentContent'. Either include it or 
+remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/features/rag/components/documents-card/index.tsx
+29:10  Error: 'getCollectionName' is defined but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+
+./src/features/rag/components/ollama-health-status.tsx
+14:10  Error: 'toast' is defined but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+
+./src/features/rag/hooks/use-rag.tsx
+241:6  Warning: React Hook useCallback has missing dependencies: 'getCollections', 'initializeDatabase', and 
+'listDocuments'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+375:15  Error: 'response' is assigned a value but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+388:5  Warning: React Hook useCallback has a missing dependency: 'listDocuments'. Either include it or remove 
+the dependency array.  react-hooks/exhaustive-deps
+426:5  Warning: React Hook useCallback has a missing dependency: 'listDocuments'. Either include it or remove 
+the dependency array.  react-hooks/exhaustive-deps
+
+./src/features/rag/providers/RAG.tsx
+24:6  Warning: React Hook useEffect has a missing dependency: 'ragState'. Either include it or remove the 
+dependency array.  react-hooks/exhaustive-deps
+29:14  Warning: Fast refresh only works when a file only exports components. Use a new file to share constants 
+or functions between components.  react-refresh/only-export-components
+
+./src/features/settings/index.tsx
+5:10  Error: 'Separator' is defined but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+
+./src/features/settings/ollama-settings.tsx
+26:68  Error: 'AlertCircle' is defined but never used. Allowed unused vars must match /^_/u.  
+@typescript-eslint/no-unused-vars
+77:8  Warning: React Hook useEffect has a missing dependency: 'fetchActiveModel'. Either include it or remove 
+the dependency array.  react-hooks/exhaustive-deps
+
+./src/features/tools/playground/components/schema-form.tsx
+45:6  Warning: React Hook useEffect has a missing dependency: 'formValues'. Either include it or remove the 
+dependency array.  react-hooks/exhaustive-deps
+
+./src/features/tools/playground/index.tsx
+59:6  Warning: React Hook useEffect has missing dependencies: 'router', 'selectedTool', and 
+'setSelectedToolName'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/hooks/use-agent-config.tsx
+133:5  Warning: React Hook useCallback has missing dependencies: 'chatWithCollectionId' and 
+'setChatWithCollectionId'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/lib/auth/middleware.ts
+20:3  Error: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+21:3  Error: Unexpected console statement. Only these console methods are allowed: warn, error.  no-console
+
+./src/providers/Agents.tsx
+197:6  Warning: React Hook useEffect has missing dependencies: 'agents.length', 
+'agentsState.getAgentConfigSchema', and 'deployments'. Either include them or remove the dependency array.  
+react-hooks/exhaustive-deps
+236:14  Warning: Fast refresh only works when a file only exports components. Use a new file to share 
+constants or functions between components.  react-refresh/only-export-components
+
+./src/providers/Auth.tsx
+116:17  Warning: Fast refresh only works when a file only exports components. Use a new file to share 
+constants or functions between components.  react-refresh/only-export-components
+
+./src/providers/Language.tsx
+99:17  Warning: Fast refresh only works when a file only exports components. Use a new file to share constants 
+or functions between components.  react-refresh/only-export-components
+
+./src/providers/MCP.tsx
+32:6  Warning: React Hook useEffect has a missing dependency: 'mcpState'. Either include it or remove the 
+dependency array.  react-hooks/exhaustive-deps
+41:14  Warning: Fast refresh only works when a file only exports components. Use a new file to share constants 
+or functions between components.  react-refresh/only-export-components
+
+info  - Need to disable some ESLint rules? Learn more here: 
+https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules

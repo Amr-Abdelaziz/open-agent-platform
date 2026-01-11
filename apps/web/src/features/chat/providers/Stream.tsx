@@ -26,6 +26,7 @@ import { useAuthContext } from "@/providers/Auth";
 import { getDeployments } from "@/lib/environment/deployments";
 import { useHasApiKeys } from "@/hooks/use-api-keys";
 import { checkApiKeysWarning } from "@/lib/agent-utils";
+import { fetchMyProfile, injectPersona } from "@/lib/onboarding";
 
 export type StateType = { messages: Message[]; ui?: UIMessage[] };
 
@@ -140,6 +141,19 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
       }
     }
   }, [agentId, deploymentId, hasApiKeys]);
+
+  useEffect(() => {
+    if (!agentId || !session?.accessToken) return;
+
+    const performOnboarding = async () => {
+      const profile = await fetchMyProfile(session.accessToken!);
+      if (profile) {
+        injectPersona(agentId, profile);
+      }
+    };
+
+    performOnboarding();
+  }, [agentId, session?.accessToken]);
 
   const handleValueChange = (v: string) => {
     setValue(v);

@@ -38,6 +38,39 @@ export interface SearchResult {
   } | null;
 }
 
+export interface CrawlRequest {
+  url: string;
+  crawl_type?: string;
+  max_pages?: number;
+  max_depth?: number;
+  extract_code_examples?: boolean;
+  max_concurrent?: number;
+  urls?: string[];
+  source_display_name?: string;
+  skip_discovery?: boolean;
+}
+
+export interface CrawlTask {
+  task_id: string;
+  status: string;
+  collection_id: string;
+  url: string;
+  created_at: string;
+  updated_at: string;
+  [key: string]: any;
+}
+
+export interface CrawledPage {
+  id: string;
+  url: string;
+  section_title?: string;
+  word_count: number;
+  char_count: number;
+  created_at: string;
+  full_content?: string;
+  metadata: Record<string, any>;
+}
+
 function getApiUrlOrThrow(): URL {
   if (!process.env.NEXT_PUBLIC_RAG_API_URL) {
     throw new Error(
@@ -179,6 +212,17 @@ interface UseRagReturn {
   getMarkdownPreview: (file: File) => Promise<string>;
   processDocument: (collectionId: string, documentId: string) => Promise<void>;
   checkOllamaHealth: () => Promise<any>;
+
+  // Crawl operations
+  startCrawl: (collectionId: string, request: CrawlRequest) => Promise<{ task_id: string }>;
+  listCrawls: (collectionId: string) => Promise<CrawlTask[]>;
+  getCrawlStatus: (taskId: string) => Promise<CrawlTask>;
+  cancelCrawl: (taskId: string) => Promise<void>;
+  deleteCrawl: (taskId: string) => Promise<void>;
+  listPages: (collectionId: string, limit?: number, offset?: number) => Promise<CrawledPage[]>;
+  getPageContent: (pageId: string) => Promise<CrawledPage>;
+  deletePage: (pageId: string) => Promise<void>;
+  deleteSource: (sourceId: string) => Promise<void>;
 }
 
 /**
@@ -587,6 +631,233 @@ export function useRag(): UseRagReturn {
     }
   }, [session]);
 
+  const startCrawl = useCallback(
+    async (collectionId: string, request: CrawlRequest) => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        throw new Error("No session found");
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/collections/${collectionId}/crawl`;
+
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `Failed to start crawl: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+    [session]
+  );
+
+  const listCrawls = useCallback(
+    async (collectionId: string): Promise<CrawlTask[]> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return [];
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/collections/${collectionId}/crawls`;
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch crawls: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getCrawlStatus = useCallback(
+    async (taskId: string): Promise<CrawlTask> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        throw new Error("No session found");
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/crawl/${taskId}`;
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch crawl status: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+    [session]
+  );
+
+  const cancelCrawl = useCallback(
+    async (taskId: string) => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return;
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/crawl/${taskId}/cancel`;
+
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to cancel crawl: ${response.statusText}`);
+      }
+    },
+    [session]
+  );
+
+  const deleteCrawl = useCallback(
+    async (taskId: string): Promise<void> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return;
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/crawl/${taskId}`;
+
+      const response = await fetch(url.toString(), {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete crawl: ${response.statusText}`);
+      }
+    },
+    [session]
+  );
+
+  const listPages = useCallback(
+    async (collectionId: string, limit: number = 50, offset: number = 0): Promise<CrawledPage[]> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return [];
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/collections/${collectionId}/pages`;
+      url.searchParams.set("limit", limit.toString());
+      url.searchParams.set("offset", offset.toString());
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch pages: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getPageContent = useCallback(
+    async (pageId: string): Promise<CrawledPage> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        throw new Error("No session found");
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/pages/${pageId}`;
+
+      const response = await fetch(url.toString(), {
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch page content: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+    [session]
+  );
+
+  const deletePage = useCallback(
+    async (pageId: string): Promise<void> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return;
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/pages/${pageId}`;
+
+      const response = await fetch(url.toString(), {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete page: ${response.statusText}`);
+      }
+    },
+    [session]
+  );
+
+  const deleteSource = useCallback(
+    async (sourceId: string): Promise<void> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        return;
+      }
+
+      const url = getApiUrlOrThrow();
+      url.pathname = `/sources/${sourceId}`;
+
+      const response = await fetch(url.toString(), {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete source: ${response.statusText}`);
+      }
+    },
+    [session]
+  );
+
   // --- Collection Operations ---
 
   const getCollections = useCallback(
@@ -835,5 +1106,16 @@ export function useRag(): UseRagReturn {
     getMarkdownPreview,
     processDocument,
     checkOllamaHealth,
+
+    // Crawl
+    startCrawl,
+    listCrawls,
+    getCrawlStatus,
+    cancelCrawl,
+    deleteCrawl,
+    listPages,
+    getPageContent,
+    deletePage,
+    deleteSource,
   };
 }

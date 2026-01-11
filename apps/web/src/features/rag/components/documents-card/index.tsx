@@ -36,6 +36,10 @@ import { Agent } from "@/types/agent";
 import { useRouter } from "next/navigation";
 import { DocumentPreview } from "../document-preview";
 import { ApiDocument } from "../../hooks/use-rag";
+import { CrawlForm } from "../crawl-form";
+import { CrawlStatusList } from "../crawl-status-list";
+import { Globe, Layers } from "lucide-react";
+import { CrawledPagesList } from "../crawled-pages-list";
 
 interface DocumentsCardProps {
   selectedCollection: Collection | undefined;
@@ -268,6 +272,14 @@ export function DocumentsCard({
             <TabsList className="mb-4">
               <TabsTrigger value="file">Upload File</TabsTrigger>
               <TabsTrigger value="text">Add Text</TabsTrigger>
+              <TabsTrigger value="crawl">
+                <Globe className="mr-2 h-3.5 w-3.5" />
+                Crawl Website
+              </TabsTrigger>
+              <TabsTrigger value="pages">
+                <Layers className="mr-2 h-3.5 w-3.5" />
+                Crawled Pages
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="file">
               <div
@@ -351,6 +363,15 @@ export function DocumentsCard({
                   Add Text Document
                 </Button>
               </div>
+            </TabsContent>
+            <TabsContent value="crawl">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <CrawlForm collectionId={selectedCollection?.uuid || ""} />
+                <CrawlStatusList collectionId={selectedCollection?.uuid || ""} />
+              </div>
+            </TabsContent>
+            <TabsContent value="pages">
+              <CrawledPagesList />
             </TabsContent>
           </Tabs>
         </div>

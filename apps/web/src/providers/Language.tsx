@@ -38,6 +38,8 @@ const translations: Record<Language, Record<string, string>> = {
         type_message: "Type your message...",
         send: "Send",
         cancel: "Cancel",
+        admin: "Admin",
+        organization: "Organization",
     },
     ar: {
         chat: "المحادثة",
@@ -62,6 +64,8 @@ const translations: Record<Language, Record<string, string>> = {
         type_message: "اكتب رسالتك...",
         send: "إرسال",
         cancel: "إلغاء",
+        admin: "الإدارة",
+        organization: "الهيكل التنظيمي",
     },
 };
 
