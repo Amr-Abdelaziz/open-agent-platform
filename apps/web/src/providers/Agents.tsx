@@ -22,6 +22,7 @@ import { createClient } from "@/lib/client";
 import { useAuthContext } from "./Auth";
 import { toast } from "sonner";
 import { Assistant } from "@langchain/langgraph-sdk";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 async function getOrCreateDefaultAssistants(
   deployment: Deployment,
@@ -71,6 +72,7 @@ async function getAgents(
     agentId: string,
     deploymentId: string,
   ) => Promise<Record<string, any> | undefined>,
+  isAdmin?: boolean,
 ): Promise<Agent[]> {
   const agentsPromise: Promise<Agent[]>[] = deployments.map(
     async (deployment) => {
@@ -80,6 +82,7 @@ async function getAgents(
         getOrCreateDefaultAssistants(deployment, accessToken),
         client.assistants.search({
           limit: 100,
+          ...(isAdmin && { metadata: {} }), // Try to clear metadata filter for admins
         }),
       ]);
       const assistantMap = new Map<string, Assistant>();
@@ -178,23 +181,29 @@ export const AgentsProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [refreshAgentsLoading, setRefreshAgentsLoading] = useState(false);
 
+  const { isAdmin, loading: profileLoading } = useUserProfile();
+
   useEffect(() => {
-    if (agents.length > 0 || firstRequestMade.current || !session?.accessToken)
+    if (agents.length > 0 || !session?.accessToken || profileLoading)
       return;
 
-    firstRequestMade.current = true;
     setLoading(true);
     getAgents(
       deployments,
       session.accessToken,
       agentsState.getAgentConfigSchema,
+      isAdmin,
     )
-      // Never expose the system created default assistants to the user
-      .then((a) =>
-        setAgents(a.filter((a) => !isSystemCreatedDefaultAssistant(a))),
-      )
+      .then((a) => {
+        // Admins see everything, regular users only see non-system default assistants
+        if (isAdmin) {
+          setAgents(a);
+        } else {
+          setAgents(a.filter((a) => !isSystemCreatedDefaultAssistant(a)));
+        }
+      })
       .finally(() => setLoading(false));
-  }, [session?.accessToken]);
+  }, [session?.accessToken, isAdmin, profileLoading]);
 
   async function refreshAgents() {
     if (!session?.accessToken) {
@@ -209,8 +218,13 @@ export const AgentsProvider: React.FC<{ children: ReactNode }> = ({
         deployments,
         session.accessToken,
         agentsState.getAgentConfigSchema,
+        isAdmin,
       );
-      setAgents(newAgents.filter((a) => !isSystemCreatedDefaultAssistant(a)));
+      if (isAdmin) {
+        setAgents(newAgents);
+      } else {
+        setAgents(newAgents.filter((a) => !isSystemCreatedDefaultAssistant(a)));
+      }
     } catch (e) {
       console.error("Failed to refresh agents", e);
     } finally {

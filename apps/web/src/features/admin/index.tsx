@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Users, Shield, MapPin, Briefcase, Check, X, Edit2, Save, Brain } from "lucide-react";
+import { Users, Shield, MapPin, Briefcase, Check, X, Edit2, Save, Brain, Trash2 } from "lucide-react";
 import { useAuthContext } from "@/providers/Auth";
 import {
     Card,
@@ -123,6 +123,32 @@ export default function AdminInterface() {
             fetchProfiles();
         } catch (error) {
             toast.error("Failed to update profile");
+        }
+    };
+
+    const handleDeleteUser = async (userId: string, email: string) => {
+        if (!confirm(`Are you sure you want to delete user ${email}? This action cannot be undone.`)) return;
+
+        const ragApiUrl = process.env.NEXT_PUBLIC_RAG_API_URL;
+        if (!ragApiUrl || !session?.accessToken) return;
+
+        try {
+            const response = await fetch(`${ragApiUrl}/api/profiles/admin/delete`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${session.accessToken}`,
+                },
+                body: JSON.stringify({ user_id: userId }),
+            });
+
+            if (!response.ok) throw new Error("Delete failed");
+
+            toast.success("User deleted successfully");
+            fetchProfiles();
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            toast.error("Failed to delete user. Please ensure the endpoint is active.");
         }
     };
 
@@ -251,9 +277,14 @@ export default function AdminInterface() {
                                                         </Button>
                                                     </div>
                                                 ) : (
-                                                    <Button size="icon" variant="ghost" className="size-9 opacity-0 group-hover:opacity-100 transition-all rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => handleStartEdit(profile)}>
-                                                        <Edit2 className="size-4" />
-                                                    </Button>
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button size="icon" variant="ghost" className="size-9 opacity-0 group-hover:opacity-100 transition-all rounded-xl hover:bg-primary/10 hover:text-primary" onClick={() => handleStartEdit(profile)}>
+                                                            <Edit2 className="size-4" />
+                                                        </Button>
+                                                        <Button size="icon" variant="ghost" className="size-9 opacity-0 group-hover:opacity-100 transition-all rounded-xl hover:bg-destructive/10 hover:text-destructive" onClick={() => handleDeleteUser(profile.user_id, profile.email || "ANONYMOUS")}>
+                                                            <Trash2 className="size-4" />
+                                                        </Button>
+                                                    </div>
                                                 )}
                                             </TableCell>
                                         </TableRow>

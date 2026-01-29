@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { CreateAgentDialog } from "./create-edit-agent-dialogs/create-agent-dialog";
 import { useState } from "react";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 interface PageHeaderProps {
   title: string;
@@ -12,6 +13,7 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, description, action }: PageHeaderProps) {
   const [showCreateAgentDialog, setShowCreateAgentDialog] = useState(false);
+  const { isAdmin } = useUserProfile();
   return (
     <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
       <div>
@@ -20,12 +22,12 @@ export function PageHeader({ title, description, action }: PageHeaderProps) {
           <p className="text-muted-foreground mt-1">{description}</p>
         )}
       </div>
-      {action || (
+      {action || (isAdmin && (
         <Button onClick={() => setShowCreateAgentDialog(true)}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Create Agent
         </Button>
-      )}
+      ))}
 
       <CreateAgentDialog
         open={showCreateAgentDialog}

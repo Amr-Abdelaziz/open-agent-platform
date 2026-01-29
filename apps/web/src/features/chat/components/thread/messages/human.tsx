@@ -110,11 +110,15 @@ export function HumanMessage({
               <div className="flex flex-wrap items-end justify-end gap-2">
                 {message.content.reduce<React.ReactNode[]>(
                   (acc, block, idx) => {
-                    if (isBase64ContentBlock(block)) {
+                    if (
+                      isBase64ContentBlock(block) ||
+                      ((block as any).type === "text" &&
+                        (block as any).metadata?.isPDF)
+                    ) {
                       acc.push(
                         <MultimodalPreview
                           key={idx}
-                          block={block}
+                          block={block as any}
                           size="md"
                         />,
                       );

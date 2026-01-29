@@ -27,7 +27,7 @@ const translations: Record<Language, Record<string, string>> = {
         logout: "Log Out",
         theme: "Theme",
         language: "Language",
-        neural_node_management: "Neural Node Management",
+        neural_node_management: "Organization Assistants",
         active_nodes: "Active Nodes",
         synchronize_nodes: "Synchronize local and remote processing units to the Gorbit network.",
         no_collections: "No Collections Found",

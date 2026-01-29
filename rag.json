@@ -1465,6 +1465,54 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Delete Crawl",
+                "description": "Delete a crawl task record from history.",
+                "operationId": "delete_crawl_crawl__task_id__delete",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "task_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Task Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Delete Crawl Crawl  Task Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/crawl/{task_id}/cancel": {
@@ -1593,6 +1641,561 @@
                         "HTTPBearer": []
                     }
                 ]
+            }
+        },
+        "/collections/{collection_id}/pages": {
+            "get": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "List Collection Pages",
+                "description": "List all crawled pages for a specific collection.",
+                "operationId": "list_collection_pages_collections__collection_id__pages_get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "collection_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "title": "Collection Id"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 100,
+                            "minimum": 1,
+                            "default": 50,
+                            "title": "Limit"
+                        }
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "default": 0,
+                            "title": "Offset"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "additionalProperties": true
+                                    },
+                                    "title": "Response List Collection Pages Collections  Collection Id  Pages Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/pages/{page_id}": {
+            "get": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Get Page Content",
+                "description": "Get the full content and metadata of a specific crawled page.",
+                "operationId": "get_page_content_pages__page_id__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "page_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "title": "Page Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Get Page Content Pages  Page Id  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Delete Page",
+                "description": "Delete a specific crawled page and its associated data.",
+                "operationId": "delete_page_pages__page_id__delete",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "page_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "title": "Page Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Delete Page Pages  Page Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sources/{source_id}": {
+            "delete": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Delete Source",
+                "description": "Delete a crawl source and all its associated pages, chunks, and code examples.",
+                "operationId": "delete_source_sources__source_id__delete",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "source_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Source Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Delete Source Sources  Source Id  Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profiles/": {
+            "post": {
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Create Or Update Profile",
+                "description": "Create or update the user's profile and persona.",
+                "operationId": "create_or_update_profile_api_profiles__post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProfileCreate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfileResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/profiles/me": {
+            "get": {
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Get My Profile",
+                "description": "Retrieve the current user's profile and generated system prompt.",
+                "operationId": "get_my_profile_api_profiles_me_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProfileResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/profiles/all": {
+            "get": {
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Get All Profiles",
+                "description": "Retrieve all user profiles (Admin only).",
+                "operationId": "get_all_profiles_api_profiles_all_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/profiles/hierarchy": {
+            "get": {
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Get Organization Hierarchy",
+                "description": "Retrieve basic profile info for all users to visualize hierarchy.",
+                "operationId": "get_organization_hierarchy_api_profiles_hierarchy_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/profiles/admin/update": {
+            "post": {
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Admin Update Profile",
+                "description": "Update any user profile (Admin only).",
+                "operationId": "admin_update_profile_api_profiles_admin_update_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProfileAdminUpdate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/profiles/admin/delete": {
+            "post": {
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Admin Delete Profile",
+                "description": "Delete a user profile and all associated data (Admin only).",
+                "operationId": "admin_delete_profile_api_profiles_admin_delete_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProfileAdminDelete"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/profiles/admin/personas": {
+            "get": {
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "List All Personas",
+                "description": "List all dynamic personas in the database.",
+                "operationId": "list_all_personas_api_profiles_admin_personas_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Create Or Update Persona",
+                "description": "Create or update a persona configuration.",
+                "operationId": "create_or_update_persona_api_profiles_admin_personas_post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/PersonaUpdate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/api/profiles/admin/personas/{job_title}": {
+            "delete": {
+                "tags": [
+                    "Profiles"
+                ],
+                "summary": "Delete Persona",
+                "description": "Delete a persona configuration.",
+                "operationId": "delete_persona_api_profiles_admin_personas__job_title__delete",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "job_title",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Job Title"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/health": {
@@ -1810,7 +2413,7 @@
                     "extract_code_examples": {
                         "type": "boolean",
                         "title": "Extract Code Examples",
-                        "default": true
+                        "default": false
                     },
                     "max_concurrent": {
                         "anyOf": [
@@ -2150,6 +2753,196 @@
                     "capabilities"
                 ],
                 "title": "OllamaModelInfo"
+            },
+            "PersonaUpdate": {
+                "properties": {
+                    "job_title": {
+                        "type": "string",
+                        "title": "Job Title"
+                    },
+                    "persona_text": {
+                        "type": "string",
+                        "title": "Persona Text"
+                    },
+                    "goals": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Goals"
+                    },
+                    "rag_context": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Rag Context",
+                        "default": "general_knowledge"
+                    },
+                    "capabilities": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array",
+                        "title": "Capabilities"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "job_title",
+                    "persona_text",
+                    "goals",
+                    "capabilities"
+                ],
+                "title": "PersonaUpdate"
+            },
+            "ProfileAdminDelete": {
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_id"
+                ],
+                "title": "ProfileAdminDelete"
+            },
+            "ProfileAdminUpdate": {
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    },
+                    "is_admin": {
+                        "anyOf": [
+                            {
+                                "type": "boolean"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Is Admin"
+                    },
+                    "department": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Department"
+                    },
+                    "job_title": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Job Title"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_id"
+                ],
+                "title": "ProfileAdminUpdate"
+            },
+            "ProfileCreate": {
+                "properties": {
+                    "department": {
+                        "type": "string",
+                        "title": "Department"
+                    },
+                    "job_title": {
+                        "type": "string",
+                        "title": "Job Title"
+                    },
+                    "persona_name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Persona Name"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "department",
+                    "job_title"
+                ],
+                "title": "ProfileCreate"
+            },
+            "ProfileResponse": {
+                "properties": {
+                    "user_id": {
+                        "type": "string",
+                        "title": "User Id"
+                    },
+                    "department": {
+                        "type": "string",
+                        "title": "Department"
+                    },
+                    "job_title": {
+                        "type": "string",
+                        "title": "Job Title"
+                    },
+                    "persona_name": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Persona Name"
+                    },
+                    "system_prompt": {
+                        "type": "string",
+                        "title": "System Prompt"
+                    },
+                    "rag_context": {
+                        "type": "string",
+                        "title": "Rag Context"
+                    },
+                    "rag_collection_id": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ],
+                        "title": "Rag Collection Id"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "user_id",
+                    "department",
+                    "job_title",
+                    "persona_name",
+                    "system_prompt",
+                    "rag_context"
+                ],
+                "title": "ProfileResponse"
             },
             "SearchQuery": {
                 "properties": {

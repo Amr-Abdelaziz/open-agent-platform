@@ -26,7 +26,7 @@ import { useAuthContext } from "@/providers/Auth";
 import { getDeployments } from "@/lib/environment/deployments";
 import { useHasApiKeys } from "@/hooks/use-api-keys";
 import { checkApiKeysWarning } from "@/lib/agent-utils";
-import { fetchMyProfile, injectPersona } from "@/lib/onboarding";
+import { fetchMyProfile, injectPersona, fetchPersonas } from "@/lib/onboarding";
 
 export type StateType = { messages: Message[]; ui?: UIMessage[] };
 
@@ -142,18 +142,35 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
     }
   }, [agentId, deploymentId, hasApiKeys]);
 
+  const onboardingPerformedRef = useRef(false);
+
   useEffect(() => {
-    if (!agentId || !session?.accessToken) return;
+    if (!session?.accessToken || onboardingPerformedRef.current) return;
 
     const performOnboarding = async () => {
+      onboardingPerformedRef.current = true;
       const profile = await fetchMyProfile(session.accessToken!);
       if (profile) {
-        injectPersona(agentId, profile);
+        if (agentId) {
+          injectPersona(agentId, profile);
+        }
+
+        // Check if this persona has an assigned agent and we haven't manually set one yet
+        if (!agentId && !deploymentId) {
+          const allPersonas = await fetchPersonas(session.accessToken!);
+          const userPersona = allPersonas.find(p => p.job_title === profile.job_title);
+          if (userPersona?.assigned_agent_id && userPersona?.assigned_deployment_id) {
+            const assignedValue = `${userPersona.assigned_agent_id}:${userPersona.assigned_deployment_id}`;
+            setValue(assignedValue);
+            setAgentId(userPersona.assigned_agent_id);
+            setDeploymentId(userPersona.assigned_deployment_id);
+          }
+        }
       }
     };
 
     performOnboarding();
-  }, [agentId, session?.accessToken]);
+  }, [agentId, deploymentId, session?.accessToken, setValue, setAgentId, setDeploymentId]);
 
   const handleValueChange = (v: string) => {
     setValue(v);
@@ -193,7 +210,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
             </div>
 
             <p className="text-foreground/60 max-w-xs mt-4 leading-relaxed">
-              Welcome to the Gorbit orbital node. Access to your Organization's AI by selecting your authorized agent.
+              Welcome to the Gorbit . Access to your Organization's AI by selecting your authorized agent.
             </p>
           </div>
           <div className="mb-12 grid grid-cols-[1fr_auto] gap-4 px-8 pt-4 relative z-10">

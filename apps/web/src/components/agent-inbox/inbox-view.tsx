@@ -127,7 +127,7 @@ export function AgentInboxView<
           <div className="flex w-full flex-col items-center justify-center py-16">
             <div className="mb-4 flex items-center justify-center gap-2 text-gray-700">
               <InboxIcon className="h-6 w-6" />
-              <p className="font-medium">No threads found in this inbox</p>
+              <p className="font-medium">No chat history found in this inbox</p>
             </div>
           </div>
         )}
@@ -135,7 +135,7 @@ export function AgentInboxView<
           <div className="flex w-full items-center justify-center py-16">
             <div className="flex items-center justify-center gap-2 text-gray-700">
               <LoaderCircle className="h-6 w-6 animate-spin" />
-              <p className="font-medium">Loading threads...</p>
+              <p className="font-medium">Loading chat history...</p>
             </div>
           </div>
         )}

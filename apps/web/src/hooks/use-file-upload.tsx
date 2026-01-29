@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, ChangeEvent } from "react";
 import { toast } from "sonner";
-import type { Base64ContentBlock } from "@langchain/core/messages";
-import { fileToContentBlock } from "@/lib/multimodal-utils";
+import type { DataContentBlock } from "@langchain/core/messages";
+import { fileToContentBlock, pdfToMarkdown } from "@/lib/multimodal-utils";
 
 export const SUPPORTED_FILE_TYPES = [
   "image/jpeg",
@@ -12,25 +12,33 @@ export const SUPPORTED_FILE_TYPES = [
 ];
 
 interface UseFileUploadOptions {
-  initialBlocks?: Base64ContentBlock[];
+  initialBlocks?: DataContentBlock[];
+  ragApiUrl?: string;
+  accessToken?: string;
 }
 
 export function useFileUpload({
   initialBlocks = [],
+  ragApiUrl,
+  accessToken,
 }: UseFileUploadOptions = {}) {
   const [contentBlocks, setContentBlocks] =
-    useState<Base64ContentBlock[]>(initialBlocks);
+    useState<DataContentBlock[]>(initialBlocks);
+  const [isConverting, setIsConverting] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const dragCounter = useRef(0);
 
-  const isDuplicate = (file: File, blocks: Base64ContentBlock[]) => {
+  const isDuplicate = (file: File, blocks: DataContentBlock[]) => {
     if (file.type === "application/pdf") {
       return blocks.some(
         (b) =>
-          b.type === "file" &&
-          b.mime_type === "application/pdf" &&
-          b.metadata?.filename === file.name,
+          ((b.type === "file" || (b.type as string) === "document") &&
+            b.mime_type === "application/pdf" &&
+            b.metadata?.filename === file.name) ||
+          (b.type === "text" &&
+            (b as any).metadata?.isPDF &&
+            (b as any).metadata?.filename === file.name),
       );
     }
     if (SUPPORTED_FILE_TYPES.includes(file.type)) {
@@ -72,9 +80,38 @@ export function useFileUpload({
       );
     }
 
-    const newBlocks = uniqueFiles.length
-      ? await Promise.all(uniqueFiles.map(fileToContentBlock))
-      : [];
+    const newBlocks: DataContentBlock[] = [];
+    const hasPDFs = uniqueFiles.some((f) => f.type === "application/pdf");
+    if (hasPDFs && ragApiUrl && accessToken) setIsConverting(true);
+
+    try {
+      for (const file of uniqueFiles) {
+        if (file.type === "application/pdf" && ragApiUrl && accessToken) {
+          try {
+            const markdown = await pdfToMarkdown(file, ragApiUrl, accessToken);
+            newBlocks.push({
+              type: "text",
+              source_type: "text",
+              text: markdown,
+              metadata: {
+                isPDF: true,
+                filename: file.name,
+                mime_type: "application/pdf",
+              },
+            } as DataContentBlock);
+          } catch (error) {
+            console.error("Error converting PDF to markdown:", error);
+            toast.error(`Failed to convert PDF ${file.name} to markdown.`);
+            newBlocks.push(await fileToContentBlock(file));
+          }
+        } else {
+          newBlocks.push(await fileToContentBlock(file));
+        }
+      }
+    } finally {
+      setIsConverting(false);
+    }
+
     setContentBlocks((prev) => [...prev, ...newBlocks]);
     e.target.value = "";
   };
@@ -133,9 +170,37 @@ export function useFileUpload({
         );
       }
 
-      const newBlocks = uniqueFiles.length
-        ? await Promise.all(uniqueFiles.map(fileToContentBlock))
-        : [];
+      const newBlocks: DataContentBlock[] = [];
+      const hasPDFs = uniqueFiles.some((f) => f.type === "application/pdf");
+      if (hasPDFs && ragApiUrl && accessToken) setIsConverting(true);
+
+      try {
+        for (const file of uniqueFiles) {
+          if (file.type === "application/pdf" && ragApiUrl && accessToken) {
+            try {
+              const markdown = await pdfToMarkdown(file, ragApiUrl, accessToken);
+              newBlocks.push({
+                type: "text",
+                source_type: "text",
+                text: markdown,
+                metadata: {
+                  isPDF: true,
+                  filename: file.name,
+                  mime_type: "application/pdf",
+                },
+              } as DataContentBlock);
+            } catch (error) {
+              console.error("Error converting PDF to markdown:", error);
+              toast.error(`Failed to convert PDF ${file.name} to markdown.`);
+              newBlocks.push(await fileToContentBlock(file));
+            }
+          } else {
+            newBlocks.push(await fileToContentBlock(file));
+          }
+        }
+      } finally {
+        setIsConverting(false);
+      }
       setContentBlocks((prev) => [...prev, ...newBlocks]);
     };
     const handleWindowDragEnd = (e: DragEvent) => {
@@ -226,9 +291,12 @@ export function useFileUpload({
       if (file.type === "application/pdf") {
         return contentBlocks.some(
           (b) =>
-            b.type === "file" &&
-            b.mime_type === "application/pdf" &&
-            b.metadata?.filename === file.name,
+            ((b.type === "file" || (b.type as string) === "document") &&
+              b.mime_type === "application/pdf" &&
+              b.metadata?.filename === file.name) ||
+            (b.type === "text" &&
+              (b as any).metadata?.isPDF &&
+              (b as any).metadata?.filename === file.name),
         );
       }
       if (SUPPORTED_FILE_TYPES.includes(file.type)) {
@@ -254,7 +322,37 @@ export function useFileUpload({
       );
     }
     if (uniqueFiles.length > 0) {
-      const newBlocks = await Promise.all(uniqueFiles.map(fileToContentBlock));
+      const newBlocks: DataContentBlock[] = [];
+      const hasPDFs = uniqueFiles.some((f) => f.type === "application/pdf");
+      if (hasPDFs && ragApiUrl && accessToken) setIsConverting(true);
+
+      try {
+        for (const file of uniqueFiles) {
+          if (file.type === "application/pdf" && ragApiUrl && accessToken) {
+            try {
+              const markdown = await pdfToMarkdown(file, ragApiUrl, accessToken);
+              newBlocks.push({
+                type: "text",
+                source_type: "text",
+                text: markdown,
+                metadata: {
+                  isPDF: true,
+                  filename: file.name,
+                  mime_type: "application/pdf",
+                },
+              } as DataContentBlock);
+            } catch (error) {
+              console.error("Error converting PDF to markdown:", error);
+              toast.error(`Failed to convert PDF ${file.name} to markdown.`);
+              newBlocks.push(await fileToContentBlock(file));
+            }
+          } else {
+            newBlocks.push(await fileToContentBlock(file));
+          }
+        }
+      } finally {
+        setIsConverting(false);
+      }
       setContentBlocks((prev) => [...prev, ...newBlocks]);
     }
   };
@@ -268,5 +366,6 @@ export function useFileUpload({
     resetBlocks,
     dragOver,
     handlePaste,
+    isConverting,
   };
 }

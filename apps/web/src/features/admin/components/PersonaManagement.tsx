@@ -11,9 +11,13 @@ import {
     Target,
     Zap,
     Database,
-    PlusCircle
+    PlusCircle,
+    UserCircle,
+    Edit2
 } from "lucide-react";
 import { useAuthContext } from "@/providers/Auth";
+import { useAgentsContext } from "@/providers/Agents";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
     Card,
@@ -34,10 +38,13 @@ interface Persona {
     goals: string[];
     rag_context: string;
     capabilities: string[];
+    assigned_agent_id?: string;
+    assigned_deployment_id?: string;
 }
 
 export function PersonaManagement() {
     const { session } = useAuthContext();
+    const { agents } = useAgentsContext();
     const [personas, setPersonas] = useState<Persona[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [editingTitle, setEditingTitle] = useState<string | null>(null);
@@ -177,8 +184,8 @@ export function PersonaManagement() {
                                         <CardTitle className="text-lg font-bold">{p.job_title}</CardTitle>
                                     </div>
                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <Button size="icon" variant="ghost" className="size-8" onClick={() => handleStartEdit(p)}>
-                                            <Plus className="size-4 rotate-45" /> {/* Using Plus as Edit icon alternative */}
+                                        <Button size="icon" variant="ghost" className="size-8 hover:bg-primary/10 hover:text-primary" onClick={() => handleStartEdit(p)}>
+                                            <Edit2 className="size-4" />
                                         </Button>
                                         <Button size="icon" variant="ghost" className="size-8 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => handleDelete(p.job_title)}>
                                             <Trash2 className="size-4" />
@@ -200,6 +207,12 @@ export function PersonaManagement() {
                                         <Database className="size-3" />
                                         Context: {p.rag_context}
                                     </div>
+                                    {p.assigned_agent_id && (
+                                        <div className="flex items-center gap-2 text-[10px] text-primary uppercase tracking-widest font-black">
+                                            <UserCircle className="size-3" />
+                                            Agent: {agents.find(a => a.assistant_id === p.assigned_agent_id)?.name || p.assigned_agent_id}
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
                         </motion.div>
@@ -224,7 +237,7 @@ export function PersonaManagement() {
                                 <div className="flex gap-2">
                                     <Button variant="outline" onClick={() => setEditValues(null)}>Cancel</Button>
                                     <Button onClick={handleSave} className="gap-2 bg-blue-600 hover:bg-blue-700">
-                                        <Save className="size-4" /> Deploy Configuration
+                                        <Save className="size-4" /> {editingTitle === "NEW" ? "Create Persona" : "Save Changes"}
                                     </Button>
                                 </div>
                             </div>
@@ -262,6 +275,35 @@ export function PersonaManagement() {
                                             onChange={(e) => setEditValues({ ...editValues, rag_context: e.target.value })}
                                             placeholder="Collection name for domain knowledge"
                                         />
+                                    </div>
+                                    <div>
+                                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1 block flex items-center gap-2">
+                                            <UserCircle className="size-3" /> Assigned Agent
+                                        </label>
+                                        <Select
+                                            value={editValues.assigned_agent_id ? `${editValues.assigned_agent_id}:${editValues.assigned_deployment_id}` : "none"}
+                                            onValueChange={(v) => {
+                                                if (v === "none") {
+                                                    setEditValues({ ...editValues, assigned_agent_id: undefined, assigned_deployment_id: undefined });
+                                                } else {
+                                                    const [aid, did] = v.split(":");
+                                                    setEditValues({ ...editValues, assigned_agent_id: aid, assigned_deployment_id: did });
+                                                }
+                                            }}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select an agent for this persona" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="none">No specific agent (User selection)</SelectItem>
+                                                {agents.map(a => (
+                                                    <SelectItem key={`${a.assistant_id}:${a.deploymentId}`} value={`${a.assistant_id}:${a.deploymentId}`}>
+                                                        {a.name} ({a.graph_id})
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
+                                        <p className="text-[10px] text-muted-foreground mt-1 uppercase italic">Only administrators can assign specific agents to personas.</p>
                                     </div>
                                 </div>
 

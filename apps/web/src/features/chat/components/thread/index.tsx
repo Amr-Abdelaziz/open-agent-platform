@@ -224,6 +224,7 @@ export function Thread() {
     parseAsBoolean.withDefault(false),
   );
   const [hasInput, setHasInput] = useState(false);
+  const { session } = useAuthContext();
   const {
     contentBlocks,
     setContentBlocks,
@@ -232,12 +233,14 @@ export function Thread() {
     removeBlock,
     dragOver,
     handlePaste,
-  } = useFileUpload();
+    isConverting,
+  } = useFileUpload({
+    ragApiUrl: process.env.NEXT_PUBLIC_RAG_API_URL,
+    accessToken: session?.accessToken ?? undefined,
+  });
 
   const { apiKeys } = useApiKeys();
   const hasApiKeys = useHasApiKeys();
-
-  const { session } = useAuthContext();
 
   const stream = useStreamContext();
   const messages = stream.messages;
@@ -518,6 +521,12 @@ export function Thread() {
                       accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
                       className="hidden"
                     />
+                    {isConverting && (
+                      <div className="flex items-center gap-2 text-primary animate-pulse">
+                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                        <span className="text-xs font-medium">Converting PDF...</span>
+                      </div>
+                    )}
                     {stream.isLoading ? (
                       <Button
                         key="stop"
@@ -542,6 +551,7 @@ export function Thread() {
                                     className="shadow-md transition-all"
                                     disabled={
                                       isLoading ||
+                                      isConverting ||
                                       (!hasInput &&
                                         contentBlocks.length === 0) ||
                                       requiresApiKeysButNotSet(
@@ -568,6 +578,7 @@ export function Thread() {
                             className="shadow-md transition-all"
                             disabled={
                               isLoading ||
+                              isConverting ||
                               (!hasInput && contentBlocks.length === 0)
                             }
                           >

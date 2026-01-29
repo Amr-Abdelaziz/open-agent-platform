@@ -7,8 +7,10 @@ import {
   Cloud,
   Edit,
   MessageSquare,
+  Trash,
   User,
   Wrench,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +27,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { isUserCreatedDefaultAssistant } from "@/lib/agent-utils";
+import { useAgents } from "@/hooks/use-agents";
+import { useAgentsContext } from "@/providers/Agents";
+import { toast } from "sonner";
 
 function SupportedConfigBadge({
   type,
@@ -73,6 +78,22 @@ export function AgentCard({ agent, showDeployment }: AgentCardProps) {
   );
 
   const isDefaultAgent = isUserCreatedDefaultAssistant(agent);
+  const { deleteAgent } = useAgents();
+  const { refreshAgents } = useAgentsContext();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm(`Are you sure you want to delete agent "${agent.name}"?`)) return;
+
+    setIsDeleting(true);
+    const success = await deleteAgent(agent.deploymentId, agent.assistant_id);
+    setIsDeleting(false);
+
+    if (success) {
+      toast.success("Agent deleted successfully");
+      refreshAgents();
+    }
+  };
 
   return (
     <>
@@ -117,7 +138,7 @@ export function AgentCard({ agent, showDeployment }: AgentCardProps) {
           </div>
           <div className="flex flex-0 flex-wrap items-center justify-start gap-2">
             {agent.metadata?.description &&
-            typeof agent.metadata.description === "string" ? (
+              typeof agent.metadata.description === "string" ? (
               <p className="text-muted-foreground mt-1 text-sm">
                 {agent.metadata.description}
               </p>
@@ -132,14 +153,30 @@ export function AgentCard({ agent, showDeployment }: AgentCardProps) {
         </CardHeader>
         <CardFooter className="mt-auto flex w-full justify-between pt-2">
           {!isDefaultAgent && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowEditDialog(true)}
-            >
-              <Edit className="mr-2 h-3.5 w-3.5" />
-              Edit
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowEditDialog(true)}
+              >
+                <Edit className="mr-2 h-3.5 w-3.5" />
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                {isDeleting ? (
+                  <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Trash className="mr-2 h-3.5 w-3.5" />
+                )}
+                Delete
+              </Button>
+            </div>
           )}
           <NextLink
             href={`/?agentId=${agent.assistant_id}&deploymentId=${agent.deploymentId}`}

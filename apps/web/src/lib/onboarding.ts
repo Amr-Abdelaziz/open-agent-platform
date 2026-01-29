@@ -59,6 +59,37 @@ export async function createProfile(accessToken: string, data: { department: str
     }
 }
 
+export interface Persona {
+    job_title: string;
+    persona_text: string;
+    goals: string[];
+    rag_context: string;
+    capabilities: string[];
+    assigned_agent_id?: string;
+    assigned_deployment_id?: string;
+}
+
+export async function fetchPersonas(accessToken: string): Promise<Persona[]> {
+    const ragApiUrl = process.env.NEXT_PUBLIC_RAG_API_URL;
+    if (!ragApiUrl) return [];
+
+    try {
+        const response = await fetch(`${ragApiUrl}/api/profiles/admin/personas`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!response.ok) return [];
+        const data = await response.json();
+        return data.map((p: any) => ({
+            ...p,
+            goals: typeof p.goals === 'string' ? JSON.parse(p.goals) : p.goals,
+            capabilities: typeof p.capabilities === 'string' ? JSON.parse(p.capabilities) : p.capabilities,
+        }));
+    } catch (error) {
+        console.error("Error fetching personas:", error);
+        return [];
+    }
+}
+
 /**
  * Injects the persona and goals into the agent configuration.
  */

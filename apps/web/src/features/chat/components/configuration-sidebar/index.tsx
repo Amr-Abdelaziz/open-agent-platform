@@ -46,6 +46,7 @@ import { Label } from "@/components/ui/label";
 import { isUserCreatedDefaultAssistant } from "@/lib/agent-utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useLocalStorage } from "@/hooks/use-local-storage";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 function NameAndDescriptionAlertDialog({
   name,
@@ -136,7 +137,8 @@ export const ConfigurationSidebar = forwardRef<
     loading,
     supportedConfigs,
   } = useAgentConfig();
-  const { updateAgent, createAgent } = useAgents();
+  const { updateAgent, createAgent, deleteAgent } = useAgents();
+  const { isAdmin } = useUserProfile();
 
   const [newName, setNewName] = useState("");
   const [newDescription, setNewDescription] = useState("");
@@ -197,6 +199,10 @@ export const ConfigurationSidebar = forwardRef<
       return;
     }
     if (isUserCreatedDefaultAssistant(selectedAgent) && !newName) {
+      if (!isAdmin) {
+        toast.error("Only administrators can create new agents from templates.");
+        return;
+      }
       setOpenNameAndDescriptionAlertDialog(true);
       return;
     } else if (isUserCreatedDefaultAssistant(selectedAgent) && newName) {
@@ -230,6 +236,22 @@ export const ConfigurationSidebar = forwardRef<
     toast.success("Agent configuration saved successfully");
   };
 
+  const handleDeleteAgent = async () => {
+    if (!agentId || !deploymentId || !agents?.length) return;
+    const selectedAgent = agents.find(
+      (a) => a.assistant_id === agentId && a.deploymentId === deploymentId,
+    );
+    if (!selectedAgent) return;
+
+    if (!confirm(`Are you sure you want to delete agent "${selectedAgent.name}"?`)) return;
+
+    const success = await deleteAgent(deploymentId, agentId);
+    if (success) {
+      toast.success("Agent deleted successfully");
+      window.location.href = "/";
+    }
+  };
+
   return (
     <div
       ref={ref}
@@ -242,9 +264,28 @@ export const ConfigurationSidebar = forwardRef<
       {open && (
         <div className="flex h-full flex-col">
           <div className="flex flex-shrink-0 items-center justify-between border-b border-secondary/10 p-4">
-            <h2 className="text-lg font-black tracking-tight bg-gradient-to-r from-secondary to-secondary/60 bg-clip-text text-transparent uppercase text-xs">Neural Node Config</h2>
+            <h2 className="text-lg font-black tracking-tight bg-gradient-to-r from-secondary to-secondary/60 bg-clip-text text-transparent uppercase text-xs">Agent Configuration</h2>
             <div className="flex gap-2">
               <TooltipProvider>
+                {agentId && agents?.find(a => a.assistant_id === agentId && a.deploymentId === deploymentId && !isUserCreatedDefaultAssistant(a)) && (
+                  <Tooltip delayDuration={200}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                        onClick={handleDeleteAgent}
+                      >
+                        <Trash2 className="mr-1 h-4 w-4" />
+                        Delete
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Permanently delete this agent</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+
                 <Tooltip delayDuration={200}>
                   <TooltipTrigger asChild>
                     <Button
@@ -269,6 +310,9 @@ export const ConfigurationSidebar = forwardRef<
                     <Button
                       size="sm"
                       onClick={handleSave}
+                      className={cn(
+                        isUserCreatedDefaultAssistant(agents.find(a => a.assistant_id === agentId && a.deploymentId === deploymentId)!) && !isAdmin && "hidden"
+                      )}
                     >
                       <Save className="mr-1 h-4 w-4" />
                       Save

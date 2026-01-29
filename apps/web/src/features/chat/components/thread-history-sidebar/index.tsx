@@ -10,7 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { useAuthContext } from "@/providers/Auth";
 import { MessageContent } from "@langchain/core/messages";
-import { FileClock } from "lucide-react";
+import { FileClock, Trash2, Loader2, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const getMessageStringContent = (
   content: MessageContent | undefined,
@@ -114,6 +115,26 @@ export const ThreadHistorySidebar = forwardRef<
     setOpen(false);
   };
 
+  const handleDeleteThread = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!deploymentId || !session?.accessToken) return;
+
+    if (!confirm("Are you sure you want to delete this chat history?")) return;
+
+    try {
+      const client = createClient(deploymentId, session.accessToken);
+      await client.threads.delete(id);
+      setThreads((prev) => prev.filter((t) => t.thread_id !== id));
+      if (threadId === id) {
+        setThreadId(null);
+      }
+      toast.success("Chat history deleted");
+    } catch (e) {
+      console.error("Failed to delete thread", e);
+      toast.error("Failed to delete chat history");
+    }
+  };
+
   return (
     <div
       ref={ref}
@@ -126,7 +147,46 @@ export const ThreadHistorySidebar = forwardRef<
       {open && (
         <div className="flex h-full flex-col">
           <div className="flex flex-shrink-0 items-center justify-between border-b border-primary/10 p-4">
-            <h2 className="text-lg font-black tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent uppercase text-xs">Access Logs</h2>
+            <h2 className="text-lg font-black tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent uppercase text-xs">Chat History</h2>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="size-7 text-gray-400 hover:text-primary transition-colors"
+                title="New Chat"
+                onClick={() => {
+                  setThreadId(null);
+                  setOpen(false);
+                }}
+              >
+                <Plus className="size-4" />
+              </Button>
+              {threads.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7 text-gray-400 hover:text-destructive transition-colors"
+                  title="Clear All History"
+                  onClick={async () => {
+                    if (!deploymentId || !session?.accessToken) return;
+                    if (!confirm("Are you sure you want to delete ALL chat history for this agent?")) return;
+
+                    try {
+                      const client = createClient(deploymentId, session.accessToken);
+                      await Promise.all(threads.map(t => client.threads.delete(t.thread_id)));
+                      setThreads([]);
+                      setThreadId(null);
+                      toast.success("All chat history deleted");
+                    } catch (e) {
+                      console.error("Failed to clear history", e);
+                      toast.error("Failed to clear chat history");
+                    }
+                  }}
+                >
+                  <Trash2 className="size-4" />
+                </Button>
+              )}
+            </div>
           </div>
 
           {loading ? (
@@ -143,7 +203,7 @@ export const ThreadHistorySidebar = forwardRef<
               {threads.length === 0 && (
                 <div className="flex h-full flex-1 items-center justify-center gap-2">
                   <FileClock className="size-6" />
-                  <p>No threads found</p>
+                  <p>No chat history found</p>
                 </div>
               )}
               {threads.map((thread) => {
@@ -172,7 +232,14 @@ export const ThreadHistorySidebar = forwardRef<
                         </p>
                       </div>
                     </div>
-                    {/* TODO: Add save/delete buttons back if needed */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-gray-400 hover:text-destructive transition-colors h-8 w-8"
+                      onClick={(e) => handleDeleteThread(e, thread.thread_id)}
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
                   </div>
                 );
               })}

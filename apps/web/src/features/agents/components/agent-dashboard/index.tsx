@@ -18,6 +18,7 @@ import { getDeployments } from "@/lib/environment/deployments";
 import { GraphGroup } from "../../types";
 import { groupAgentsByGraphs } from "@/lib/agent-utils";
 import _ from "lodash";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 export function AgentDashboard() {
   const { agents, loading: agentsLoading } = useAgentsContext();
@@ -25,6 +26,7 @@ export function AgentDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [graphFilter, setGraphFilter] = useState<string>("all");
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const { isAdmin } = useUserProfile();
 
   const allGraphGroups: GraphGroup[] = useMemo(() => {
     if (agentsLoading) return [];
@@ -143,9 +145,11 @@ export function AgentDashboard() {
             We couldn't find any agents matching your search criteria. Try
             adjusting your filters or create a new agent.
           </p>
-          <Button onClick={() => setShowCreateDialog(true)}>
-            Create Agent
-          </Button>
+          {isAdmin && (
+            <Button onClick={() => setShowCreateDialog(true)}>
+              Create Agent
+            </Button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

@@ -1,12 +1,13 @@
 {
   "name": "@open-agent-platform/docs",
+  "version": "0.0.0",
   "author": "LangChain",
   "repository": "https://github.com/langchain-ai/open-agent-platform",
   "private": true,
   "scripts": {
-    "dev": "mint dev"
+    "dev": "mintlify dev"
   },
   "devDependencies": {
-    "mint": "^4.1.19"
+    "mintlify": "^4.2.303"
   }
 }

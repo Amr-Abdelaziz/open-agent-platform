@@ -111,7 +111,7 @@ export function OllamaSettings() {
                     </div>
                     <div>
                         <h1 className="text-3xl font-black tracking-tighter bg-gradient-to-r from-accent via-primary to-secondary bg-clip-text text-transparent">
-                            Neural Node Management
+                            Model Management
                         </h1>
                         <p className="text-foreground/50 font-medium">Configure and synchronize your orbital processing units</p>
                     </div>

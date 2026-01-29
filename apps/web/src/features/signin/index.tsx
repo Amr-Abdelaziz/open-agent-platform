@@ -126,7 +126,7 @@ export default function SigninInterface() {
             Gorbit
           </CardTitle>
           <CardDescription className="text-center text-foreground/50 font-medium uppercase tracking-widest text-[10px] mt-2">
-            Neural Network Access
+            Organization Access
           </CardDescription>
         </CardHeader>
         <CardContent>
