@@ -56,6 +56,7 @@ export function DocumentsTable({
         <TableRow>
           <TableHead>Document Name</TableHead>
           <TableHead>Collection</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead>Date Uploaded</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
@@ -64,7 +65,7 @@ export function DocumentsTable({
         {documents.length === 0 ? (
           <TableRow>
             <TableCell
-              colSpan={4}
+              colSpan={5}
               className="text-muted-foreground text-center"
             >
               No documents found in this collection.
@@ -85,6 +86,19 @@ export function DocumentsTable({
                 </Badge>
               </TableCell>
               <TableCell>
+                {doc.metadata?.embedding_status === "completed" ? (
+                  <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 gap-1 h-6">
+                    <Cpu className="size-3" />
+                    Embedded
+                  </Badge>
+                ) : (
+                  <Badge variant="outline" className="text-muted-foreground gap-1 h-6 opacity-70">
+                    <Cpu className="size-3 animate-pulse" />
+                    Pending
+                  </Badge>
+                )}
+              </TableCell>
+              <TableCell className="text-sm text-muted-foreground">
                 {doc.created_at || doc.metadata?.created_at
                   ? format(
                     new Date(doc.created_at || doc.metadata?.created_at),

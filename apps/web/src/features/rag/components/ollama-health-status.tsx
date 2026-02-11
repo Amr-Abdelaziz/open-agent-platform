@@ -93,7 +93,7 @@ export function OllamaHealthStatus() {
                         <div className="space-y-2">
                             <p className="font-bold text-sm tracking-tight text-primary">System Health Report</p>
                             {status === "healthy" && (
-                                <p className="text-xs text-foreground/80 leading-relaxed">All orbital nodes are currently synchronized and responsive.</p>
+                                <p className="text-xs text-foreground/80 leading-relaxed">All organization collections are currently synchronized and responsive.</p>
                             )}
                             {status === "unhealthy" && (
                                 <div className="space-y-1">

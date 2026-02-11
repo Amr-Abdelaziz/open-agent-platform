@@ -13,10 +13,13 @@ import {
     Database,
     PlusCircle,
     UserCircle,
-    Edit2
+    Edit2,
+    Wrench,
+    Check
 } from "lucide-react";
 import { useAuthContext } from "@/providers/Auth";
 import { useAgentsContext } from "@/providers/Agents";
+import { useMCPContext } from "@/providers/MCP";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import {
@@ -31,6 +34,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
+import { getDeployments } from "@/lib/environment/deployments";
+import { useAgents } from "@/hooks/use-agents";
+import { RefreshCw } from "lucide-react";
 
 interface Persona {
     job_title: string;
@@ -38,17 +44,22 @@ interface Persona {
     goals: string[];
     rag_context: string;
     capabilities: string[];
+    tools: string[];
     assigned_agent_id?: string;
     assigned_deployment_id?: string;
 }
 
 export function PersonaManagement() {
     const { session } = useAuthContext();
-    const { agents } = useAgentsContext();
+    const { agents, refreshAgents } = useAgentsContext();
+    const { createAgent } = useAgents();
+    const { tools: availableTools } = useMCPContext();
     const [personas, setPersonas] = useState<Persona[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isSyncing, setIsSyncing] = useState(false);
     const [editingTitle, setEditingTitle] = useState<string | null>(null);
     const [editValues, setEditValues] = useState<Persona | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
 
     const fetchPersonas = async () => {
         const ragApiUrl = process.env.NEXT_PUBLIC_RAG_API_URL;
@@ -60,11 +71,11 @@ export function PersonaManagement() {
             });
             if (!response.ok) throw new Error("Failed to fetch personas");
             const data = await response.json();
-            // Data from backend goals/capabilities are strings if they were stringified JSON
             const normalized = data.map((p: any) => ({
                 ...p,
-                goals: typeof p.goals === 'string' ? JSON.parse(p.goals) : p.goals,
-                capabilities: typeof p.capabilities === 'string' ? JSON.parse(p.capabilities) : p.capabilities,
+                goals: typeof p.goals === 'string' ? JSON.parse(p.goals) : (p.goals || []),
+                capabilities: typeof p.capabilities === 'string' ? JSON.parse(p.capabilities) : (p.capabilities || []),
+                tools: typeof p.tools === 'string' ? JSON.parse(p.tools) : (p.tools || []),
             }));
             setPersonas(normalized);
         } catch (error) {
@@ -89,7 +100,8 @@ export function PersonaManagement() {
             persona_text: "",
             goals: [],
             rag_context: "general_knowledge",
-            capabilities: []
+            capabilities: [],
+            tools: []
         };
         setEditingTitle("NEW");
         setEditValues(newPersona);
@@ -113,6 +125,58 @@ export function PersonaManagement() {
             fetchPersonas();
         } catch (error) {
             toast.error("Error saving persona");
+        }
+    };
+
+    const handleSyncAll = async () => {
+        if (!confirm("This will ensure every persona has a corresponding agent. Existing agents with matching names will be skipped. Proceed?")) return;
+
+        setIsSyncing(true);
+        const deployments = getDeployments();
+        const defaultDeployment = deployments.find(d => d.isDefault) || deployments[0];
+
+        let createdCount = 0;
+        let errorCount = 0;
+
+        try {
+            for (const persona of personas) {
+                // Check if agent already exists by name
+                const exists = agents.some(a => a.name === persona.job_title);
+                if (exists) continue;
+
+                const success = await createAgent(defaultDeployment.id, defaultDeployment.defaultGraphId!, {
+                    name: persona.job_title,
+                    description: persona.persona_text,
+                    config: {
+                        system_prompt: persona.persona_text,
+                        tools: persona.tools || []
+                    }
+                });
+
+                if (success) {
+                    createdCount++;
+                    // We should also update the persona with the assigned_agent_id if we want that link
+                    // But let's keep it simple first
+                } else {
+                    errorCount++;
+                }
+            }
+
+            if (createdCount > 0) {
+                toast.success(`Successfully synced ${createdCount} agents`);
+                await refreshAgents();
+            } else {
+                toast.info("All personas already have corresponding agents.");
+            }
+
+            if (errorCount > 0) {
+                toast.error(`Failed to sync ${errorCount} agents`);
+            }
+        } catch (error) {
+            toast.error("An error occurred during sync");
+            console.error(error);
+        } finally {
+            setIsSyncing(false);
         }
     };
 
@@ -144,10 +208,19 @@ export function PersonaManagement() {
         setEditValues({ ...editValues, [field]: [...editValues[field], ""] });
     };
 
-    const removeArrayItem = (field: 'goals' | 'capabilities', index: number) => {
+    const removeArrayItem = (field: 'goals' | 'capabilities' | 'tools', index: number) => {
         if (!editValues) return;
         const newArr = editValues[field].filter((_, i) => i !== index);
         setEditValues({ ...editValues, [field]: newArr });
+    };
+
+    const toggleTool = (toolName: string) => {
+        if (!editValues) return;
+        const currentTools = editValues.tools || [];
+        const newTools = currentTools.includes(toolName)
+            ? currentTools.filter(t => t !== toolName)
+            : [...currentTools, toolName];
+        setEditValues({ ...editValues, tools: newTools });
     };
 
     if (isLoading) return <div className="p-8 text-center text-muted-foreground">Loading personas...</div>;
@@ -159,10 +232,21 @@ export function PersonaManagement() {
                     <h2 className="text-xl font-bold">Persona Library</h2>
                     <p className="text-sm text-muted-foreground">Define how the AI agent behaves for specific job titles.</p>
                 </div>
-                <Button onClick={handleAddNew} className="gap-2">
-                    <PlusCircle className="size-4" />
-                    Create Persona
-                </Button>
+                <div className="flex gap-2">
+                    <Button
+                        variant="outline"
+                        onClick={handleSyncAll}
+                        disabled={isSyncing || personas.length === 0}
+                        className="gap-2"
+                    >
+                        <RefreshCw className={`size-4 ${isSyncing ? "animate-spin" : ""}`} />
+                        {isSyncing ? "Syncing..." : "Sync All Agents"}
+                    </Button>
+                    <Button onClick={handleAddNew} className="gap-2">
+                        <PlusCircle className="size-4" />
+                        Create Persona
+                    </Button>
+                </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -200,6 +284,12 @@ export function PersonaManagement() {
                                         {p.capabilities.map(c => (
                                             <Badge key={c} variant="secondary" className="text-[10px] uppercase font-bold tracking-tighter bg-blue-500/5 text-blue-400 border-none">
                                                 {c}
+                                            </Badge>
+                                        ))}
+                                        {(p.tools || []).map(t => (
+                                            <Badge key={t} variant="outline" className="text-[10px] uppercase font-bold tracking-tighter bg-green-500/5 text-green-400 border-green-500/20">
+                                                <Wrench className="size-2 mr-1" />
+                                                {t}
                                             </Badge>
                                         ))}
                                     </div>
@@ -339,6 +429,43 @@ export function PersonaManagement() {
                                                     <X className="size-3 cursor-pointer hover:text-red-500" onClick={() => removeArrayItem('capabilities', i)} />
                                                 </Badge>
                                             ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-3 block flex items-center justify-between">
+                                            <span className="flex items-center gap-2"><Wrench className="size-3" /> Hard-Linked Tools</span>
+                                        </label>
+                                        <div className="space-y-4">
+                                            <Input
+                                                placeholder="Filter tools..."
+                                                value={searchTerm}
+                                                onChange={(e) => setSearchTerm(e.target.value)}
+                                                className="h-8 text-xs"
+                                            />
+                                            <div className="grid grid-cols-1 gap-2 max-h-[200px] overflow-y-auto p-1 pr-2 scrollbar-thin scrollbar-thumb-muted border rounded-md">
+                                                {availableTools
+                                                    .filter(t => t.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                                                    .map((tool) => {
+                                                        const isSelected = editValues.tools?.includes(tool.name);
+                                                        return (
+                                                            <div
+                                                                key={tool.name}
+                                                                onClick={() => toggleTool(tool.name)}
+                                                                className={`flex items-center justify-between p-2 rounded-lg border cursor-pointer transition-all ${isSelected
+                                                                    ? "bg-blue-500/10 border-blue-500/50 text-blue-400"
+                                                                    : "border-transparent hover:bg-white/5"
+                                                                    }`}
+                                                            >
+                                                                <div className="flex flex-col">
+                                                                    <span className="text-sm font-bold">{tool.name}</span>
+                                                                    <span className="text-[10px] text-muted-foreground line-clamp-1">{tool.description}</span>
+                                                                </div>
+                                                                {isSelected && <Check className="size-4" />}
+                                                            </div>
+                                                        );
+                                                    })}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

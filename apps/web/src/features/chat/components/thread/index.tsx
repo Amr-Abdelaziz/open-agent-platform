@@ -25,6 +25,7 @@ import {
   SquarePen,
   AlertCircle,
   Plus,
+  Bot,
 } from "lucide-react";
 import { useQueryState, parseAsBoolean } from "nuqs";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
@@ -37,6 +38,8 @@ import { useConfigStore } from "../../hooks/use-config-store";
 import { useAuthContext } from "@/providers/Auth";
 import { AgentsCombobox } from "@/components/ui/agents-combobox";
 import { useAgentsContext } from "@/providers/Agents";
+import { useUserProfile } from "@/hooks/use-user-profile";
+import { Badge } from "@/components/ui/badge";
 import {
   isUserSpecifiedDefaultAgent,
   requiresApiKeysButNotSet,
@@ -96,6 +99,7 @@ function ScrollToBottom(props: { className?: string }) {
 
 function NewThreadButton(props: { hasMessages: boolean }) {
   const { agents, loading } = useAgentsContext();
+  const { isAdmin, persona, loading: profileLoading } = useUserProfile();
   const [open, setOpen] = useState(false);
 
   const [agentId, setAgentId] = useQueryState("agentId");
@@ -144,18 +148,54 @@ function NewThreadButton(props: { hasMessages: boolean }) {
     agentId && deploymentId ? `${agentId}:${deploymentId}` : undefined;
 
   useEffect(() => {
-    if (agentValue || !agents.length) {
+    if (agentValue || !agents.length || profileLoading) {
       return;
     }
+
+    if (!isAdmin && persona?.assigned_agent_id) {
+      const assignedAgent = agents.find(a => a.assistant_id === persona.assigned_agent_id);
+      if (assignedAgent) {
+        onAgentChange(`${assignedAgent.assistant_id}:${assignedAgent.deploymentId}`);
+        return;
+      } else {
+        toast.error("Assigned agent not found", {
+          description: `The agent assigned to your role (${persona.job_title}) could not be located.`
+        });
+      }
+    } else if (!isAdmin && !persona?.assigned_agent_id) {
+      toast.error("No agent assigned", {
+        description: "Your role does not have an assigned agent. Please contact an administrator."
+      });
+    }
+
     const defaultAgent = agents.find(isUserSpecifiedDefaultAgent);
     if (defaultAgent) {
       onAgentChange(
         `${defaultAgent.assistant_id}:${defaultAgent.deploymentId}`,
       );
     }
-  }, [agents, agentValue, onAgentChange]);
+  }, [agents, agentValue, onAgentChange, isAdmin, persona, profileLoading]);
+
+  if (profileLoading) {
+    return (
+      <div className="flex items-center gap-2 px-3 py-2 bg-secondary/20 animate-pulse rounded-lg border border-border/50 h-9">
+        <div className="size-4 bg-primary/20 rounded-full" />
+        <div className="h-4 w-24 bg-primary/10 rounded" />
+      </div>
+    );
+  }
 
   if (!props.hasMessages) {
+    if (!isAdmin) {
+      const assignedAgent = agents.find(a => a.assistant_id === persona?.assigned_agent_id);
+      return (
+        <div className="flex items-center gap-2 px-3 py-2 bg-secondary/50 rounded-lg border border-border/50">
+          <Bot className="size-4 text-primary" />
+          <span className="text-sm font-semibold">{assignedAgent?.name || "Assigned Agent"}</span>
+          <Badge variant="outline" className="text-[10px] uppercase font-bold py-0 h-4">ROLE_SPECIFIC</Badge>
+        </div>
+      );
+    }
     return (
       <AgentsCombobox
         agents={agents}
@@ -167,6 +207,16 @@ function NewThreadButton(props: { hasMessages: boolean }) {
         triggerAsChild
         className="min-w-auto"
       />
+    );
+  }
+
+  if (!isAdmin) {
+    const assignedAgent = agents.find(a => a.assistant_id === persona?.assigned_agent_id);
+    return (
+      <div className="flex items-center gap-2 px-3 py-2 bg-secondary/50 rounded-lg border border-border/50 h-9">
+        <Bot className="size-4 text-primary" />
+        <span className="text-sm font-semibold truncate max-w-[150px]">{assignedAgent?.name || "Assigned Agent"}</span>
+      </div>
     );
   }
 
@@ -225,6 +275,7 @@ export function Thread() {
   );
   const [hasInput, setHasInput] = useState(false);
   const { session } = useAuthContext();
+  const { isAdmin, loading: profileLoading } = useUserProfile();
   const {
     contentBlocks,
     setContentBlocks,
@@ -469,6 +520,7 @@ export function Thread() {
                   />
                   <textarea
                     name="input"
+                    disabled={!agentId && !isAdmin && !profileLoading}
                     onChange={(e) => setHasInput(!!e.target.value.trim())}
                     onPaste={handlePaste}
                     onKeyDown={(e) => {
@@ -483,8 +535,8 @@ export function Thread() {
                         form?.requestSubmit();
                       }
                     }}
-                    placeholder={t('type_message')}
-                    className="field-sizing-content resize-none border-none bg-transparent p-3.5 pb-0 shadow-none ring-0 outline-none focus:ring-0 focus:outline-none"
+                    placeholder={(!agentId && !isAdmin && !profileLoading) ? "No agent assigned to your role. Access restricted." : t('type_message')}
+                    className="field-sizing-content resize-none border-none bg-transparent p-3.5 pb-0 shadow-none ring-0 outline-none focus:ring-0 focus:outline-none disabled:opacity-50"
                   />
 
                   <div className="flex items-center gap-6 p-2 pt-4">

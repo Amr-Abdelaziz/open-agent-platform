@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 function getUiConfig(
   value: unknown,
-): { type: string; [key: string]: any } | undefined {
+): { type: string;[key: string]: any } | undefined {
   if (
     typeof value !== "object" ||
     !value ||
@@ -77,10 +77,14 @@ function configSchemaToConfigurableFields(
       continue;
     }
 
-    // If the `x_oap_ui_config` metadata is not found/is missing the `type` field, default to text input
+    // Default to textarea for common prompt/instruction fields if no UI config
+    const commonTextAreaFields = ['system_prompt', 'system_prompt_template', 'systemPrompt', 'instructions', 'prompt', 'persona', 'persona_text', 'goals', 'capabilities'];
+    const isTextArea = commonTextAreaFields.some(field => key.toLowerCase().includes(field.toLowerCase()));
+
+    // If the `x_oap_ui_config` metadata is not found/is missing the `type` field, default to text input (or textarea for common fields)
     fields.push({
       label: key,
-      type: "text",
+      type: isTextArea ? "textarea" : "text",
     });
   }
   return fields;
@@ -206,47 +210,47 @@ export function extractConfigurationsFromAgent({
       ...f,
       default: defaultConfig
         ? {
-            ...defaultConfig,
-            auth_required: process.env.NEXT_PUBLIC_MCP_AUTH_REQUIRED === "true",
-          }
+          ...defaultConfig,
+          auth_required: process.env.NEXT_PUBLIC_MCP_AUTH_REQUIRED === "true",
+        }
         : undefined,
     };
   });
 
   const configRagWithDefaults = ragConfig
     ? {
-        ...ragConfig,
-        default: {
-          collections:
-            (
-              configurable[
-                ragConfig.label
-              ] as ConfigurableFieldRAGMetadata["default"]
-            )?.collections ??
-            ragConfig.default?.collections ??
-            [],
-          rag_url:
-            configurable[ragConfig.label]?.rag_url ??
-            process.env.NEXT_PUBLIC_RAG_API_URL,
-        },
-      }
+      ...ragConfig,
+      default: {
+        collections:
+          (
+            configurable[
+            ragConfig.label
+            ] as ConfigurableFieldRAGMetadata["default"]
+          )?.collections ??
+          ragConfig.default?.collections ??
+          [],
+        rag_url:
+          configurable[ragConfig.label]?.rag_url ??
+          process.env.NEXT_PUBLIC_RAG_API_URL,
+      },
+    }
     : undefined;
 
   const configurableAgentsWithDefaults = agentsConfig
     ? {
-        ...agentsConfig,
-        default:
-          Array.isArray(configurable[agentsConfig.label]) &&
+      ...agentsConfig,
+      default:
+        Array.isArray(configurable[agentsConfig.label]) &&
           (configurable[agentsConfig.label] as any[]).length > 0
-            ? (configurable[agentsConfig.label] as {
-                agent_id?: string;
-                deployment_url?: string;
-                name?: string;
-              }[])
-            : Array.isArray(agentsConfig.default)
-              ? agentsConfig.default
-              : [],
-      }
+          ? (configurable[agentsConfig.label] as {
+            agent_id?: string;
+            deployment_url?: string;
+            name?: string;
+          }[])
+          : Array.isArray(agentsConfig.default)
+            ? agentsConfig.default
+            : [],
+    }
     : undefined;
 
   return {

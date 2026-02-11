@@ -13,7 +13,8 @@ import {
     Calendar,
     Layers,
     FileBox,
-    Trash2
+    Trash2,
+    Database
 } from "lucide-react";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
@@ -31,7 +32,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import ReactMarkdown from "react-markdown";
 
 export function CrawledPagesList() {
-    const { selectedCollection, listPages, getPageContent, deletePage } = useRagContext();
+    const { selectedCollection, listPages, getPageContent, deletePage, deleteSource } = useRagContext();
     const [pages, setPages] = useState<CrawledPage[]>([]);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -79,6 +80,26 @@ export function CrawledPagesList() {
         } catch (error) {
             console.error("Failed to delete page:", error);
             toast.error("Failed to delete page");
+        }
+    };
+
+    const handleDeleteSource = async (page: CrawledPage) => {
+        const sourceId = page.metadata?.source_id;
+        if (!sourceId) {
+            toast.error("Source ID not found for this page");
+            return;
+        }
+
+        if (!confirm("Are you sure you want to delete all data for this website? This includes all pages, chunks, and embeddings.")) return;
+
+        const loadingToast = toast.loading("Purging website data from orbital banks...");
+        try {
+            await deleteSource(sourceId);
+            toast.success("Website data purged successfully", { id: loadingToast });
+            setSelectedPage(null);
+            fetchPages();
+        } catch (error: any) {
+            toast.error("Failed to purge website data", { id: loadingToast, description: error.message });
         }
     };
 
@@ -251,6 +272,17 @@ export function CrawledPagesList() {
                             <span className="text-xs text-white/40">
                                 ID: <span className="font-mono text-[10px]">{selectedPage?.id}</span>
                             </span>
+                            {selectedPage?.metadata?.source_id && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleDeleteSource(selectedPage)}
+                                    className="h-7 text-[10px] text-red-400 hover:text-red-300 hover:bg-red-400/10 gap-1.5 px-2 border border-red-400/20"
+                                >
+                                    <Database className="w-3 h-3" />
+                                    Purge Website Data
+                                </Button>
+                            )}
                         </div>
                         <Button
                             variant="outline"

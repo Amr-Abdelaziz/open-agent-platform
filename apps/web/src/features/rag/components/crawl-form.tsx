@@ -139,7 +139,7 @@ export function CrawlForm({ collectionId }: CrawlFormProps) {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between space-x-2 rounded-lg border p-3">
+                {/* <div className="flex items-center justify-between space-x-2 rounded-lg border p-3">
                     <div className="space-y-0.5">
                         <Label htmlFor="extract_code">Extract Code Examples</Label>
                         <p className="text-xs text-muted-foreground">
@@ -151,7 +151,7 @@ export function CrawlForm({ collectionId }: CrawlFormProps) {
                         checked={formData.extract_code_examples}
                         onCheckedChange={(checked) => handleChange("extract_code_examples", checked)}
                     />
-                </div>
+                </div> */}
 
                 <div className="flex items-center justify-between space-x-2 rounded-lg border p-3">
                     <div className="space-y-0.5">

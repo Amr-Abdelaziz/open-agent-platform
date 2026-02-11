@@ -1,25 +1,59 @@
-
+version: '3.8'
 
 services:
   web:
     build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./apps/web/Dockerfile
+      args:
+        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+        - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+        - NEXT_PUBLIC_BASE_API_URL=${NEXT_PUBLIC_BASE_API_URL}
+        - NEXT_PUBLIC_RAG_API_URL=${NEXT_PUBLIC_RAG_API_URL}
+        - NEXT_PUBLIC_DEPLOYMENTS=${NEXT_PUBLIC_DEPLOYMENTS}
+        - NEXT_PUBLIC_MCP_SERVER_URL=${NEXT_PUBLIC_MCP_SERVER_URL}
+        - NEXT_PUBLIC_MCP_AUTH_REQUIRED=${NEXT_PUBLIC_MCP_AUTH_REQUIRED:-false}
+        - NEXT_PUBLIC_USE_LANGSMITH_AUTH=${NEXT_PUBLIC_USE_LANGSMITH_AUTH:-false}
+        - NEXT_PUBLIC_GOOGLE_AUTH_DISABLED=${NEXT_PUBLIC_GOOGLE_AUTH_DISABLED:-false}
+        - NEXT_PUBLIC_DEMO_APP=${NEXT_PUBLIC_DEMO_APP:-false}
     ports:
-      - "4000:3000"
+      - "${WEB_PORT:-3000}:3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:3000/api}
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - NEXT_PUBLIC_BASE_API_URL=${NEXT_PUBLIC_BASE_API_URL}
+      - NEXT_PUBLIC_RAG_API_URL=${NEXT_PUBLIC_RAG_API_URL}
+      - NEXT_PUBLIC_DEPLOYMENTS=${NEXT_PUBLIC_DEPLOYMENTS}
+      - NEXT_PUBLIC_MCP_SERVER_URL=${NEXT_PUBLIC_MCP_SERVER_URL}
+      - NEXT_PUBLIC_MCP_AUTH_REQUIRED=${NEXT_PUBLIC_MCP_AUTH_REQUIRED:-false}
+      - NEXT_PUBLIC_USE_LANGSMITH_AUTH=${NEXT_PUBLIC_USE_LANGSMITH_AUTH:-false}
+      - NEXT_PUBLIC_GOOGLE_AUTH_DISABLED=${NEXT_PUBLIC_GOOGLE_AUTH_DISABLED:-false}
+      - NEXT_PUBLIC_DEMO_APP=${NEXT_PUBLIC_DEMO_APP:-false}
     restart: unless-stopped
-    depends_on:
-      - docs
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   docs:
     build:
       context: ./apps/docs
       dockerfile: Dockerfile
     ports:
-      - "3001:3000"
+      - "${DOCS_PORT:-3001}:3000"
     environment:
       - NODE_ENV=production
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  default:
+    name: open-agent-platform

@@ -1,18 +1,92 @@
+# Node modules (will be installed in container)
 node_modules
+**/node_modules
+
+# Build outputs
 .next
+**/.next
 .turbo
-# .yarn
-.cache
+**/.turbo
 out
+**/out
 build
+**/build
 dist
+**/dist
+
+# Cache directories
+.cache
+**/.cache
+.eslintcache
+
+# Environment files
 .env
 .env.local
+.env.*.local
+**/.env
+**/.env.local
+
+# Git
 .git
+.gitignore
+.gitattributes
+
+# GitHub
 .github
-apps/web/.next
-apps/web/node_modules
-apps/docs/node_modules
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs
+
+# Testing
+coverage
+.nyc_output
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Documentation (unless needed)
+*.md
+!README.md
+docs
+LICENSE
+
+# Docker files (avoid recursion)
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Temporary files
+tmp
+temp
+*.tmp
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# Optional: Keep package manager files
+# Uncomment if you want to exclude them
 # yarn.lock
 # package-lock.json
-
+# pnpm-lock.yaml

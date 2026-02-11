@@ -54,7 +54,7 @@ export default function EmptyCollectionsState() {
             </h3>
             <p className="text-muted-foreground font-medium leading-relaxed">
               Experience the power of Gorbit RAG by creating your first collection.
-              Organize your documents in orbital nodes for efficient retrieval.
+              Organize your documents in organization collections for efficient retrieval.
             </p>
           </div>
 

@@ -11,6 +11,8 @@ export interface UserProfile {
     rag_context: string;
     rag_collection_id: string | null;
     is_admin?: boolean;
+    assigned_agent_id?: string;
+    assigned_deployment_id?: string;
 }
 
 export async function fetchMyProfile(accessToken: string): Promise<UserProfile | null> {

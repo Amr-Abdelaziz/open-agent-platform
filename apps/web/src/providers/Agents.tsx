@@ -181,7 +181,7 @@ export const AgentsProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState(false);
   const [refreshAgentsLoading, setRefreshAgentsLoading] = useState(false);
 
-  const { isAdmin, loading: profileLoading } = useUserProfile();
+  const { isAdmin, persona, loading: profileLoading } = useUserProfile();
 
   useEffect(() => {
     if (agents.length > 0 || !session?.accessToken || profileLoading)
@@ -195,11 +195,13 @@ export const AgentsProvider: React.FC<{ children: ReactNode }> = ({
       isAdmin,
     )
       .then((a) => {
-        // Admins see everything, regular users only see non-system default assistants
+        // Admins see everything, regular users only see their assigned agent
         if (isAdmin) {
           setAgents(a);
+        } else if (persona?.assigned_agent_id) {
+          setAgents(a.filter((a) => a.assistant_id === persona.assigned_agent_id));
         } else {
-          setAgents(a.filter((a) => !isSystemCreatedDefaultAssistant(a)));
+          setAgents([]);
         }
       })
       .finally(() => setLoading(false));
@@ -222,8 +224,10 @@ export const AgentsProvider: React.FC<{ children: ReactNode }> = ({
       );
       if (isAdmin) {
         setAgents(newAgents);
+      } else if (persona?.assigned_agent_id) {
+        setAgents(newAgents.filter((a) => a.assistant_id === persona.assigned_agent_id));
       } else {
-        setAgents(newAgents.filter((a) => !isSystemCreatedDefaultAssistant(a)));
+        setAgents([]);
       }
     } catch (e) {
       console.error("Failed to refresh agents", e);

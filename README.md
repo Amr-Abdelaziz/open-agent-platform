@@ -25,6 +25,56 @@ For detailed setup instructions, guides, and API references, please visit our **
 
 To quickly get started with Gorbit, check out the [Quickstart Guide](https://docs.langchain.com/labs/oap/quickstart) in our documentation.
 
+## Docker Deployment
+
+Gorbit can be easily deployed using Docker and Docker Compose. This is the recommended method for production deployments.
+
+### Quick Start with Docker
+
+1. **Clone and configure**:
+```bash
+git clone https://github.com/langchain-ai/open-agent-platform.git
+cd open-agent-platform
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+2. **Deploy using Make** (recommended):
+```bash
+make deploy
+```
+
+Or **using Docker Compose directly**:
+```bash
+docker-compose build
+docker-compose up -d
+```
+
+3. **Access the application**:
+   - Web App: http://localhost:3000
+   - Documentation: http://localhost:3001
+
+### Development Mode
+
+For development with hot-reload:
+
+```bash
+make dev
+# Or: docker-compose -f docker-compose.dev.yml up
+```
+
+### Available Make Commands
+
+- `make help` - Show all available commands
+- `make deploy` - Build and deploy production
+- `make dev` - Build and start development environment
+- `make logs-follow` - View live logs
+- `make shell` - Open shell in web container
+- `make clean` - Remove all Docker artifacts
+
+For comprehensive Docker deployment documentation, see [DOCKER.md](./DOCKER.md).
+
+
 ## Community and Support
 
 - **GitHub Issues**: Report bugs or request features [here](https://github.com/langchain-ai/open-agent-platform/issues).

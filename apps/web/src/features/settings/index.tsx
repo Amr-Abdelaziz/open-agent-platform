@@ -15,8 +15,9 @@ import {
 import { useLocalStorage } from "@/hooks/use-local-storage";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { KeyRound, Server } from "lucide-react";
+import { KeyRound, Server, UserCog } from "lucide-react";
 import { OllamaSettings } from "./ollama-settings";
+import { UserPreferences } from "./user-preferences";
 
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -67,10 +68,14 @@ export default function SettingsInterface(): React.ReactNode {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-[400px] mb-8 bg-muted/50 p-1">
+        <TabsList className="grid w-full grid-cols-3 max-w-[600px] mb-8 bg-muted/50 p-1">
           <TabsTrigger value="api-keys" className="gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
             <KeyRound className="size-4" />
             API Keys
+          </TabsTrigger>
+          <TabsTrigger value="preferences" className="gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
+            <UserCog className="size-4" />
+            Preferences
           </TabsTrigger>
           <TabsTrigger value="ollama" className="gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all">
             <Server className="size-4" />
@@ -138,6 +143,10 @@ export default function SettingsInterface(): React.ReactNode {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="preferences" className="mt-0 focus-visible:outline-none focus-visible:ring-0">
+          <UserPreferences />
         </TabsContent>
 
         <TabsContent value="ollama" className="mt-0 focus-visible:outline-none focus-visible:ring-0">

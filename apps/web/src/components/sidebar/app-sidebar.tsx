@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { SiteHeader } from "./sidebar-header";
 import { useAuthContext } from "@/providers/Auth";
+import { useUserProfile } from "@/hooks/use-user-profile";
 
 // This is sample data.
 const data = {
@@ -28,11 +29,13 @@ const data = {
       title: "agents",
       url: "/agents",
       icon: Bot,
+      isAdminOnly: true,
     },
     {
       title: "tools",
       url: "/tools",
       icon: Wrench,
+      isAdminOnly: true,
     },
     // {
     //   title: "Inbox",
@@ -48,6 +51,7 @@ const data = {
       title: "organization",
       url: "/organization",
       icon: Network,
+      isAdminOnly: true,
     },
     {
       title: "admin",
@@ -60,6 +64,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuthContext();
+  const { isAdmin } = useUserProfile();
   return (
     <Sidebar
       collapsible="icon"
@@ -71,10 +76,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain.filter(item => {
           if (!item.isAdminOnly) return true;
-          // Check if user email is amr2@dr-ai.tech or amr2@admin for manual bypass
-          // or if the profile is synced (best to check user metadata)
-          const adminEmails = ["amr2@dr-ai.tech", "amr2@admin"];
-          return adminEmails.includes(user?.email || "");
+          return isAdmin;
         })} />
       </SidebarContent>
       <SidebarFooter className="gap-2 p-2">

@@ -1,4 +1,4 @@
-
+version: '3.8'
 
 services:
   web:
@@ -6,18 +6,40 @@ services:
       context: .
       dockerfile: ./apps/web/Dockerfile.dev
     volumes:
-      - ./apps/web:/app:delegated
-      # keep node_modules inside container to avoid host mismatch
-      - web_node_modules:/app/node_modules
+      - ./apps/web:/app/apps/web:delegated
+      - ./package.json:/app/package.json:ro
+      - ./yarn.lock:/app/yarn.lock:ro
+      - ./tsconfig.json:/app/tsconfig.json:ro
+      - ./turbo.json:/app/turbo.json:ro
+      - ./.yarnrc.yml:/app/.yarnrc.yml:ro
+      # Exclude node_modules to avoid conflicts
+      - /app/node_modules
+      - /app/apps/web/node_modules
+      - /app/apps/web/.next
     ports:
-      - "3000:3000"
+      - "${WEB_PORT:-3000}:3000"
     environment:
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://host.docker.internal:3000/api}
+      - WATCHPACK_POLLING=true
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - NEXT_PUBLIC_BASE_API_URL=${NEXT_PUBLIC_BASE_API_URL:-http://localhost:8123}
+      - NEXT_PUBLIC_RAG_API_URL=${NEXT_PUBLIC_RAG_API_URL:-http://gorbit:8080}
+      - NEXT_PUBLIC_DEPLOYMENTS=${NEXT_PUBLIC_DEPLOYMENTS}
+      - NEXT_PUBLIC_MCP_SERVER_URL=${NEXT_PUBLIC_MCP_SERVER_URL}
+      - NEXT_PUBLIC_MCP_AUTH_REQUIRED=${NEXT_PUBLIC_MCP_AUTH_REQUIRED:-false}
+      - NEXT_PUBLIC_USE_LANGSMITH_AUTH=${NEXT_PUBLIC_USE_LANGSMITH_AUTH:-false}
+      - NEXT_PUBLIC_GOOGLE_AUTH_DISABLED=${NEXT_PUBLIC_GOOGLE_AUTH_DISABLED:-false}
+      - NEXT_PUBLIC_DEMO_APP=${NEXT_PUBLIC_DEMO_APP:-false}
     stdin_open: true
     tty: true
     restart: unless-stopped
+    networks:
+      - dev-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
-volumes:
-  web_node_modules:
+networks:
+  dev-network:
+    name: open-agent-platform-dev

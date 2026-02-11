@@ -38,8 +38,8 @@ import { DocumentPreview } from "../document-preview";
 import { ApiDocument } from "../../hooks/use-rag";
 import { CrawlForm } from "../crawl-form";
 import { CrawlStatusList } from "../crawl-status-list";
-import { Globe, Layers } from "lucide-react";
-import { CrawledPagesList } from "../crawled-pages-list";
+import { Globe, Database } from "lucide-react";
+import { CrawledWebsitesList } from "../crawled-websites-list";
 
 interface DocumentsCardProps {
   selectedCollection: Collection | undefined;
@@ -65,6 +65,7 @@ export function DocumentsCard({
   const [stagedFiles, setStagedFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [activeTab, setActiveTab] = useState("file");
 
   const { agents } = useAgentsContext();
   const defaultAgent = agents.find(isUserSpecifiedDefaultAgent);
@@ -252,9 +253,9 @@ export function DocumentsCard({
       <CardHeader className="flex flex-row items-center justify-between relative z-10">
         <div className="space-y-1">
           <CardTitle className="text-xl font-black tracking-tight bg-gradient-to-r from-secondary to-secondary/60 bg-clip-text text-transparent">
-            Documents
+            Websites
           </CardTitle>
-          <CardDescription className="text-foreground/50 font-medium">Orbital resource management</CardDescription>
+          <CardDescription className="text-foreground/50 font-medium">Organization resource management</CardDescription>
         </div>
         {defaultAgent && (
           <Button
@@ -268,17 +269,13 @@ export function DocumentsCard({
       </CardHeader>
       <CardContent className="relative z-10">
         <div className="mb-6">
-          <Tabs defaultValue="file">
+          <Tabs defaultValue="file" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4">
               <TabsTrigger value="file">Upload File</TabsTrigger>
               <TabsTrigger value="text">Add Text</TabsTrigger>
               <TabsTrigger value="crawl">
                 <Globe className="mr-2 h-3.5 w-3.5" />
                 Crawl Website
-              </TabsTrigger>
-              <TabsTrigger value="pages">
-                <Layers className="mr-2 h-3.5 w-3.5" />
-                Crawled Pages
               </TabsTrigger>
             </TabsList>
             <TabsContent value="file">
@@ -346,6 +343,18 @@ export function DocumentsCard({
                   </Button>
                 </div>
               )}
+
+              {/* Document Table */}
+              {selectedCollection && (
+                <div className="mt-8 rounded-md border">
+                  <DocumentsTable
+                    documents={currentDocuments}
+                    selectedCollection={selectedCollection}
+                    actionsDisabled={isUploading}
+                    onView={handleViewDocument}
+                  />
+                </div>
+              )}
             </TabsContent>
             <TabsContent value="text">
               <div className="space-y-4">
@@ -362,31 +371,89 @@ export function DocumentsCard({
                   <Plus className="mr-2 h-4 w-4" />
                   Add Text Document
                 </Button>
+
+                {/* Document Table */}
+                {selectedCollection && (
+                  <div className="mt-8 rounded-md border">
+                    <DocumentsTable
+                      documents={currentDocuments}
+                      selectedCollection={selectedCollection}
+                      actionsDisabled={isUploading}
+                      onView={handleViewDocument}
+                    />
+                  </div>
+                )}
               </div>
             </TabsContent>
             <TabsContent value="crawl">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <CrawlForm collectionId={selectedCollection?.uuid || ""} />
-                <CrawlStatusList collectionId={selectedCollection?.uuid || ""} />
+              <div className="space-y-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <CrawlForm collectionId={selectedCollection?.uuid || ""} />
+                  <CrawlStatusList collectionId={selectedCollection?.uuid || ""} />
+                </div>
+                <div className="border-t border-white/5 pt-8">
+                  <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                    <Database className="w-5 h-5 text-violet-400" />
+                    Crawled Websites
+                  </h3>
+                  <CrawledWebsitesList />
+                </div>
               </div>
             </TabsContent>
-            <TabsContent value="pages">
-              <CrawledPagesList />
-            </TabsContent>
           </Tabs>
-        </div>
 
-        {/* Document Table */}
-        {selectedCollection && (
-          <div className="rounded-md border">
-            <DocumentsTable
-              documents={currentDocuments}
-              selectedCollection={selectedCollection}
-              actionsDisabled={isUploading}
-              onView={handleViewDocument}
-            />
-          </div>
-        )}
+          {/* Pagination (Shared by file and text tabs when visible) */}
+          {filteredDocuments.length > itemsPerPage && activeTab !== "crawl" && (
+            <Pagination className="mt-4">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(Math.max(1, currentPage - 1));
+                    }}
+                    aria-disabled={currentPage === 1}
+                    className={
+                      currentPage === 1
+                        ? "text-muted-foreground pointer-events-none"
+                        : undefined
+                    }
+                  />
+                </PaginationItem>
+                {[...Array(totalPages)].map((_, page) => (
+                  <PaginationItem key={page + 1}>
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCurrentPage(page + 1);
+                      }}
+                      isActive={currentPage === page + 1}
+                    >
+                      {page + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setCurrentPage(Math.min(totalPages, currentPage + 1));
+                    }}
+                    aria-disabled={currentPage === totalPages}
+                    className={
+                      currentPage === totalPages
+                        ? "text-muted-foreground pointer-events-none"
+                        : undefined
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          )}
+        </div>
 
         <DocumentPreview
           isOpen={previewOpen}
@@ -395,58 +462,6 @@ export function DocumentsCard({
           collectionId={selectedCollection?.uuid || ""}
           defaultTab={previewDefaultTab}
         />
-
-        {/* Pagination */}
-        {filteredDocuments.length > itemsPerPage && (
-          <Pagination className="mt-4">
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentPage(Math.max(1, currentPage - 1));
-                  }}
-                  aria-disabled={currentPage === 1}
-                  className={
-                    currentPage === 1
-                      ? "text-muted-foreground pointer-events-none"
-                      : undefined
-                  }
-                />
-              </PaginationItem>
-              {[...Array(totalPages)].map((_, page) => (
-                <PaginationItem key={page + 1}>
-                  <PaginationLink
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setCurrentPage(page + 1);
-                    }}
-                    isActive={currentPage === page + 1}
-                  >
-                    {page + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentPage(Math.min(totalPages, currentPage + 1));
-                  }}
-                  aria-disabled={currentPage === totalPages}
-                  className={
-                    currentPage === totalPages
-                      ? "text-muted-foreground pointer-events-none"
-                      : undefined
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )}
       </CardContent>
     </Card>
   );

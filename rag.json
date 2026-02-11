@@ -228,6 +228,132 @@
                 }
             }
         },
+        "/collections/search": {
+            "get": {
+                "tags": [
+                    "collections"
+                ],
+                "summary": "Collections Search Global",
+                "description": "Unified search across all documents and crawled pages for the user.",
+                "operationId": "collections_search_global_collections_search_get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Query"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "default": 10,
+                            "title": "Limit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/collections/{collection_id}/search": {
+            "get": {
+                "tags": [
+                    "collections"
+                ],
+                "summary": "Collections Search In Collection",
+                "description": "Unified search across all documents and crawled pages within a specific collection.",
+                "operationId": "collections_search_in_collection_collections__collection_id__search_get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "collection_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "title": "Collection Id"
+                        }
+                    },
+                    {
+                        "name": "query",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Query"
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "maximum": 50,
+                            "minimum": 1,
+                            "default": 10,
+                            "title": "Limit"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/collections/{collection_id}/documents": {
             "post": {
                 "tags": [
@@ -805,6 +931,67 @@
                 }
             }
         },
+        "/collections/{collection_id}/documents/granite": {
+            "post": {
+                "tags": [
+                    "documents"
+                ],
+                "summary": "Documents Create Granite",
+                "description": "Experimental processing using IBM Granite Docling (Ollama).\nThis model is specifically trained for high-fidelity document understanding.",
+                "operationId": "documents_create_granite_collections__collection_id__documents_granite_post",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "collection_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "title": "Collection Id"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_documents_create_granite_collections__collection_id__documents_granite_post"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Documents Create Granite Collections  Collection Id  Documents Granite Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/documents/search": {
             "post": {
                 "tags": [
@@ -895,6 +1082,308 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/documents/markdown/granite": {
+            "post": {
+                "tags": [
+                    "documents"
+                ],
+                "summary": "Documents Get Markdown Granite",
+                "description": "Directly converts a document to markdown using Granite Docling.\nDoes not save to any collection or perform embedding.",
+                "operationId": "documents_get_markdown_granite_documents_markdown_granite_post",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "max_pages",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "anyOf": [
+                                {
+                                    "type": "integer"
+                                },
+                                {
+                                    "type": "null"
+                                }
+                            ],
+                            "description": "Maximum number of pages to process",
+                            "title": "Max Pages"
+                        },
+                        "description": "Maximum number of pages to process"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_documents_get_markdown_granite_documents_markdown_granite_post"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    },
+                                    "title": "Response Documents Get Markdown Granite Documents Markdown Granite Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/documents/async/chunk": {
+            "post": {
+                "tags": [
+                    "documents"
+                ],
+                "summary": "Documents Start Async Chunk",
+                "description": "Starts an asynchronous document conversion and chunking task.\nSupports all docling-serve settings via options_json.",
+                "operationId": "documents_start_async_chunk_documents_async_chunk_post",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Body_documents_start_async_chunk_documents_async_chunk_post"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Documents Start Async Chunk Documents Async Chunk Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/documents/tasks/{task_id}": {
+            "get": {
+                "tags": [
+                    "documents"
+                ],
+                "summary": "Documents Get Task Status",
+                "description": "Polls the status of an asynchronous docling task.",
+                "operationId": "documents_get_task_status_documents_tasks__task_id__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "task_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Task Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Documents Get Task Status Documents Tasks  Task Id  Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/documents/tasks/{task_id}/result": {
+            "get": {
+                "tags": [
+                    "documents"
+                ],
+                "summary": "Documents Get Task Result",
+                "description": "Retrieves the result of a completed docling task.",
+                "operationId": "documents_get_task_result_documents_tasks__task_id__result_get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "task_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Task Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Documents Get Task Result Documents Tasks  Task Id  Result Get"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/documents/tasks/clear": {
+            "post": {
+                "tags": [
+                    "documents"
+                ],
+                "summary": "Documents Clear Tasks",
+                "description": "Clears completed docling task results from the server.",
+                "operationId": "documents_clear_tasks_documents_tasks_clear_post",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "older_than",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "description": "Clear results older than this many seconds",
+                            "default": 3600,
+                            "title": "Older Than"
+                        },
+                        "description": "Clear results older than this many seconds"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Documents Clear Tasks Documents Tasks Clear Post"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/documents/converters/clear": {
+            "post": {
+                "tags": [
+                    "documents"
+                ],
+                "summary": "Documents Clear Converters",
+                "description": "Clears cached document converters from the docling-serve memory.",
+                "operationId": "documents_clear_converters_documents_converters_clear_post",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "additionalProperties": true,
+                                    "type": "object",
+                                    "title": "Response Documents Clear Converters Documents Converters Clear Post"
                                 }
                             }
                         }
@@ -1386,6 +1875,55 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Delete Collection Crawls",
+                "description": "Delete all crawl task records for a specific collection.",
+                "operationId": "delete_collection_crawls_collections__collection_id__crawls_delete",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "collection_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "title": "Collection Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Delete Collection Crawls Collections  Collection Id  Crawls Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/crawl/active": {
@@ -1718,6 +2256,55 @@
                         }
                     }
                 }
+            },
+            "delete": {
+                "tags": [
+                    "crawl"
+                ],
+                "summary": "Delete Collection Pages",
+                "description": "Delete all crawled pages associated with a specific collection.",
+                "operationId": "delete_collection_pages_collections__collection_id__pages_delete",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "collection_id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid",
+                            "title": "Collection Id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Delete Collection Pages Collections  Collection Id  Pages Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/pages/{page_id}": {
@@ -1854,6 +2441,323 @@
                                     "additionalProperties": true,
                                     "title": "Response Delete Source Sources  Source Id  Delete"
                                 }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/storage/browse": {
+            "get": {
+                "tags": [
+                    "storage"
+                ],
+                "summary": "Storage Browse",
+                "description": "List files and folders in Supabase Storage.\nDefaults to the user's root folder if no path is provided.",
+                "operationId": "storage_browse_storage_browse_get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "description": "Path within the bucket to browse (usually the user folder)",
+                            "default": "",
+                            "title": "Path"
+                        },
+                        "description": "Path within the bucket to browse (usually the user folder)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/storage/download": {
+            "get": {
+                "tags": [
+                    "storage"
+                ],
+                "summary": "Storage Download",
+                "description": "Download a file from Supabase Storage.",
+                "operationId": "storage_download_storage_download_get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Full path to the file in Supabase Storage",
+                            "title": "Path"
+                        },
+                        "description": "Full path to the file in Supabase Storage"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/storage": {
+            "delete": {
+                "tags": [
+                    "storage"
+                ],
+                "summary": "Storage Delete",
+                "description": "Delete a file from Supabase Storage.",
+                "operationId": "storage_delete_storage_delete",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "description": "Full path to the file in Supabase Storage to delete",
+                            "title": "Path"
+                        },
+                        "description": "Full path to the file in Supabase Storage to delete"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": true,
+                                    "title": "Response Storage Delete Storage Delete"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/settings/": {
+            "get": {
+                "tags": [
+                    "settings"
+                ],
+                "summary": "List Settings",
+                "description": "List all settings for the current user.",
+                "operationId": "list_settings_settings__get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/UserSettingResponse"
+                                    },
+                                    "type": "array",
+                                    "title": "Response List Settings Settings  Get"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Update Setting",
+                "description": "Create or update a user setting.",
+                "operationId": "update_setting_settings__post",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserSettingUpdate"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserSettingResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ]
+            }
+        },
+        "/settings/{key}": {
+            "get": {
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Get Setting",
+                "description": "Get a specific setting for the current user.",
+                "operationId": "get_setting_settings__key__get",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserSettingResponse"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "settings"
+                ],
+                "summary": "Delete Setting",
+                "description": "Delete a user setting.",
+                "operationId": "delete_setting_settings__key__delete",
+                "security": [
+                    {
+                        "HTTPBearer": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "key",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "title": "Key"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
                             }
                         }
                     },
@@ -2250,6 +3154,23 @@
                 ],
                 "title": "Body_documents_create_collections__collection_id__documents_post"
             },
+            "Body_documents_create_granite_collections__collection_id__documents_granite_post": {
+                "properties": {
+                    "files": {
+                        "items": {
+                            "type": "string",
+                            "format": "binary"
+                        },
+                        "type": "array",
+                        "title": "Files"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "files"
+                ],
+                "title": "Body_documents_create_granite_collections__collection_id__documents_granite_post"
+            },
             "Body_documents_create_paddle_collections__collection_id__documents_paddle_post": {
                 "properties": {
                     "files": {
@@ -2280,6 +3201,39 @@
                     "file"
                 ],
                 "title": "Body_documents_get_markdown_documents_markdown_post"
+            },
+            "Body_documents_get_markdown_granite_documents_markdown_granite_post": {
+                "properties": {
+                    "file": {
+                        "type": "string",
+                        "format": "binary",
+                        "title": "File"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "file"
+                ],
+                "title": "Body_documents_get_markdown_granite_documents_markdown_granite_post"
+            },
+            "Body_documents_start_async_chunk_documents_async_chunk_post": {
+                "properties": {
+                    "file": {
+                        "type": "string",
+                        "format": "binary",
+                        "title": "File"
+                    },
+                    "options_json": {
+                        "type": "string",
+                        "title": "Options Json",
+                        "default": "{}"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "file"
+                ],
+                "title": "Body_documents_start_async_chunk_documents_async_chunk_post"
             },
             "Body_documents_upload_collections__collection_id__upload_post": {
                 "properties": {
@@ -3025,6 +3979,45 @@
                     "score"
                 ],
                 "title": "SearchResult"
+            },
+            "UserSettingResponse": {
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "title": "Key"
+                    },
+                    "value": {
+                        "title": "Value"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "title": "Updated At"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "key",
+                    "value",
+                    "updated_at"
+                ],
+                "title": "UserSettingResponse"
+            },
+            "UserSettingUpdate": {
+                "properties": {
+                    "key": {
+                        "type": "string",
+                        "title": "Key"
+                    },
+                    "value": {
+                        "title": "Value"
+                    }
+                },
+                "type": "object",
+                "required": [
+                    "key",
+                    "value"
+                ],
+                "title": "UserSettingUpdate"
             },
             "ValidationError": {
                 "properties": {
