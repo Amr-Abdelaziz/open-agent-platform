@@ -113,7 +113,7 @@ export function OllamaSettings() {
                         <h1 className="text-3xl font-black tracking-tighter bg-gradient-to-r from-accent via-primary to-secondary bg-clip-text text-transparent">
                             Model Management
                         </h1>
-                        <p className="text-foreground/50 font-medium">Configure and synchronize your orbital processing units</p>
+                        <p className="text-foreground/50 font-medium">Configure and synchronize your processing units</p>
                     </div>
                 </div>
             </div>

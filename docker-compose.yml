@@ -35,7 +35,10 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    networks:
+      - default
 
 networks:
   default:
-    name: open-agent-platform
+    name: proxy
+    external: true
