@@ -16,8 +16,10 @@ import { MarkdownText } from "@/components/ui/markdown-text";
 import { FileUp, X, FileText, Copy, Check, Loader2, Download } from "lucide-react";
 import { useRagContext } from "../providers/RAG";
 import { toast } from "sonner";
+import { useLanguage } from "@/providers/Language";
 
 export function PdfToMarkdown() {
+    const { t } = useLanguage();
     const { getGraniteMarkdownPreview } = useRagContext();
     const [file, setFile] = useState<File | null>(null);
     const [markdown, setMarkdown] = useState<string>("");
@@ -29,7 +31,7 @@ export function PdfToMarkdown() {
     const handleFile = (selectedFile: File | null) => {
         if (!selectedFile) return;
         if (selectedFile.type !== "application/pdf") {
-            toast.error("Please select a PDF file", { richColors: true });
+            toast.error(t('select_pdf_file'), { richColors: true });
             return;
         }
         setFile(selectedFile);
@@ -69,14 +71,14 @@ export function PdfToMarkdown() {
 
             if (content) {
                 setMarkdown(content);
-                toast.success("Conversion successful", { richColors: true });
+                toast.success(t('conversion_successful'), { richColors: true });
             } else {
                 setMarkdown("");
-                toast.warning("Conversion returned empty content");
+                toast.warning(t('conversion_empty'));
             }
         } catch (error: any) {
             console.error("PDF to MD Conversion error:", error);
-            toast.error(error.message || "Conversion failed");
+            toast.error(error.message || t('failed_start_crawl'));
         } finally {
             setLoading(false);
         }
@@ -87,7 +89,7 @@ export function PdfToMarkdown() {
         navigator.clipboard.writeText(markdown);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-        toast.success("Copied to clipboard");
+        toast.success(t('copied_clipboard'));
     };
 
     const handleDownload = () => {
@@ -108,11 +110,11 @@ export function PdfToMarkdown() {
                     <div className="flex items-center gap-2 mb-1">
                         <FileText className="size-5 text-blue-400" />
                         <CardTitle className="text-xl font-black tracking-tight bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                            PDF to MD Converter
+                            {t('pdf_to_md_converter')}
                         </CardTitle>
                     </div>
                     <CardDescription className="text-foreground/50 font-medium">
-                        Extract clean markdown from any PDF using Granite Vision.
+                        {t('extract_markdown_pdf')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -138,14 +140,14 @@ export function PdfToMarkdown() {
                                     className="mt-4 text-xs text-muted-foreground hover:text-destructive"
                                     onClick={() => { setFile(null); setMarkdown(""); }}
                                 >
-                                    <X className="mr-2 size-3" />
-                                    Change File
+                                    <X className="me-2 size-3" />
+                                    {t('change_file')}
                                 </Button>
                             </div>
                         ) : (
                             <>
                                 <p className="text-foreground/70 mb-2 font-semibold">
-                                    Drag and drop a PDF file
+                                    {t('drag_drop_pdf')}
                                 </p>
                                 <Input
                                     type="file"
@@ -156,7 +158,7 @@ export function PdfToMarkdown() {
                                 />
                                 <Label htmlFor="pdf-md-upload">
                                     <Button variant="outline" className="mt-2 border-blue-500/50 hover:bg-blue-500/10" asChild>
-                                        <span>Choose File</span>
+                                        <span>{t('choose_file')}</span>
                                     </Button>
                                 </Label>
                             </>
@@ -165,13 +167,13 @@ export function PdfToMarkdown() {
 
                     <div className="space-y-2">
                         <Label htmlFor="max-pages" className="text-sm font-medium text-foreground/70">
-                            Max Pages to Process (Optional)
+                            {t('max_pages_process')}
                         </Label>
                         <Input
                             id="max-pages"
                             type="number"
                             min={1}
-                            placeholder="All pages"
+                            placeholder={t('all_pages')}
                             className="bg-background/50 border-white/10"
                             value={maxPages || ""}
                             onChange={(e) => setMaxPages(e.target.value ? parseInt(e.target.value) : undefined)}
@@ -186,10 +188,10 @@ export function PdfToMarkdown() {
                         {loading ? (
                             <div className="flex items-center gap-2">
                                 <Loader2 className="size-4 animate-spin" />
-                                Converting...
+                                {t('converting')}
                             </div>
                         ) : (
-                            "Convert to Markdown"
+                            t('convert_to_markdown')
                         )}
                     </Button>
                 </CardContent>
@@ -197,7 +199,7 @@ export function PdfToMarkdown() {
 
             <Card className="glass-card border-none overflow-hidden relative flex flex-col min-h-[500px]">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0">
-                    <CardTitle className="text-lg font-bold">Preview</CardTitle>
+                    <CardTitle className="text-lg font-bold">{t('preview')}</CardTitle>
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="icon" onClick={handleCopy} disabled={!markdown}>
                             {copied ? <Check className="size-4 text-green-500" /> : <Copy className="size-4" />}
@@ -213,7 +215,7 @@ export function PdfToMarkdown() {
                             {loading ? (
                                 <div className="h-full flex flex-col items-center justify-center py-20">
                                     <Loader2 className="size-8 animate-spin text-blue-400 mb-4" />
-                                    <p className="text-muted-foreground animate-pulse">Converting document to markdown...</p>
+                                    <p className="text-muted-foreground animate-pulse">{t('converting_document_markdown')}</p>
                                 </div>
                             ) : markdown ? (
                                 <div className="text-foreground">
@@ -226,7 +228,7 @@ export function PdfToMarkdown() {
                                     <div className="size-12 rounded-full bg-muted/30 flex items-center justify-center mb-4">
                                         <FileText className="size-6 opacity-20" />
                                     </div>
-                                    <p>Converted content will appear here</p>
+                                    <p>{t('converted_content_appear')}</p>
                                 </div>
                             )}
                         </div>

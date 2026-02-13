@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useLanguage } from "@/providers/Language";
 import { Collection } from "@/types/collection";
 import { Edit, AlertCircle } from "lucide-react";
 import { useState } from "react";
@@ -27,6 +28,7 @@ export function EditCollectionDialog({
     metadata: Record<string, any>,
   ) => Promise<void>;
 }) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(collection.name);
   const [description, setDescription] = useState(
@@ -64,14 +66,14 @@ export function EditCollectionDialog({
           onClick={(e) => e.stopPropagation()}
         >
           <Edit className="mr-2 h-4 w-4" />
-          <span>Edit</span>
+          <span>{t('edit')}</span>
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Collection</DialogTitle>
+          <DialogTitle>{t('edit_collection')}</DialogTitle>
           <DialogDescription>
-            Edit the name and description for your collection.
+            {t('edit_name_description')}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -80,7 +82,7 @@ export function EditCollectionDialog({
               htmlFor="collection-name"
               className="text-right"
             >
-              Name
+              {t('name')}
             </Label>
             <Input
               id="collection-name"
@@ -94,7 +96,7 @@ export function EditCollectionDialog({
               htmlFor="collection-description"
               className="text-right"
             >
-              Description
+              {t('description')}
             </Label>
             <div className="col-span-3 space-y-2">
               <Textarea
@@ -103,7 +105,7 @@ export function EditCollectionDialog({
                 onChange={(e) => setDescription(e.target.value)}
               />
               <div className="text-muted-foreground text-right text-xs">
-                {description.length}/{DESCRIPTION_MAX_LENGTH} characters
+                {description.length}/{DESCRIPTION_MAX_LENGTH} {t('characters')}
               </div>
             </div>
           </div>
@@ -112,8 +114,7 @@ export function EditCollectionDialog({
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Description exceeds the maximum length of{" "}
-                  {DESCRIPTION_MAX_LENGTH} characters.
+                  {t('description_exceeds_max').replace('{count}', DESCRIPTION_MAX_LENGTH.toString())}
                 </AlertDescription>
               </Alert>
             </div>
@@ -124,7 +125,7 @@ export function EditCollectionDialog({
             onClick={handleSubmit}
             disabled={!hasChanges || isDescriptionTooLong}
           >
-            Save Changes
+            {t('save_changes')}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRagContext } from "../providers/RAG";
 import { CrawlTask } from "../hooks/use-rag";
+import { useLanguage } from "@/providers/Language";
 import {
     Table,
     TableBody,
@@ -22,6 +23,7 @@ interface CrawlStatusListProps {
 }
 
 export function CrawlStatusList({ collectionId }: CrawlStatusListProps) {
+    const { t } = useLanguage();
     const { listCrawls, cancelCrawl, deleteCrawl, deleteSource } = useRagContext();
     const [crawls, setCrawls] = useState<CrawlTask[]>([]);
     const [loading, setLoading] = useState(false);
@@ -59,24 +61,24 @@ export function CrawlStatusList({ collectionId }: CrawlStatusListProps) {
     }, [collectionId, crawls.map(c => c.status).join(',')]); // Trigger effect if any task status changes or length changes
 
     const handleCancel = async (taskId: string) => {
-        const loadingToast = toast.loading("Aborting mission...");
+        const loadingToast = toast.loading(t('abort_mission'));
         try {
             await cancelCrawl(taskId);
-            toast.success("Crawl cancellation requested", { id: loadingToast });
+            toast.success(t('crawl_cancel_requested'), { id: loadingToast });
             fetchCrawls();
         } catch (error: any) {
-            toast.error("Failed to cancel crawl", { id: loadingToast, description: error.message });
+            toast.error(t('failed_cancel_crawl'), { id: loadingToast, description: error.message });
         }
     };
 
     const handleDelete = async (taskId: string) => {
-        const loadingToast = toast.loading("Defragmenting mission records...");
+        const loadingToast = toast.loading(t('defragmenting_mission'));
         try {
             await deleteCrawl(taskId);
-            toast.success("Mission record purged", { id: loadingToast });
+            toast.success(t('mission_record_purged'), { id: loadingToast });
             fetchCrawls();
         } catch (error: any) {
-            toast.error("Failed to delete mission", { id: loadingToast, description: error.message });
+            toast.error(t('failed_delete_mission'), { id: loadingToast, description: error.message });
         }
     };
 
@@ -84,28 +86,28 @@ export function CrawlStatusList({ collectionId }: CrawlStatusListProps) {
         const sourceId = crawl.source_id || crawl.metadata?.source_id;
 
         if (!sourceId) {
-            toast.error("Source ID not found for this mission");
+            toast.error(t('source_id_not_found'));
             return;
         }
 
-        if (!confirm("Are you sure you want to delete all data for this website? This includes all pages, chunks, and embeddings.")) return;
+        if (!confirm(t('purge_website_confirm').replace('{name}', new URL(crawl.url).hostname).replace('{count}', "all"))) return;
 
-        const loadingToast = toast.loading("Purging website data from orbital banks...");
+        const loadingToast = toast.loading(t('purging_orbital').replace('{name}', new URL(crawl.url).hostname));
         try {
             await deleteSource(sourceId);
-            toast.success("Website data purged successfully", { id: loadingToast });
+            toast.success(t('website_purged_success'), { id: loadingToast });
             fetchCrawls();
         } catch (error: any) {
-            toast.error("Failed to purge website data", { id: loadingToast, description: error.message });
+            toast.error(t('failed_purge_website'), { id: loadingToast, description: error.message });
         }
     };
 
     const getStatusBadge = (status: string) => {
         const s = status.toLowerCase();
-        if (s === "completed") return <Badge className="bg-green-500/20 text-green-500 border-green-500/20">Completed</Badge>;
-        if (s === "failed") return <Badge variant="destructive">Failed</Badge>;
-        if (s === "crawling" || s === "processing") return <Badge className="bg-blue-500/20 text-blue-500 border-blue-500/20 animate-pulse">In Progress</Badge>;
-        if (s === "cancelled") return <Badge variant="secondary">Cancelled</Badge>;
+        if (s === "completed") return <Badge className="bg-green-500/20 text-green-500 border-green-500/20">{t('completed')}</Badge>;
+        if (s === "failed") return <Badge variant="destructive">{t('failed')}</Badge>;
+        if (s === "crawling" || s === "processing") return <Badge className="bg-blue-500/20 text-blue-500 border-blue-500/20 animate-pulse">{t('in_progress')}</Badge>;
+        if (s === "cancelled") return <Badge variant="secondary">{t('cancelled')}</Badge>;
         return <Badge variant="outline">{status}</Badge>;
     };
 
@@ -116,29 +118,29 @@ export function CrawlStatusList({ collectionId }: CrawlStatusListProps) {
             <div className="flex items-center justify-between">
                 <h4 className="text-sm font-semibold flex items-center gap-2">
                     <Search className="size-4 text-secondary" />
-                    Recent Tasks
+                    {t('recent_tasks')}
                 </h4>
                 <Button variant="ghost" size="sm" onClick={fetchCrawls} disabled={loading}>
-                    <RefreshCcw className={`size-3.5 mr-1 ${loading ? 'animate-spin' : ''}`} />
-                    Sync
+                    <RefreshCcw className={`size-3.5 me-1 ${loading ? 'animate-spin' : ''}`} />
+                    {t('sync')}
                 </Button>
             </div>
 
-            <ScrollArea className="h-[300px] -mx-4 px-4">
+            <ScrollArea className="h-[300px] -ms-4 -me-4 ps-4 pe-4">
                 <div className="rounded-md border bg-card/50">
                     <Table>
                         <TableHeader>
                             <TableRow className="hover:bg-transparent border-secondary/10">
-                                <TableHead className="text-xs font-bold uppercase tracking-wider text-foreground/40">Target</TableHead>
-                                <TableHead className="text-xs font-bold uppercase tracking-wider text-foreground/40">Status</TableHead>
-                                <TableHead className="text-xs font-bold uppercase tracking-wider text-foreground/40 text-right">Actions</TableHead>
+                                <TableHead className="text-xs font-bold uppercase tracking-wider text-foreground/40">{t('target')}</TableHead>
+                                <TableHead className="text-xs font-bold uppercase tracking-wider text-foreground/40">{t('status')}</TableHead>
+                                <TableHead className="text-xs font-bold uppercase tracking-wider text-foreground/40 text-right">{t('actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {crawls.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={3} className="text-center py-8 text-muted-foreground text-sm">
-                                        No crawled websites yet.
+                                        {t('no_crawled_websites')}
                                     </TableCell>
                                 </TableRow>
                             ) : (
@@ -153,7 +155,7 @@ export function CrawlStatusList({ collectionId }: CrawlStatusListProps) {
                                                 {["pending", "crawling", "processing", "starting"].includes(crawl.status.toLowerCase()) && (
                                                     <div className="mt-2 w-full">
                                                         <div className="flex items-center justify-between mb-1">
-                                                            <span className="text-[9px] text-white/40 uppercase tracking-tighter">Progress</span>
+                                                            <span className="text-[9px] text-white/40 uppercase tracking-tighter">{t('progress')}</span>
                                                             <span className="text-[9px] font-mono text-violet-400">
                                                                 {crawl.metadata?.pages_crawled || crawl.pages_crawled || 0} / {crawl.metadata?.max_pages || crawl.max_pages || 100}
                                                             </span>
@@ -173,7 +175,7 @@ export function CrawlStatusList({ collectionId }: CrawlStatusListProps) {
                                         <TableCell>{getStatusBadge(crawl.status)}</TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end gap-1">
-                                                <Button variant="ghost" size="icon" className="size-7" asChild title="View Source">
+                                                <Button variant="ghost" size="icon" className="size-7" asChild title={t('view_source') || 'View Source'}>
                                                     <a href={crawl.url} target="_blank" rel="noopener noreferrer">
                                                         <ExternalLink className="size-3.5" />
                                                     </a>
@@ -184,7 +186,7 @@ export function CrawlStatusList({ collectionId }: CrawlStatusListProps) {
                                                         size="icon"
                                                         className="size-7 text-destructive hover:text-destructive hover:bg-destructive/10"
                                                         onClick={() => handleCancel(crawl.task_id)}
-                                                        title="Abort Mission"
+                                                        title={t('abort_mission') || 'Abort Mission'}
                                                     >
                                                         <XCircle className="size-3.5" />
                                                     </Button>
@@ -196,7 +198,7 @@ export function CrawlStatusList({ collectionId }: CrawlStatusListProps) {
                                                                 size="icon"
                                                                 className="size-7 text-white/20 hover:text-red-500 hover:bg-red-500/10"
                                                                 onClick={() => handleDeleteSource(crawl)}
-                                                                title="Purge Website Data"
+                                                                title={t('purge_all_data') || 'Purge Website Data'}
                                                             >
                                                                 <Database className="size-3.5" />
                                                             </Button>
@@ -206,7 +208,7 @@ export function CrawlStatusList({ collectionId }: CrawlStatusListProps) {
                                                             size="icon"
                                                             className="size-7 text-white/20 hover:text-destructive hover:bg-destructive/10"
                                                             onClick={() => handleDelete(crawl.task_id)}
-                                                            title="Delete Record"
+                                                            title={t('delete') || 'Delete Record'}
                                                         >
                                                             <Trash2 className="size-3.5" />
                                                         </Button>

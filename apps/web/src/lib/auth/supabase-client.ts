@@ -24,16 +24,16 @@ export function getSupabaseClient() {
   if (typeof window !== "undefined") {
     supabaseInstance = createBrowserClient(supabaseUrl, supabaseKey, {
       cookies: {
-        get(name) {
+        get(name: string) {
           return document.cookie
             .split("; ")
             .find((row) => row.startsWith(`${name}=`))
             ?.split("=")?.[1];
         },
-        set(name, value, options) {
+        set(name: string, value: string, options?: { path?: string; maxAge?: number }) {
           document.cookie = `${name}=${value}; path=${options?.path ?? "/"}; max-age=${options?.maxAge ?? 31536000}`;
         },
-        remove(name, options) {
+        remove(name: string, options?: { path?: string }) {
           document.cookie = `${name}=; path=${options?.path ?? "/"}; max-age=0`;
         },
       },

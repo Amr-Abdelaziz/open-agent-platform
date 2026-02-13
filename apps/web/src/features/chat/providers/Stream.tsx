@@ -27,6 +27,7 @@ import { getDeployments } from "@/lib/environment/deployments";
 import { useHasApiKeys } from "@/hooks/use-api-keys";
 import { checkApiKeysWarning } from "@/lib/agent-utils";
 import { fetchMyProfile, injectPersona, fetchPersonas } from "@/lib/onboarding";
+import { useLanguage } from "@/providers/Language";
 
 export type StateType = { messages: Message[]; ui?: UIMessage[] };
 
@@ -172,6 +173,8 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
     performOnboarding();
   }, [agentId, deploymentId, session?.accessToken, setValue, setAgentId, setDeploymentId]);
 
+  const { t } = useLanguage();
+
   const handleValueChange = (v: string) => {
     setValue(v);
     setOpen(false);
@@ -206,11 +209,11 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               <h1 className="text-5xl font-black tracking-tighter bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-sm">
                 Gorbit
               </h1>
-              <p className="text-foreground/40 font-medium tracking-wide uppercase text-xs">AI Interface</p>
+              <p className="text-foreground/40 font-medium tracking-wide uppercase text-xs">{t('ai_interface')}</p>
             </div>
 
             <p className="text-foreground/60 max-w-xs mt-4 leading-relaxed">
-              Welcome to the Gorbit . Access to your Organization's AI by selecting your authorized agent.
+              {t('welcome_message')}
             </p>
           </div>
           <div className="mb-12 grid grid-cols-[1fr_auto] gap-4 px-8 pt-4 relative z-10">
@@ -232,7 +235,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
               onClick={handleStartChat}
               className="bg-primary hover:bg-primary/80 text-primary-foreground font-bold shadow-[0_0_20px_rgba(var(--primary),0.2)] hover:shadow-[0_0_30px_rgba(var(--primary),0.4)] transition-all duration-300"
             >
-              Start Chat
+              {t('start_chat')}
             </Button>
           </div>
         </div>

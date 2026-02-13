@@ -30,8 +30,10 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ReactMarkdown from "react-markdown";
+import { useLanguage } from "@/providers/Language";
 
 export function CrawledPagesList() {
+    const { t } = useLanguage();
     const { selectedCollection, listPages, getPageContent, deletePage, deleteSource } = useRagContext();
     const [pages, setPages] = useState<CrawledPage[]>([]);
     const [loading, setLoading] = useState(false);
@@ -71,35 +73,35 @@ export function CrawledPagesList() {
 
     const handleDeletePage = async (page: CrawledPage, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!confirm("Are you sure you want to delete this crawled page? This will also remove its associated chunks and embeddings.")) return;
+        if (!confirm(t('delete_page_confirm'))) return;
 
         try {
             await deletePage(page.id);
-            toast.success("Page deleted successfully");
+            toast.success(t('page_deleted_success'));
             setPages(prev => prev.filter(p => p.id !== page.id));
         } catch (error) {
             console.error("Failed to delete page:", error);
-            toast.error("Failed to delete page");
+            toast.error(t('failed_delete_page'));
         }
     };
 
     const handleDeleteSource = async (page: CrawledPage) => {
         const sourceId = page.metadata?.source_id;
         if (!sourceId) {
-            toast.error("Source ID not found for this page");
+            toast.error(t('source_id_not_found'));
             return;
         }
 
-        if (!confirm("Are you sure you want to delete all data for this website? This includes all pages, chunks, and embeddings.")) return;
+        if (!confirm(t('purge_website_confirm').replace('{name}', new URL(page.url).hostname).replace('{count}', "all"))) return;
 
-        const loadingToast = toast.loading("Purging website data from orbital banks...");
+        const loadingToast = toast.loading(t('purging_orbital').replace('{name}', new URL(page.url).hostname));
         try {
             await deleteSource(sourceId);
-            toast.success("Website data purged successfully", { id: loadingToast });
+            toast.success(t('website_purged_success'), { id: loadingToast });
             setSelectedPage(null);
             fetchPages();
         } catch (error: any) {
-            toast.error("Failed to purge website data", { id: loadingToast, description: error.message });
+            toast.error(t('failed_purge_website'), { id: loadingToast, description: error.message });
         }
     };
 
@@ -112,7 +114,7 @@ export function CrawledPagesList() {
         return (
             <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-white/10 rounded-xl bg-white/5 backdrop-blur-sm">
                 <FileBox className="w-12 h-12 text-white/20 mb-4" />
-                <p className="text-white/40">Select a collection to view crawled pages</p>
+                <p className="text-white/40">{t('select_collection_view_crawled')}</p>
             </div>
         );
     }
@@ -121,12 +123,12 @@ export function CrawledPagesList() {
         <div className="space-y-4">
             <div className="flex items-center gap-2">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                     <Input
-                        placeholder="Search crawled pages..."
+                        placeholder={t('search_crawled_pages')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="bg-white/5 border-white/10 pl-10 h-10 ring-offset-violet-500 focus-visible:ring-violet-500/50"
+                        className="bg-white/5 border-white/10 ps-10 h-10 ring-offset-violet-500 focus-visible:ring-violet-500/50"
                     />
                 </div>
                 <Button
@@ -147,7 +149,7 @@ export function CrawledPagesList() {
                     ))
                 ) : filteredPages.length === 0 ? (
                     <div className="p-8 text-center bg-white/5 rounded-xl border border-white/10 border-dashed">
-                        <p className="text-white/40">No pages found</p>
+                        <p className="text-white/40">{t('no_pages_found')}</p>
                     </div>
                 ) : (
                     filteredPages.map((page) => (
@@ -163,7 +165,7 @@ export function CrawledPagesList() {
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <h4 className="text-white font-medium truncate group-hover:text-violet-300 transition-colors">
-                                            {page.section_title || page.url.split("/").pop() || "Untitled Page"}
+                                            {page.section_title || page.url.split("/").pop() || t('untitled_page')}
                                         </h4>
                                         <div className="flex items-center gap-3 mt-1 underline-none">
                                             <a
@@ -179,7 +181,7 @@ export function CrawledPagesList() {
                                             <span className="text-white/20 text-xs">•</span>
                                             <span className="text-xs text-white/40 flex items-center gap-1">
                                                 <Layers className="w-3 h-3" />
-                                                {page.word_count} words
+                                                {page.word_count} {t('words')}
                                             </span>
                                         </div>
                                     </div>
@@ -197,7 +199,7 @@ export function CrawledPagesList() {
                                 </div>
                             </div>
 
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="absolute end-4 top-1/2 -translate-y-1/2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -206,7 +208,7 @@ export function CrawledPagesList() {
                                 >
                                     <Trash2 className="w-4 h-4" />
                                 </Button>
-                                <ChevronRight className="w-5 h-5 text-white/40" />
+                                <ChevronRight className="w-5 h-5 text-white/40 rtl:rotate-180" />
                             </div>
                         </div>
                     ))
@@ -214,12 +216,12 @@ export function CrawledPagesList() {
             </div>
 
             <Dialog open={!!selectedPage} onOpenChange={(open) => !open && setSelectedPage(null)}>
-                <DialogContent className="max-w-4xl max-h-[90vh] bg-neutral-950/95 backdrop-blur-2xl border-white/10 overflow-hidden flex flex-col p-0 gap-0 shadow-2xl shadow-violet-500/20">
-                    <DialogHeader className="p-6 border-b border-white/10 bg-white/5">
+                <DialogContent className="max-w-4xl h-[90vh] bg-neutral-950/95 backdrop-blur-2xl border-white/10 overflow-hidden flex flex-col p-0 gap-0 shadow-2xl shadow-violet-500/20">
+                    <DialogHeader className="p-6 border-b border-white/10 bg-white/5 shrink-0">
                         <div className="flex items-center justify-between gap-4">
                             <div className="space-y-1 min-w-0">
                                 <DialogTitle className="text-xl font-bold bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent truncate leading-relaxed">
-                                    {selectedPage?.section_title || "Page Preview"}
+                                    {selectedPage?.section_title || t('page_preview')}
                                 </DialogTitle>
                                 <div className="flex items-center gap-3">
                                     <a
@@ -234,13 +236,13 @@ export function CrawledPagesList() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 shrink-0">
-                                <div className="text-right">
-                                    <div className="text-xs text-white/40 uppercase tracking-widest font-bold">Word Count</div>
+                                <div className="text-right rtl:text-left">
+                                    <div className="text-xs text-white/40 uppercase tracking-widest font-bold">{t('word_count')}</div>
                                     <div className="text-lg font-mono text-white/80">{selectedPage?.word_count}</div>
                                 </div>
                                 <div className="w-px h-8 bg-white/10" />
-                                <div className="text-right">
-                                    <div className="text-xs text-white/40 uppercase tracking-widest font-bold">Created</div>
+                                <div className="text-right rtl:text-left">
+                                    <div className="text-xs text-white/40 uppercase tracking-widest font-bold">{t('created_label')}</div>
                                     <div className="text-sm text-white/80">
                                         {selectedPage && formatDistanceToNow(new Date(selectedPage.created_at), { addSuffix: true })}
                                     </div>
@@ -249,25 +251,29 @@ export function CrawledPagesList() {
                         </div>
                     </DialogHeader>
 
-                    <ScrollArea className="flex-1 p-8 overflow-y-auto custom-scrollbar">
+                    <div className="flex-1 overflow-hidden min-h-0 relative">
                         {pageContentLoading ? (
-                            <div className="flex flex-col items-center justify-center py-20 gap-4">
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/50 backdrop-blur-sm z-50 gap-4">
                                 <div className="relative">
                                     <div className="w-16 h-16 border-4 border-violet-500/20 border-t-violet-500 rounded-full animate-spin" />
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <Eye className="w-6 h-6 text-violet-500" />
                                     </div>
                                 </div>
-                                <p className="text-white/60 animate-pulse font-medium tracking-wide">Decompressing page content...</p>
+                                <p className="text-white/60 animate-pulse font-medium tracking-wide">{t('decompressing_page_content')}</p>
                             </div>
-                        ) : (
-                            <div className="prose prose-invert max-w-none prose-pre:bg-white/5 prose-pre:border prose-pre:border-white/10 prose-headings:text-white prose-p:text-white/80 prose-li:text-white/80">
-                                <ReactMarkdown>{selectedPage?.full_content || ""}</ReactMarkdown>
-                            </div>
-                        )}
-                    </ScrollArea>
+                        ) : null}
 
-                    <div className="p-4 border-t border-white/10 bg-white/5 flex items-center justify-between">
+                        <ScrollArea className="h-full w-full">
+                            <div className="p-8 pb-24">
+                                <div className="prose prose-invert max-w-none prose-pre:bg-white/5 prose-pre:border prose-pre:border-white/10 prose-headings:text-white prose-p:text-white/80 prose-li:text-white/80">
+                                    <ReactMarkdown>{selectedPage?.full_content || ""}</ReactMarkdown>
+                                </div>
+                            </div>
+                        </ScrollArea>
+                    </div>
+
+                    <div className="p-4 border-t border-white/10 bg-white/5 flex items-center justify-between shrink-0">
                         <div className="flex items-center gap-4">
                             <span className="text-xs text-white/40">
                                 ID: <span className="font-mono text-[10px]">{selectedPage?.id}</span>
@@ -280,7 +286,7 @@ export function CrawledPagesList() {
                                     className="h-7 text-[10px] text-red-400 hover:text-red-300 hover:bg-red-400/10 gap-1.5 px-2 border border-red-400/20"
                                 >
                                     <Database className="w-3 h-3" />
-                                    Purge Website Data
+                                    {t('purge_all_data')}
                                 </Button>
                             )}
                         </div>
@@ -289,7 +295,7 @@ export function CrawledPagesList() {
                             onClick={() => setSelectedPage(null)}
                             className="bg-white/5 border-white/10 hover:bg-white/10"
                         >
-                            Close Preview
+                            {t('close_preview')}
                         </Button>
                     </div>
                 </DialogContent>

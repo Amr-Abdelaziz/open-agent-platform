@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useLanguage } from "@/providers/Language";
 import {
   Dialog,
   DialogContent,
@@ -32,6 +33,7 @@ export function CreateCollectionDialog({
   trigger,
   onSubmit,
 }: CreateCollectionDialogProps) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [newCollectionName, setNewCollectionName] = useState("");
   const [newCollectionDescription, setNewCollectionDescription] = useState("");
@@ -64,9 +66,9 @@ export function CreateCollectionDialog({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Collection</DialogTitle>
+          <DialogTitle>{t('create_new_collection')}</DialogTitle>
           <DialogDescription>
-            Enter a name for your new collection.
+            {t('enter_name_collection')}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -75,7 +77,7 @@ export function CreateCollectionDialog({
               htmlFor="collection-name"
               className="text-right"
             >
-              Name
+              {t('name')}
             </Label>
             <Input
               id="collection-name"
@@ -89,7 +91,7 @@ export function CreateCollectionDialog({
               htmlFor="collection-description"
               className="text-right"
             >
-              Description
+              {t('description')}
             </Label>
             <div className="col-span-3 space-y-2">
               <Textarea
@@ -99,7 +101,7 @@ export function CreateCollectionDialog({
               />
               <div className="text-muted-foreground text-right text-xs">
                 {newCollectionDescription.length}/{DESCRIPTION_MAX_LENGTH}{" "}
-                characters
+                {t('characters')}
               </div>
             </div>
           </div>
@@ -108,8 +110,7 @@ export function CreateCollectionDialog({
               <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  Description exceeds the maximum length of{" "}
-                  {DESCRIPTION_MAX_LENGTH} characters.
+                  {t('description_exceeds_max').replace('{count}', DESCRIPTION_MAX_LENGTH.toString())}
                 </AlertDescription>
               </Alert>
             </div>
@@ -122,7 +123,7 @@ export function CreateCollectionDialog({
               !newCollectionName.trim() || isDescriptionTooLong || loading
             }
           >
-            Create
+            {t('create_label')}
           </Button>
         </DialogFooter>
       </DialogContent>

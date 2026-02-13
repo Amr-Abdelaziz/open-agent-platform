@@ -23,12 +23,14 @@ import { Globe, Loader2, Play } from "lucide-react";
 import { useRagContext } from "../providers/RAG";
 import { toast } from "sonner";
 import { CrawlRequest } from "../hooks/use-rag";
+import { useLanguage } from "@/providers/Language";
 
 interface CrawlFormProps {
     collectionId: string;
 }
 
 export function CrawlForm({ collectionId }: CrawlFormProps) {
+    const { t } = useLanguage();
     const { startCrawl } = useRagContext();
     const [isCrawling, setIsCrawling] = useState(false);
     const [formData, setFormData] = useState<CrawlRequest>({
@@ -44,21 +46,21 @@ export function CrawlForm({ collectionId }: CrawlFormProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.url) {
-            toast.error("Please enter a URL to crawl");
+            toast.error(t('enter_url'));
             return;
         }
 
         setIsCrawling(true);
-        const loadingToast = toast.loading("Starting crawl operation...");
+        const loadingToast = toast.loading(t('starting_crawl'));
 
         try {
             const response = await startCrawl(collectionId, formData);
-            toast.success("Crawl started successfully!", {
+            toast.success(t('crawl_started_success'), {
                 description: `Task ID: ${response.task_id}`,
             });
             // Optionally reset form or redirect to a status view
         } catch (error: any) {
-            toast.error("Failed to start crawl", {
+            toast.error(t('failed_start_crawl'), {
                 description: error.message,
             });
         } finally {
@@ -75,7 +77,7 @@ export function CrawlForm({ collectionId }: CrawlFormProps) {
         <div className="space-y-6 py-4">
             <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
-                    <Label htmlFor="url">Seed URL</Label>
+                    <Label htmlFor="url">{t('seed_url')}</Label>
                     <div className="flex gap-2">
                         <Input
                             id="url"
@@ -86,29 +88,29 @@ export function CrawlForm({ collectionId }: CrawlFormProps) {
                         />
                     </div>
                     <p className="text-xs text-muted-foreground">
-                        The starting point for the orbital scout.
+                        {t('starting_point_scout')}
                     </p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="crawl_type">Crawl Type</Label>
+                        <Label htmlFor="crawl_type">{t('crawl_type')}</Label>
                         <Select
                             value={formData.crawl_type}
                             onValueChange={(value) => handleChange("crawl_type", value)}
                         >
                             <SelectTrigger id="crawl_type">
-                                <SelectValue placeholder="Select type" />
+                                <SelectValue placeholder={t('select_type')} />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="website">Website</SelectItem>
-                                <SelectItem value="sitemap">Sitemap</SelectItem>
-                                <SelectItem value="docs">Documentation</SelectItem>
+                                <SelectItem value="website">{t('website')}</SelectItem>
+                                <SelectItem value="sitemap">{t('sitemap')}</SelectItem>
+                                <SelectItem value="docs">{t('documentation')}</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="max_pages">Max Pages</Label>
+                        <Label htmlFor="max_pages">{t('max_pages')}</Label>
                         <Input
                             id="max_pages"
                             type="number"
@@ -120,7 +122,7 @@ export function CrawlForm({ collectionId }: CrawlFormProps) {
 
                 <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
-                        <Label htmlFor="max_depth">Max Depth</Label>
+                        <Label htmlFor="max_depth">{t('max_depth')}</Label>
                         <Input
                             id="max_depth"
                             type="number"
@@ -129,7 +131,7 @@ export function CrawlForm({ collectionId }: CrawlFormProps) {
                         />
                     </div>
                     <div className="grid gap-2">
-                        <Label htmlFor="max_concurrent">Concurrent Requests</Label>
+                        <Label htmlFor="max_concurrent">{t('concurrent_requests')}</Label>
                         <Input
                             id="max_concurrent"
                             type="number"
@@ -155,9 +157,9 @@ export function CrawlForm({ collectionId }: CrawlFormProps) {
 
                 <div className="flex items-center justify-between space-x-2 rounded-lg border p-3">
                     <div className="space-y-0.5">
-                        <Label htmlFor="skip_discovery">Skip Discovery</Label>
+                        <Label htmlFor="skip_discovery">{t('skip_discovery')}</Label>
                         <p className="text-xs text-muted-foreground">
-                            Only crawl the provided URL(s) without finding new ones.
+                            {t('skip_discovery_description')}
                         </p>
                     </div>
                     <Switch
@@ -175,13 +177,13 @@ export function CrawlForm({ collectionId }: CrawlFormProps) {
             >
                 {isCrawling ? (
                     <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Engaging Orbital Scout...
+                        <Loader2 className="me-2 h-4 w-4 animate-spin" />
+                        {t('engaging_orbital_scout')}
                     </>
                 ) : (
                     <>
-                        <Play className="mr-2 h-4 w-4" />
-                        Start Crawl
+                        <Play className="me-2 h-4 w-4" />
+                        {t('start_crawl')}
                     </>
                 )}
             </Button>

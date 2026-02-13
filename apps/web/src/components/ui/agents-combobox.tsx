@@ -26,6 +26,7 @@ import {
   sortAgentGroup,
 } from "@/lib/agent-utils";
 import { getDeployments } from "@/lib/environment/deployments";
+import { useLanguage } from "@/providers/Language";
 
 export interface AgentsComboboxProps {
   agents: Agent[];
@@ -137,6 +138,7 @@ export function AgentsCombobox({
   style,
   agentsLoading,
 }: AgentsComboboxProps) {
+  const { t } = useLanguage();
   const deployments = getDeployments();
 
   // Convert value to array for internal handling
@@ -190,7 +192,7 @@ export function AgentsCombobox({
               ? multiple
                 ? getMultipleSelectedAgentValues(selectedValues, agents)
                 : getSelectedAgentValue(selectedValues[0], agents)
-              : placeholder}
+              : t('select_agent')}
             <ChevronsUpDown className="opacity-50" />
           </Button>
         )}
@@ -209,16 +211,16 @@ export function AgentsCombobox({
             return 0;
           }}
         >
-          <CommandInput placeholder="Search agents..." />
+          <CommandInput placeholder={t('search_agents')} />
           <CommandList>
             <CommandEmpty>
               {agentsLoading ? (
                 <span className="flex items-center justify-center gap-2">
                   <Loader2 className="size-4 animate-spin" />
-                  Loading agents...
+                  {t('loading_agents')}
                 </span>
               ) : (
-                "No agents found."
+                t('no_agent_found')
               )}
             </CommandEmpty>
             {deployments.map((deployment) => {
@@ -273,7 +275,7 @@ export function AgentsCombobox({
                             {isUserCreatedDefaultAssistant(item) && (
                               <span className="text-muted-foreground flex items-center gap-2 text-xs">
                                 <Star />
-                                <p>Default</p>
+                                <p>{t('default_label')}</p>
                               </span>
                             )}
                           </div>

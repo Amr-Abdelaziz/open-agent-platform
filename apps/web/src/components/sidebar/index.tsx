@@ -15,7 +15,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
       <MCPProvider>
         <AgentsProvider>
           <RagProvider>
-            <AppSidebar />
+            <AppSidebar side={direction === 'rtl' ? 'right' : 'left'} />
             <SidebarInset>{children}</SidebarInset>
           </RagProvider>
         </AgentsProvider>

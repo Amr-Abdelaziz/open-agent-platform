@@ -115,7 +115,11 @@ export function AgentFieldsForm({
       form.setValue("config.rag_context", persona.rag_context || "");
 
       if (toolConfigurations[0]?.label) {
-        form.setValue(`config.${toolConfigurations[0].label}`, persona.tools || []);
+        const currentToolsConfig = toolConfigurations[0].default || { tools: [] };
+        form.setValue(`config.${toolConfigurations[0].label}`, {
+          ...currentToolsConfig,
+          tools: persona.tools || [],
+        });
       }
     }
   };

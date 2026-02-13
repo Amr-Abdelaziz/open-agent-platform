@@ -1,10 +1,10 @@
 "use client";
 
-import type React from "react";
 import { useState, DragEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useLanguage } from "@/providers/Language";
 import {
     Card,
     CardContent,
@@ -17,6 +17,7 @@ import { useRagContext } from "../providers/RAG";
 import { toast } from "sonner";
 
 export function DocumentConverter() {
+    const { t } = useLanguage();
     const {
         selectedCollection,
         handleGraniteConversion,
@@ -42,7 +43,7 @@ export function DocumentConverter() {
         );
 
         if (filteredFiles.length < files.length) {
-            toast.warning("Some files were filtered out. Supported: PDF, JPG, PNG, WEBP.", { richColors: true });
+            toast.warning(t('some_files_filtered_supported'), { richColors: true });
         }
 
         setStagedFiles((prevFiles) => [...prevFiles, ...filteredFiles]);
@@ -84,11 +85,11 @@ export function DocumentConverter() {
 
     const handleProcessFiles = async () => {
         if (!selectedCollection) {
-            toast.error("Please select a collection first", { richColors: true });
+            toast.error(t('select_collection_first'), { richColors: true });
             return;
         }
         if (stagedFiles.length === 0) {
-            toast.error("No files staged for processing", { richColors: true });
+            toast.error(t('no_files_staged'), { richColors: true });
             return;
         }
 
@@ -118,11 +119,11 @@ export function DocumentConverter() {
                 <div className="flex items-center gap-2 mb-1">
                     <Languages className="size-5 text-primary" />
                     <CardTitle className="text-xl font-black tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                        AI Document Converter
+                        {t('ai_document_converter')}
                     </CardTitle>
                 </div>
                 <CardDescription className="text-foreground/50 font-medium">
-                    High-fidelity document understanding using IBM Granite Vision models.
+                    {t('high_fidelity_document_understanding')}
                 </CardDescription>
             </CardHeader>
             <CardContent className="relative z-10 space-y-6">
@@ -139,10 +140,10 @@ export function DocumentConverter() {
                         <FileUp className="text-primary h-8 w-8" />
                     </div>
                     <p className="text-foreground/70 mb-2 font-semibold">
-                        Drag and drop images or PDFs here
+                        {t('drag_drop_images_pdfs')}
                     </p>
                     <p className="text-muted-foreground mb-4 text-xs italic">
-                        Supports JPG, PNG, WEBP, and PDF
+                        {t('supported_formats_converter')}
                     </p>
                     <Input
                         type="file"
@@ -158,7 +159,7 @@ export function DocumentConverter() {
                             className="border-primary/50 hover:bg-primary/10 hover:text-primary transition-all duration-300"
                             asChild
                         >
-                            <span>Select Files</span>
+                            <span>{t('select_files')}</span>
                         </Button>
                     </Label>
                 </div>
@@ -167,7 +168,7 @@ export function DocumentConverter() {
                     <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                         <div className="flex items-center justify-between">
                             <h4 className="text-sm font-bold flex items-center gap-2">
-                                Staged Files <span className="bg-primary/20 text-primary px-2 py-0.5 rounded-full text-[10px]">{stagedFiles.length}</span>
+                                {t('staged_files')} <span className="bg-primary/20 text-primary px-2 py-0.5 rounded-full text-[10px]">{stagedFiles.length}</span>
                             </h4>
                             <Button
                                 variant="ghost"
@@ -175,7 +176,7 @@ export function DocumentConverter() {
                                 className="text-xs text-muted-foreground hover:text-destructive"
                                 onClick={() => setStagedFiles([])}
                             >
-                                Clear all
+                                {t('clear_all')}
                             </Button>
                         </div>
                         <ul className="space-y-2 max-h-60 overflow-y-auto pr-2 scrollbar-thin">
@@ -209,12 +210,12 @@ export function DocumentConverter() {
                             {isUploading ? (
                                 <div className="flex items-center gap-2">
                                     <div className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                    Processing...
+                                    {t('processing')}
                                 </div>
                             ) : (
                                 <div className="flex items-center gap-2">
                                     <Sparkles className="size-4" />
-                                    Convert with Granite Vision
+                                    {t('convert_with_granite_vision')}
                                 </div>
                             )}
                         </Button>
@@ -224,7 +225,7 @@ export function DocumentConverter() {
                 {!selectedCollection && (
                     <div className="text-center py-4 bg-amber-500/10 rounded-xl border border-amber-500/20">
                         <p className="text-amber-500 text-sm font-medium">
-                            Please select a collection to enable conversion
+                            {t('select_collection_enable_conversion')}
                         </p>
                     </div>
                 )}

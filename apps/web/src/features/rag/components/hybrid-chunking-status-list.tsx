@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/providers/Language";
 import { RefreshCcw, FileText, Clock, AlertCircle, CheckCircle2, Trash2, StopCircle, Eraser } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -21,6 +22,7 @@ interface HybridChunkingStatusListProps {
 }
 
 export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusListProps) {
+    const { t } = useLanguage();
     const { listHybridChunkingTasks, deleteHybridChunkingTask, clearRunningTasks, clearResults } = useRagContext();
     const [tasks, setTasks] = useState<HybridChunkingTask[]>([]);
     const [loading, setLoading] = useState(false);
@@ -39,7 +41,7 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
     };
 
     const handleDeleteTask = async (taskId: string) => {
-        if (!confirm("Are you sure you want to delete this task record from the database?")) return;
+        if (!confirm(t('delete_task_confirm'))) return;
         try {
             await deleteHybridChunkingTask(taskId);
             setTasks(prev => prev.filter(t => t.task_id !== taskId));
@@ -49,7 +51,7 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
     };
 
     const handleClearConverters = async () => {
-        if (!confirm("Are you sure you want to stop all running conversion tasks?")) return;
+        if (!confirm(t('stop_all_tasks_confirm'))) return;
         try {
             await clearRunningTasks();
             fetchTasks();
@@ -59,7 +61,7 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
     };
 
     const handleClearResults = async () => {
-        if (!confirm("Are you sure you want to clear all processing results from memory?")) return;
+        if (!confirm(t('clear_results_confirm'))) return;
         try {
             await clearResults();
             fetchTasks();
@@ -85,14 +87,14 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
                 return (
                     <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 gap-1.5 py-1 px-2.5">
                         <CheckCircle2 className="size-3" />
-                        Completed
+                        {t('completed')}
                     </Badge>
                 );
             case "failed":
                 return (
                     <Badge variant="destructive" className="gap-1.5 py-1 px-2.5">
                         <AlertCircle className="size-3" />
-                        Failed
+                        {t('failed')}
                     </Badge>
                 );
             case "processing":
@@ -100,7 +102,7 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
                 return (
                     <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 animate-pulse gap-1.5 py-1 px-2.5">
                         <RefreshCcw className="size-3 animate-spin" />
-                        {s === "processing" ? "Processing" : "Pending"}
+                        {s === "processing" ? t('processing') : t('pending')}
                     </Badge>
                 );
             default:
@@ -117,7 +119,7 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
                     <div className="p-1.5 bg-blue-500/10 rounded-md">
                         <FileText className="size-4 text-blue-500" />
                     </div>
-                    <h4 className="text-sm font-black tracking-tight uppercase">Conversion Tasks</h4>
+                    <h4 className="text-sm font-black tracking-tight uppercase">{t('conversion_tasks')}</h4>
                 </div>
                 <div className="flex items-center gap-1">
                     <Button
@@ -127,7 +129,7 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
                         className="h-8 text-orange-500 hover:text-orange-600 hover:bg-orange-500/10 gap-1.5 text-[10px] font-bold uppercase"
                     >
                         <StopCircle className="size-3.5" />
-                        Stop All
+                        {t('stop_all')}
                     </Button>
                     <Button
                         variant="ghost"
@@ -136,11 +138,11 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
                         className="h-8 text-pink-500 hover:text-pink-600 hover:bg-pink-500/10 gap-1.5 text-[10px] font-bold uppercase"
                     >
                         <Eraser className="size-3.5" />
-                        Clear Results
+                        {t('clear_results')}
                     </Button>
                     <Button variant="ghost" size="sm" onClick={() => fetchTasks()} disabled={loading} className="h-8 group text-blue-500">
                         <RefreshCcw className={`size-3.5 mr-1.5 transition-transform group-hover:rotate-180 duration-500 ${loading ? 'animate-spin' : ''}`} />
-                        Sync
+                        {t('sync')}
                     </Button>
                 </div>
             </div>
@@ -150,10 +152,10 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
                     <Table>
                         <TableHeader>
                             <TableRow className="hover:bg-transparent border-white/5 bg-white/5">
-                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground w-1/2">File Asset</TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Status</TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Timeline</TableHead>
-                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right border-none">Actions</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground w-1/2">{t('file_asset')}</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('status')}</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{t('timeline')}</TableHead>
+                                <TableHead className="text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right border-none">{t('actions')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -162,7 +164,7 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
                                     <TableCell colSpan={4} className="text-center py-12 text-muted-foreground">
                                         <div className="flex flex-col items-center gap-2 opacity-30">
                                             <Clock className="size-8 stroke-[1]" />
-                                            <p className="text-xs font-bold uppercase tracking-tighter">No active conversion threads</p>
+                                            <p className="text-xs font-bold uppercase tracking-tighter">{t('no_active_conversion_threads')}</p>
                                         </div>
                                     </TableCell>
                                 </TableRow>
@@ -192,10 +194,10 @@ export function HybridChunkingStatusList({ collectionId }: HybridChunkingStatusL
                                                         variant="ghost"
                                                         size="icon"
                                                         className="size-7 rounded-lg text-emerald-500 hover:text-emerald-600 hover:bg-emerald-500/10 opacity-0 group-hover:opacity-100 transition-all"
-                                                        title="View Result JSON"
+                                                        title={t('view_result_json')}
                                                         onClick={() => {
                                                             console.log("Task Result:", task.metadata?.gorbit_result);
-                                                            alert("Result collected and stored in DB. Check console for full JSON.\n\nChunks: " + (task.metadata?.gorbit_result?.chunks?.length || 0));
+                                                            alert(t('result_collected_stored') + (task.metadata?.gorbit_result?.chunks?.length || 0));
                                                         }}
                                                     >
                                                         <FileText className="size-3.5" />

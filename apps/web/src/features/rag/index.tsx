@@ -21,8 +21,10 @@ import { DocumentConverter } from "./components/document-converter";
 import { PdfToMarkdown } from "./components/pdf-to-markdown";
 import { HybridChunkingStatusList } from "./components/hybrid-chunking-status-list";
 import { LayoutGrid, HardDrive, Activity, FileScan, FileText } from "lucide-react";
+import { useLanguage } from "@/providers/Language";
 
 export default function RAGInterface() {
+  const { t } = useLanguage();
   const {
     selectedCollection,
     setSelectedCollection,
@@ -41,7 +43,7 @@ export default function RAGInterface() {
       <div className="flex justify-between items-center glass-card p-4 rounded-xl neon-border-purple relative overflow-hidden group">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-sm">
-          Gorbit Knowledge Base
+          {t('rag_knowledge_base')}
         </h1>
         <div className="flex items-center gap-3">
           <ActiveEmbeddingModel />
@@ -56,23 +58,23 @@ export default function RAGInterface() {
             <TabsList className={`grid w-full grid-cols-5 bg-background/20 backdrop-blur-md border border-white/5 p-1 h-11 mb-4 rounded-xl ${(activeTab === 'storage' || activeTab === 'tasks' || activeTab === 'converter' || activeTab === 'pdf-to-md') ? 'w-full max-w-4xl mx-auto' : 'w-full'}`}>
               <TabsTrigger value="collections" className="gap-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-lg transition-all">
                 <LayoutGrid className="size-4" />
-                Collections
+                {t('collections')}
               </TabsTrigger>
               <TabsTrigger value="storage" className="gap-2 data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-500 rounded-lg transition-all">
                 <HardDrive className="size-4" />
-                Storage
+                {t('storage')}
               </TabsTrigger>
               <TabsTrigger value="tasks" className="gap-2 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-500 rounded-lg transition-all">
                 <Activity className="size-4" />
-                Tasks
+                {t('tasks')}
               </TabsTrigger>
               <TabsTrigger value="converter" className="gap-2 data-[state=active]:bg-purple-500/10 data-[state=active]:text-purple-500 rounded-lg transition-all">
                 <FileScan className="size-4" />
-                Converter
+                {t('converter')}
               </TabsTrigger>
               <TabsTrigger value="pdf-to-md" className="gap-2 data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-500 rounded-lg transition-all">
                 <FileText className="size-4" />
-                PDF to MD
+                {t('pdf_to_md')}
               </TabsTrigger>
             </TabsList>
 
@@ -102,7 +104,7 @@ export default function RAGInterface() {
                     <HybridChunkingStatusList collectionId={selectedCollection.uuid} />
                   ) : (
                     <div className="text-center py-12 text-muted-foreground">
-                      Please select a collection to view tasks
+                      {t('select_collection_tasks')}
                     </div>
                   )}
                 </Card>

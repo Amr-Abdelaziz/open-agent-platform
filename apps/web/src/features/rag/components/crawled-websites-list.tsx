@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { MarkdownText } from "@/components/ui/markdown-text";
+import { useLanguage } from "@/providers/Language";
 import {
     Dialog,
     DialogContent,
@@ -50,6 +51,7 @@ interface WebsiteSource {
 }
 
 export function CrawledWebsitesList() {
+    const { t } = useLanguage();
     const { selectedCollection, listCrawls, listPages, deleteSource, getPageContent } = useRagContext();
     const [websites, setWebsites] = useState<WebsiteSource[]>([]);
     const [loading, setLoading] = useState(false);
@@ -58,24 +60,35 @@ export function CrawledWebsitesList() {
     const [selectedPage, setSelectedPage] = useState<CrawledPage | null>(null);
     const [pageLoading, setPageLoading] = useState(false);
     const [copied, setCopied] = useState(false);
+    const [pagesLimit, setPagesLimit] = useState(100);
+    const [hasMorePages, setHasMorePages] = useState(false);
 
-    const fetchWebsites = useCallback(async () => {
+    const fetchWebsites = useCallback(async (silent = false) => {
         if (!selectedCollection) return;
-        setLoading(true);
+        if (!silent) setLoading(true);
         try {
-            const [crawls, pages] = await Promise.all([
+            // Calculate how many batches of 100 we need
+            const batchCount = Math.ceil(pagesLimit / 100);
+            const pageRequests = [];
+            for (let i = 0; i < batchCount; i++) {
+                pageRequests.push(listPages(selectedCollection.uuid, 100, i * 100));
+            }
+
+            const [crawls, ...allBatches] = await Promise.all([
                 listCrawls(selectedCollection.uuid),
-                listPages(selectedCollection.uuid, 100)
+                ...pageRequests
             ]);
+
+            const pages = allBatches.flat();
+            setHasMorePages(allBatches[allBatches.length - 1].length === 100);
 
             const websiteMap = new Map<string, WebsiteSource>();
 
             // Process crawls to find unique sources
             crawls.forEach((crawl: CrawlTask) => {
-                const sourceId = crawl.source_id || crawl.metadata?.source_id;
-                if (!sourceId) return;
-
                 const hostname = new URL(crawl.url).hostname;
+                const sourceId = crawl.source_id || crawl.metadata?.source_id || hostname;
+                if (!sourceId) return;
                 if (!websiteMap.has(sourceId)) {
                     websiteMap.set(sourceId, {
                         source_id: sourceId,
@@ -166,30 +179,43 @@ export function CrawledWebsitesList() {
             ));
         } catch (error) {
             console.error("Failed to fetch websites:", error);
-            toast.error("Failed to sync orbital database");
+            toast.error(t('failed_sync_orbital'));
         } finally {
             setLoading(false);
         }
-    }, [selectedCollection, listCrawls, listPages]);
+    }, [selectedCollection, listCrawls, listPages, t, pagesLimit]);
 
     useEffect(() => {
         fetchWebsites();
     }, [fetchWebsites]);
 
+    useEffect(() => {
+        if (!selectedCollection) return;
+
+        const activeStates = ["pending", "crawling", "processing", "starting"];
+        const hasActive = websites.some(w => activeStates.includes(w.status.toLowerCase()));
+
+        const interval = setInterval(() => {
+            fetchWebsites(true); // silent fetch
+        }, hasActive ? 5000 : 30000);
+
+        return () => clearInterval(interval);
+    }, [selectedCollection, websites.map(w => w.status).join(','), fetchWebsites]);
+
     const handleDeleteSource = async (website: WebsiteSource, e: React.MouseEvent) => {
         e.stopPropagation();
-        if (!confirm(`Are you sure you want to delete all data for ${website.hostname}? This includes all ${website.pageCount} pages, chunks, and embeddings.`)) return;
+        if (!confirm(t('purge_website_confirm').replace('{name}', website.hostname).replace('{count}', website.pageCount.toString()))) return;
 
-        const loadingToast = toast.loading(`Purging ${website.hostname} from orbital banks...`);
+        const loadingToast = toast.loading(t('purging_orbital').replace('{name}', website.hostname));
         try {
             await deleteSource(website.source_id);
-            toast.success("Website data purged successfully", { id: loadingToast });
+            toast.success(t('website_purged_success'), { id: loadingToast });
             fetchWebsites();
             if (selectedWebsite?.source_id === website.source_id) {
                 setSelectedWebsite(null);
             }
         } catch (error: any) {
-            toast.error("Failed to purge website data", { id: loadingToast, description: error.message });
+            toast.error(t('failed_purge_website'), { id: loadingToast, description: error.message });
         }
     };
 
@@ -205,7 +231,7 @@ export function CrawledWebsitesList() {
             setSelectedPage(fullPage);
         } catch (error) {
             console.error("Failed to fetch page content:", error);
-            toast.error("Failed to load orbital data");
+            toast.error(t('failed_load_orbital'));
         } finally {
             setPageLoading(false);
         }
@@ -216,14 +242,14 @@ export function CrawledWebsitesList() {
         navigator.clipboard.writeText(selectedPage.full_content);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-        toast.success("Page content copied to clipboard");
+        toast.success(t('page_content_copied'));
     };
 
     if (!selectedCollection) {
         return (
             <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-white/10 rounded-xl bg-white/5 backdrop-blur-sm">
                 <Server className="w-12 h-12 text-white/20 mb-4" />
-                <p className="text-white/40">Select a collection to view crawled websites</p>
+                <p className="text-white/40">{t('select_collection_view_crawled')}</p>
             </div>
         );
     }
@@ -232,18 +258,18 @@ export function CrawledWebsitesList() {
         <div className="space-y-4">
             <div className="flex items-center gap-2">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
                     <Input
-                        placeholder="Search websites..."
+                        placeholder={t('search_websites')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="bg-white/5 border-white/10 pl-10 h-10 ring-offset-violet-500 focus-visible:ring-violet-500/50"
+                        className="bg-white/5 border-white/10 ps-10 h-10 ring-offset-violet-500 focus-visible:ring-violet-500/50"
                     />
                 </div>
                 <Button
                     variant="outline"
                     size="icon"
-                    onClick={fetchWebsites}
+                    onClick={() => fetchWebsites()}
                     disabled={loading}
                     className="bg-white/5 border-white/10 hover:bg-white/10 h-10 w-10 shrink-0"
                 >
@@ -251,7 +277,7 @@ export function CrawledWebsitesList() {
                 </Button>
             </div>
 
-            <ScrollArea className="h-[500px] pr-4 -mr-4">
+            <ScrollArea className="h-[500px] pe-4 -me-4">
                 <div className="grid gap-4">
                     {loading && websites.length === 0 ? (
                         Array.from({ length: 3 }).map((_, i) => (
@@ -260,7 +286,7 @@ export function CrawledWebsitesList() {
                     ) : filteredWebsites.length === 0 ? (
                         <div className="p-12 text-center bg-white/5 rounded-xl border border-white/10 border-dashed">
                             <Globe className="w-12 h-12 text-white/10 mx-auto mb-4" />
-                            <p className="text-white/40 font-medium tracking-wide">No crawl sources found in this sector</p>
+                            <p className="text-white/40 font-medium tracking-wide">{t('no_crawl_sources')}</p>
                         </div>
                     ) : (
                         filteredWebsites.map((website) => (
@@ -283,7 +309,7 @@ export function CrawledWebsitesList() {
                                             {website.progress && (
                                                 <div className="mt-3 w-64">
                                                     <div className="flex items-center justify-between mb-1.5">
-                                                        <span className="text-[10px] text-violet-300 font-bold uppercase tracking-wider">Crawl Progress</span>
+                                                        <span className="text-[10px] text-violet-300 font-bold uppercase tracking-wider">{t('crawl_progress')}</span>
                                                         <span className="text-[10px] text-white/40 font-mono">{website.progress.current} / {website.progress.total}</span>
                                                     </div>
                                                     <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/10 p-[1px]">
@@ -299,12 +325,12 @@ export function CrawledWebsitesList() {
                                                 <div className="flex items-center gap-1.5 text-xs text-white/60">
                                                     <Layers className="w-3.5 h-3.5 text-violet-400/60" />
                                                     <span className="font-semibold">{website.pageCount}</span>
-                                                    <span className="opacity-60">pages discovered</span>
+                                                    <span className="opacity-60">{t('pages_discovered')}</span>
                                                 </div>
                                                 <div className="w-1 h-1 rounded-full bg-white/10" />
                                                 <div className="flex items-center gap-1.5 text-xs text-white/60">
                                                     <Calendar className="w-3.5 h-3.5 text-violet-400/60" />
-                                                    <span className="opacity-60">Last sync:</span>
+                                                    <span className="opacity-60">{t('last_sync')}</span>
                                                     <span className="font-medium">{formatDistanceToNow(new Date(website.lastCrawled), { addSuffix: true })}</span>
                                                 </div>
                                             </div>
@@ -321,7 +347,7 @@ export function CrawledWebsitesList() {
                                                 size="icon"
                                                 onClick={(e) => handleDeleteSource(website, e)}
                                                 className="h-9 w-9 text-white/20 hover:text-red-400 hover:bg-red-400/10 border border-transparent hover:border-red-400/20"
-                                                title="Purge Website Data"
+                                                title={t('purge_website_confirm').replace('{name}', website.hostname).split('?')[0]}
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </Button>
@@ -333,6 +359,25 @@ export function CrawledWebsitesList() {
                                 </div>
                             </div>
                         ))
+                    )}
+
+                    {hasMorePages && (
+                        <div className="flex justify-center py-4">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setPagesLimit(prev => prev + 100)}
+                                disabled={loading}
+                                className="bg-white/5 border-white/10 hover:bg-white/10 text-xs font-bold uppercase tracking-widest text-white/60"
+                            >
+                                {loading ? (
+                                    <Loader2 className="w-3 h-3 animate-spin me-2" />
+                                ) : (
+                                    <Layers className="w-3 h-3 me-2" />
+                                )}
+                                {t('load_more_pages') || 'Load More Pages'}
+                            </Button>
+                        </div>
                     )}
                 </div>
             </ScrollArea>
@@ -358,8 +403,8 @@ export function CrawledWebsitesList() {
                                 onClick={(e) => selectedWebsite && handleDeleteSource(selectedWebsite, e as any)}
                                 className="h-8 text-xs text-red-400 hover:text-red-300 border-red-400/20 bg-red-400/5 hover:bg-red-400/10 hover:border-red-400/40"
                             >
-                                <Trash2 className="w-3.5 h-3.5 mr-2" />
-                                Purge All Data
+                                <Trash2 className="w-3.5 h-3.5 me-2" />
+                                {t('purge_all_data')}
                             </Button>
                         </div>
                     </DialogHeader>
@@ -368,7 +413,7 @@ export function CrawledWebsitesList() {
                         <div className="px-6 py-4 border-b border-white/5 bg-white/5 shrink-0">
                             <h5 className="text-[10px] font-black text-violet-400 uppercase tracking-[0.2em] flex items-center gap-2">
                                 <Layers className="w-3 h-3" />
-                                Crawled Pages ({selectedWebsite?.pageCount})
+                                {t('crawled_pages_count').replace('{count}', (selectedWebsite?.pageCount || 0).toString())}
                             </h5>
                         </div>
                         <div className="flex-1 overflow-hidden min-h-0">
@@ -387,14 +432,14 @@ export function CrawledWebsitesList() {
                                                     </div>
                                                     <div className="min-w-0">
                                                         <p className="text-sm font-bold text-white group-hover/page:text-violet-200 transition-colors truncate">
-                                                            {page.section_title || page.url.split('/').pop() || 'Untitled Page'}
+                                                            {page.section_title || page.url.split('/').pop() || t('untitled_page')}
                                                         </p>
                                                         <p className="text-[10px] text-white/20 truncate font-mono mt-0.5 group-hover/page:text-white/40">{page.url}</p>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-4 shrink-0">
-                                                    <div className="hidden sm:flex flex-col items-end mr-2">
-                                                        <span className="text-[10px] text-white/30 font-black tracking-widest uppercase">{page.word_count} words</span>
+                                                    <div className="hidden sm:flex flex-col items-end me-2">
+                                                        <span className="text-[10px] text-white/30 font-black tracking-widest uppercase">{page.word_count} {t('word_count')}</span>
                                                         <span className="text-[9px] text-white/10 font-mono">NODE_{page.id.slice(0, 6)}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1">
@@ -430,7 +475,7 @@ export function CrawledWebsitesList() {
                             onClick={() => setSelectedWebsite(null)}
                             className="bg-white/5 border-white/10 hover:bg-white/10"
                         >
-                            Close
+                            {t('close')}
                         </Button>
                     </div>
                 </DialogContent>
@@ -445,7 +490,7 @@ export function CrawledWebsitesList() {
                             </div>
                             <div className="min-w-0">
                                 <DialogTitle className="text-xl font-black tracking-tight text-white truncate">
-                                    {pageLoading ? "Decrypting Orbital Data..." : selectedPage?.section_title || "Page Preview"}
+                                    {pageLoading ? t('decrypting_orbital') : selectedPage?.section_title || t('preview')}
                                 </DialogTitle>
                                 <DialogDescription className="text-white/40 font-mono text-[10px] truncate max-w-lg">
                                     {selectedPage?.url}
@@ -461,7 +506,7 @@ export function CrawledWebsitesList() {
                                     className="h-8 bg-white/5 border-white/10 hover:bg-white/10 gap-2 text-white/60"
                                 >
                                     {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                                    {copied ? "Copied" : "Copy Content"}
+                                    {copied ? t('copied') : t('copy_content')}
                                 </Button>
                             )}
                             <a
@@ -471,7 +516,7 @@ export function CrawledWebsitesList() {
                                 className="h-8 px-3 flex items-center gap-2 rounded-md bg-violet-500 text-white text-xs font-bold hover:bg-violet-600 transition-colors"
                             >
                                 <ExternalLink className="w-3.5 h-3.5" />
-                                Visit Original
+                                {t('visit_original')}
                             </a>
                         </div>
                     </DialogHeader>
@@ -480,7 +525,7 @@ export function CrawledWebsitesList() {
                         {pageLoading ? (
                             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md z-50">
                                 <Loader2 className="w-12 h-12 text-violet-500 animate-spin mb-4" />
-                                <p className="text-violet-300 font-bold tracking-widest uppercase text-[10px] animate-pulse">Syncing with orbital banks...</p>
+                                <p className="text-violet-300 font-bold tracking-widest uppercase text-[10px] animate-pulse">{t('syncing_orbital')}</p>
                             </div>
                         ) : null}
 
@@ -490,17 +535,17 @@ export function CrawledWebsitesList() {
                                     <div className="max-w-3xl mx-auto">
                                         <div className="flex gap-6 mb-8 p-4 rounded-xl bg-white/5 border border-white/10 border-dashed">
                                             <div className="space-y-1">
-                                                <p className="text-[10px] uppercase font-black text-white/20 tracking-widest">Word Count</p>
+                                                <p className="text-[10px] uppercase font-black text-white/20 tracking-widest">{t('word_count')}</p>
                                                 <p className="text-xl font-bold text-violet-400">{selectedPage.word_count}</p>
                                             </div>
                                             <div className="w-px h-10 bg-white/10" />
                                             <div className="space-y-1">
-                                                <p className="text-[10px] uppercase font-black text-white/20 tracking-widest">Character Count</p>
+                                                <p className="text-[10px] uppercase font-black text-white/20 tracking-widest">{t('character_count')}</p>
                                                 <p className="text-xl font-bold text-fuchsia-400">{selectedPage.char_count || selectedPage.full_content.length}</p>
                                             </div>
                                             <div className="w-px h-10 bg-white/10" />
                                             <div className="space-y-1">
-                                                <p className="text-[10px] uppercase font-black text-white/20 tracking-widest">Discovery Date</p>
+                                                <p className="text-[10px] uppercase font-black text-white/20 tracking-widest">{t('discovery_date')}</p>
                                                 <p className="text-sm font-bold text-white/60">{new Date(selectedPage.created_at).toLocaleDateString()}</p>
                                             </div>
                                         </div>
@@ -512,7 +557,7 @@ export function CrawledWebsitesList() {
                                 ) : (
                                     <div className="h-[400px] flex flex-col items-center justify-center text-center opacity-40">
                                         <FileText className="w-16 h-16 mb-4 stroke-[1]" />
-                                        <p className="text-lg font-medium">No decrypted content available for this node</p>
+                                        <p className="text-lg font-medium">{t('no_decrypted_content')}</p>
                                     </div>
                                 )}
                             </div>
@@ -525,7 +570,7 @@ export function CrawledWebsitesList() {
                             onClick={() => setSelectedPage(null)}
                             className="bg-white/5 border-white/10 hover:bg-white/10 h-10 px-6 font-bold"
                         >
-                            Return
+                            {t('return')}
                         </Button>
                     </div>
                 </DialogContent>

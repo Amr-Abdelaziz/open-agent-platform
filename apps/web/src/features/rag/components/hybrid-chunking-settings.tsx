@@ -1,7 +1,6 @@
-"use client";
-
 import React from "react";
 import { HybridChunkingOptions } from "../hooks/use-rag";
+import { useLanguage } from "@/providers/Language";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -20,6 +19,7 @@ interface HybridChunkingSettingsProps {
 }
 
 export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: HybridChunkingSettingsProps) {
+    const { t } = useLanguage();
     const { discoverModels } = useOllama();
     const [embeddingModels, setEmbeddingModels] = React.useState<OllamaModelInfo[]>([]);
     const [loadingModels, setLoadingModels] = React.useState(false);
@@ -70,15 +70,15 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
         <div className="space-y-2 py-2">
             <div className="flex items-center gap-2 mb-2">
                 <Settings2 className="size-3.5 text-blue-500" />
-                <h4 className="text-[11px] font-black uppercase tracking-wider">Processing Config</h4>
+                <h4 className="text-[11px] font-black uppercase tracking-wider">{t('processing_config')}</h4>
             </div>
 
             <div className="space-y-1">
                 {/* Core Settings */}
-                <Section title="Core Engine" icon={Cpu} defaultOpen={true}>
+                <Section title={t('core_engine')} icon={Cpu} defaultOpen={true}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">PDF Backend</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('pdf_backend')}</Label>
                             <Select
                                 value={options.convert_pdf_backend || "dlparse_v4"}
                                 onValueChange={(v) => handleChange("convert_pdf_backend", v)}
@@ -94,7 +94,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">Pipeline</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('pipeline')}</Label>
                             <Select
                                 value={options.convert_pipeline || "standard"}
                                 onValueChange={(v) => handleChange("convert_pipeline", v)}
@@ -103,7 +103,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="standard">Standard</SelectItem>
+                                    <SelectItem value="standard">{t('standard') || 'Standard'}</SelectItem>
                                     <SelectItem value="vlm">VLM Vision</SelectItem>
                                     <SelectItem value="asr">ASR Audio</SelectItem>
                                 </SelectContent>
@@ -111,7 +111,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                         </div>
                     </div>
                     <div className="flex items-center justify-between">
-                        <Label className="text-[10px] font-medium">Abort on Error</Label>
+                        <Label className="text-[10px] font-medium">{t('abort_on_error')}</Label>
                         <Switch
                             className="scale-75 origin-right"
                             checked={options.convert_abort_on_error}
@@ -121,10 +121,10 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                 </Section>
 
                 {/* Page Range */}
-                <Section title="Document Range" icon={Hash}>
+                <Section title={t('document_range')} icon={Hash}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">Start Page</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('start_page')}</Label>
                             <Input
                                 type="number"
                                 min={1}
@@ -138,12 +138,12 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">End Page</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('end_page')}</Label>
                             <Input
                                 type="text"
-                                value={options.convert_page_range?.[1] === "9223372036854775807" ? "All" : options.convert_page_range?.[1] || "All"}
+                                value={options.convert_page_range?.[1] === "9223372036854775807" ? (t('all_pages') || "All") : options.convert_page_range?.[1] || (t('all_pages') || "All")}
                                 onChange={(e) => {
-                                    const val = e.target.value === "All" || e.target.value === "" ? "9223372036854775807" : e.target.value;
+                                    const val = e.target.value === (t('all_pages') || "All") || e.target.value === "" ? "9223372036854775807" : e.target.value;
                                     const start = options.convert_page_range?.[0] || 1;
                                     handleChange("convert_page_range", [start, val]);
                                 }}
@@ -154,10 +154,10 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                 </Section>
 
                 {/* OCR & Vision */}
-                <Section title="OCR & Vision" icon={ImageIcon}>
+                <Section title={t('ocr_vision')} icon={ImageIcon}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">OCR Engine</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('ocr_engine')}</Label>
                             <Select
                                 value={options.convert_ocr_engine || "easyocr"}
                                 onValueChange={(v) => handleChange("convert_ocr_engine", v)}
@@ -175,7 +175,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">Images</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('images')}</Label>
                             <Select
                                 value={options.convert_image_export_mode || "embedded"}
                                 onValueChange={(v) => handleChange("convert_image_export_mode", v)}
@@ -184,7 +184,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="embedded">Embedded</SelectItem>
+                                    <SelectItem value="embedded">{t('embedded') || 'Embedded'}</SelectItem>
                                     <SelectItem value="placeholder">Placeholder</SelectItem>
                                     <SelectItem value="referenced">Referenced</SelectItem>
                                 </SelectContent>
@@ -193,7 +193,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                     </div>
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                            <Label className="text-[10px] font-medium">Enable OCR</Label>
+                            <Label className="text-[10px] font-medium">{t('enable_ocr')}</Label>
                             <Switch
                                 className="scale-75 origin-right"
                                 checked={options.convert_do_ocr ?? true}
@@ -201,7 +201,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             />
                         </div>
                         <div className="flex items-center justify-between">
-                            <Label className="text-[10px] font-medium">Force OCR</Label>
+                            <Label className="text-[10px] font-medium">{t('force_ocr')}</Label>
                             <Switch
                                 className="scale-75 origin-right"
                                 checked={options.convert_force_ocr}
@@ -209,7 +209,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             />
                         </div>
                         <div className="flex items-center justify-between">
-                            <Label className="text-[10px] font-medium">Include Images</Label>
+                            <Label className="text-[10px] font-medium">{t('include_images')}</Label>
                             <Switch
                                 className="scale-75 origin-right"
                                 checked={options.convert_include_images ?? true}
@@ -217,7 +217,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             />
                         </div>
                         <div className="flex items-center justify-between">
-                            <Label className="text-[10px] font-medium text-blue-400">Classification</Label>
+                            <Label className="text-[10px] font-medium text-blue-400">{t('classification')}</Label>
                             <Switch
                                 className="scale-75 origin-right"
                                 checked={options.convert_do_picture_classification}
@@ -225,7 +225,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             />
                         </div>
                         <div className="flex items-center justify-between">
-                            <Label className="text-[10px] font-medium text-pink-500/80">Pic Description</Label>
+                            <Label className="text-[10px] font-medium text-pink-500/80">{t('pic_description')}</Label>
                             <Switch
                                 className="scale-75 origin-right"
                                 checked={options.convert_do_picture_description}
@@ -236,10 +236,10 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                 </Section>
 
                 {/* VLM Models */}
-                <Section title="VLM Models" icon={Sparkles}>
+                <Section title={t('vlm_models')} icon={Sparkles}>
                     <div className="space-y-4">
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">Pipeline Model (Preset)</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('pipeline_model_preset')}</Label>
                             <Select
                                 value={options.convert_vlm_pipeline_model || "none"}
                                 onValueChange={(v) => handleChange("convert_vlm_pipeline_model", v === "none" ? null : v)}
@@ -262,9 +262,9 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">VLM Model API</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('vlm_model_api')}</Label>
                             <Input
-                                placeholder="Mutually exclusive with preset"
+                                placeholder={t('mutually_exclusive_preset') || "Mutually exclusive with preset"}
                                 value={options.convert_vlm_pipeline_model_api || ""}
                                 onChange={(e) => handleChange("convert_vlm_pipeline_model_api", e.target.value)}
                                 className="h-7 text-[10px] bg-background/50 border-white/5"
@@ -273,10 +273,10 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                     </div>
                 </Section>
 
-                <Section title="Layout & Tables" icon={Layers}>
+                <Section title={t('layout_tables')} icon={Layers}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">Table Mode</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('table_mode')}</Label>
                             <Select
                                 value={options.convert_table_mode || "accurate"}
                                 onValueChange={(v) => handleChange("convert_table_mode", v)}
@@ -291,7 +291,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             </Select>
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">Doc Scale</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('doc_scale')}</Label>
                             <Input
                                 type="number"
                                 step="0.5"
@@ -303,7 +303,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                     </div>
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                            <Label className="text-[10px] font-medium">Extract Tables</Label>
+                            <Label className="text-[10px] font-medium">{t('extract_tables')}</Label>
                             <Switch
                                 className="scale-75 origin-right"
                                 checked={options.convert_do_table_structure ?? true}
@@ -311,7 +311,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             />
                         </div>
                         <div className="flex items-center justify-between">
-                            <Label className="text-[10px] font-medium">Code Discovery</Label>
+                            <Label className="text-[10px] font-medium">{t('code_discovery')}</Label>
                             <Switch
                                 className="scale-75 origin-right"
                                 checked={options.convert_do_code_enrichment}
@@ -321,22 +321,22 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                     </div>
                 </Section>
 
-                <Section title="Strategy" icon={Binary}>
+                <Section title={t('strategy')} icon={Binary}>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1.5 col-span-2">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">Tokenizer / Embedding</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('tokenizer_embedding')}</Label>
                             <Select
                                 value={options.chunking_tokenizer || "sentence-transformers/all-MiniLM-L6-v2"}
                                 onValueChange={(v) => handleChange("chunking_tokenizer", v)}
                             >
                                 <SelectTrigger className="h-7 text-[10px] bg-background/50 border-white/5 font-mono">
-                                    <SelectValue placeholder={loadingModels ? "Loading..." : "Select Model"} />
+                                    <SelectValue placeholder={loadingModels ? (t('loading') || "Loading...") : (t('select_model') || "Select Model")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="sentence-transformers/all-MiniLM-L6-v2">
                                         <div className="flex items-center gap-2">
                                             <Binary className="size-3 text-blue-400" />
-                                            <span>Default (MiniLM-L6)</span>
+                                            <span>{t('default') || 'Default'} (MiniLM-L6)</span>
                                         </div>
                                     </SelectItem>
                                     {embeddingModels.map((model) => (
@@ -353,12 +353,12 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             {loadingModels && (
                                 <div className="flex items-center gap-1.5 text-[8px] text-muted-foreground animate-pulse mt-1">
                                     <Loader2 className="size-2.5 animate-spin" />
-                                    Synchronizing Ollama models...
+                                    {t('syncing_ollama_models')}
                                 </div>
                             )}
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">Max Tokens</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('max_tokens')}</Label>
                             <Input
                                 type="number"
                                 value={options.chunking_max_tokens || 512}
@@ -367,7 +367,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                             />
                         </div>
                         <div className="space-y-1.5">
-                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">Merge Chunks</Label>
+                            <Label className="text-[9px] uppercase font-mono text-muted-foreground/70">{t('merge_chunks')}</Label>
                             <div className="flex h-7 items-center justify-end">
                                 <Switch
                                     className="scale-75 origin-right"
@@ -392,7 +392,7 @@ export function HybridChunkingSettings({ options, onChange, onSave, isSaving }: 
                         ) : (
                             <Save className="size-3.5" />
                         )}
-                        {isSaving ? "Saving Configuration..." : "Save Settings to Database"}
+                        {isSaving ? t('saving_config') : t('save_settings_db')}
                     </Button>
                 </div>
             )}

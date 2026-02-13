@@ -60,6 +60,7 @@ ENV TYPESCRIPT_IGNORE_BUILD_ERRORS=true
 
 # Build the web application
 WORKDIR /app/apps/web
+RUN mkdir -p public
 RUN yarn build:internal
 
 # Production image, copy all the files and run next
@@ -74,15 +75,12 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
 # Copy public assets
-COPY --from=builder /app/apps/web/public ./public
-
-# Create .next directory with proper permissions
-RUN mkdir .next && chown nextjs:nodejs .next
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/public ./apps/web/public
 
 # Copy Next.js build artifacts
 # Use standalone output for optimized deployment
 COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next/static ./apps/web/.next/static
 
 USER nextjs
 

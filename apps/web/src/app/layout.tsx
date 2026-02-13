@@ -20,6 +20,10 @@ const vazirmatn = Vazirmatn({
 export const metadata: Metadata = {
   title: "Gorbit",
   description: "Gorbit by LangChain",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 import { ThemeProvider } from "@/components/theme-provider";

@@ -40,6 +40,7 @@ import { CrawlForm } from "../crawl-form";
 import { CrawlStatusList } from "../crawl-status-list";
 import { Globe, Database } from "lucide-react";
 import { CrawledWebsitesList } from "../crawled-websites-list";
+import { useLanguage } from "@/providers/Language";
 
 interface DocumentsCardProps {
   selectedCollection: Collection | undefined;
@@ -52,6 +53,7 @@ export function DocumentsCard({
   currentPage,
   setCurrentPage,
 }: DocumentsCardProps) {
+  const { t } = useLanguage();
   const router = useRouter();
   const {
     documents,
@@ -153,7 +155,7 @@ export function DocumentsCard({
     if (unsupportedFiles.length > 0) {
       const unsupportedNames = unsupportedFiles.map((f) => f.name).join(", ");
       toast.error(
-        `Unsupported file types: ${unsupportedNames}. Please use PDF, TXT, or HTML.`,
+        t('unsupported_file_types').replace('{names}', unsupportedNames),
         { richColors: true },
       );
     }
@@ -184,7 +186,7 @@ export function DocumentsCard({
     }
 
     setIsUploading(true);
-    const loadingToast = toast.loading("Uploading files", { richColors: true });
+    const loadingToast = toast.loading(t('uploading_files'), { richColors: true });
     // Convert File[] to FileList as expected by the hook
     const dataTransfer = new DataTransfer();
     stagedFiles.forEach((file) => dataTransfer.items.add(file));
@@ -192,7 +194,7 @@ export function DocumentsCard({
 
     await handleDocumentFileUpload(fileList, selectedCollection.uuid);
 
-    toast.success("Files uploaded successfully", { richColors: true });
+    toast.success(t('files_uploaded_success'), { richColors: true });
     setIsUploading(false);
     toast.dismiss(loadingToast);
     setStagedFiles([]); // Clear staged files after initiating upload
@@ -206,14 +208,14 @@ export function DocumentsCard({
 
     if (textInput.trim()) {
       setIsUploading(true);
-      const loadingToast = toast.loading("Uploading text document", {
+      const loadingToast = toast.loading(t('uploading_text_document'), {
         richColors: true,
       });
       await handleDocumentTextUpload(textInput, selectedCollection.uuid);
       setTextInput("");
       setIsUploading(false);
       toast.dismiss(loadingToast);
-      toast.success("Text document uploaded successfully", {
+      toast.success(t('text_document_uploaded_success'), {
         richColors: true,
       });
     }
@@ -221,9 +223,9 @@ export function DocumentsCard({
 
   const handleChatWithDocuments = async (agent: Agent) => {
     if (!selectedCollection) {
-      toast.error("No collection selected", {
+      toast.error(t('no_collection_selected'), {
         richColors: true,
-        description: "Please select a collection to chat with documents.",
+        description: t('chat_with_docs_description'),
       });
       return;
     }
@@ -253,9 +255,9 @@ export function DocumentsCard({
       <CardHeader className="flex flex-row items-center justify-between relative z-10">
         <div className="space-y-1">
           <CardTitle className="text-xl font-black tracking-tight bg-gradient-to-r from-secondary to-secondary/60 bg-clip-text text-transparent">
-            Websites
+            {t('websites')}
           </CardTitle>
-          <CardDescription className="text-foreground/50 font-medium">Organization resource management</CardDescription>
+          <CardDescription className="text-foreground/50 font-medium">{t('orbital_resource')}</CardDescription>
         </div>
         {defaultAgent && (
           <Button
@@ -263,7 +265,7 @@ export function DocumentsCard({
             className="bg-secondary hover:bg-secondary/80 text-secondary-foreground font-bold shadow-[0_0_15px_rgba(var(--secondary),0.3)]"
           >
             <MessageSquare className="mr-2 h-3.5 w-3.5" />
-            Chat with Satellite
+            {t('chat_with_satellite')}
           </Button>
         )}
       </CardHeader>
@@ -271,11 +273,11 @@ export function DocumentsCard({
         <div className="mb-6">
           <Tabs defaultValue="file" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-4">
-              <TabsTrigger value="file">Upload File</TabsTrigger>
-              <TabsTrigger value="text">Add Text</TabsTrigger>
+              <TabsTrigger value="file">{t('upload_file')}</TabsTrigger>
+              <TabsTrigger value="text">{t('add_text')}</TabsTrigger>
               <TabsTrigger value="crawl">
                 <Globe className="mr-2 h-3.5 w-3.5" />
-                Crawl Website
+                {t('crawl_website')}
               </TabsTrigger>
             </TabsList>
             <TabsContent value="file">
@@ -290,7 +292,7 @@ export function DocumentsCard({
               >
                 <FileUp className="text-secondary/60 mx-auto mb-3 h-10 w-10 drop-shadow-[0_0_10px_rgba(var(--secondary),0.3)]" />
                 <p className="text-muted-foreground mb-2 text-sm">
-                  Drag and drop files here or click to browse
+                  {t('drag_drop_files')}
                 </p>
                 <Input
                   type="file"
@@ -306,14 +308,14 @@ export function DocumentsCard({
                     className="mt-2"
                     asChild
                   >
-                    <span>Select Files</span>
+                    <span>{t('select_files')}</span>
                   </Button>
                 </Label>
               </div>
               {/* Staged Files Display */}
               {stagedFiles.length > 0 && (
                 <div className="mt-4 space-y-2">
-                  <h4 className="text-sm font-medium">Files to Upload:</h4>
+                  <h4 className="text-sm font-medium">{t('files_to_upload')}</h4>
                   <ul className="space-y-1">
                     {stagedFiles.map((file, index) => (
                       <li
@@ -339,7 +341,7 @@ export function DocumentsCard({
                     className="mt-2 w-full"
                   >
                     <FileUp className="mr-2 h-4 w-4" />
-                    {`Upload ${stagedFiles.length} File(s)`}
+                    {t('upload_count_files').replace('{count}', stagedFiles.length.toString())}
                   </Button>
                 </div>
               )}
@@ -359,7 +361,7 @@ export function DocumentsCard({
             <TabsContent value="text">
               <div className="space-y-4">
                 <Textarea
-                  placeholder="Paste or type your text here..."
+                  placeholder={t('paste_type_text')}
                   className="min-h-[150px]"
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
@@ -369,7 +371,7 @@ export function DocumentsCard({
                   disabled={!textInput.trim() || isUploading}
                 >
                   <Plus className="mr-2 h-4 w-4" />
-                  Add Text Document
+                  {t('add_text_document')}
                 </Button>
 
                 {/* Document Table */}
@@ -394,7 +396,7 @@ export function DocumentsCard({
                 <div className="border-t border-white/5 pt-8">
                   <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
                     <Database className="w-5 h-5 text-violet-400" />
-                    Crawled Websites
+                    {t('crawled_websites')}
                   </h3>
                   <CrawledWebsitesList />
                 </div>
@@ -419,7 +421,9 @@ export function DocumentsCard({
                         ? "text-muted-foreground pointer-events-none"
                         : undefined
                     }
-                  />
+                  >
+                    {t('pagination_previous')}
+                  </PaginationPrevious>
                 </PaginationItem>
                 {[...Array(totalPages)].map((_, page) => (
                   <PaginationItem key={page + 1}>
@@ -448,7 +452,9 @@ export function DocumentsCard({
                         ? "text-muted-foreground pointer-events-none"
                         : undefined
                     }
-                  />
+                  >
+                    {t('pagination_next')}
+                  </PaginationNext>
                 </PaginationItem>
               </PaginationContent>
             </Pagination>

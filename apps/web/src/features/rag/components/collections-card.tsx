@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { CreateCollectionDialog } from "./create-collection-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Layers } from "lucide-react";
+import { useLanguage } from "@/providers/Language";
 
 interface CollectionsCardProps {
   collections: Collection[];
@@ -26,6 +27,7 @@ export function CollectionsCard({
   setSelectedCollection,
   setCurrentPage,
 }: CollectionsCardProps) {
+  const { t } = useLanguage();
   const {
     createCollection,
     deleteCollection,
@@ -42,7 +44,7 @@ export function CollectionsCard({
 
   // Handle creating a new collection (uses hook)
   const handleCreateCollection = async (name: string, description: string) => {
-    const loadingToast = toast.loading("Creating collection", {
+    const loadingToast = toast.loading(t('creating_collection'), {
       richColors: true,
     });
     const success = await createCollection(name, {
@@ -51,10 +53,10 @@ export function CollectionsCard({
     toast.dismiss(loadingToast);
     if (success) {
       setOpen(false);
-      toast.success("Collection created successfully", { richColors: true });
+      toast.success(t('collection_created'), { richColors: true });
     } else {
       toast.warning(
-        `Collection named '${name}' could not be created (likely already exists).`,
+        t('collection_exists').replace('{name}', name),
         {
           duration: 5000,
           richColors: true,
@@ -65,16 +67,16 @@ export function CollectionsCard({
 
   // Handle deleting a collection (uses collection hook and document hook)
   const handleDeleteCollection = async (id: string) => {
-    const loadingToast = toast.loading("Deleting collection", {
+    const loadingToast = toast.loading(t('deleting_collection'), {
       richColors: true,
     });
     await deleteCollection(id);
     toast.dismiss(loadingToast);
-    toast.success("Collection deleted successfully", { richColors: true });
+    toast.success(t('collection_deleted'), { richColors: true });
     if (selectedCollection?.uuid === id) {
       const newSelectedCollection = collections.find((c) => c.uuid !== id);
       if (!newSelectedCollection) {
-        toast.error("No collections remaining.", { richColors: true });
+        toast.error(t('no_collections_remaining'), { richColors: true });
         return;
       }
       setSelectedCollection(newSelectedCollection);
@@ -89,12 +91,12 @@ export function CollectionsCard({
     name: string,
     metadata: Record<string, any>,
   ) => {
-    const loadingToast = toast.loading("Updating collection", {
+    const loadingToast = toast.loading(t('updating_collection'), {
       richColors: true,
     });
     await updateCollection(id, name, metadata);
     toast.dismiss(loadingToast);
-    toast.success("Collection updated successfully", { richColors: true });
+    toast.success(t('collection_updated'), { richColors: true });
   };
 
   return (
@@ -104,7 +106,7 @@ export function CollectionsCard({
       </div>
       <CardHeader className="flex flex-row items-center justify-between relative z-10">
         <CardTitle className="text-xl font-black tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          Collections
+          {t('collections')}
         </CardTitle>
         <CreateCollectionDialog
           open={open}

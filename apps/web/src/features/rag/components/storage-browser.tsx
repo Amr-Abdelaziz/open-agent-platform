@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/sheet";
 import { MarkdownText } from "@/components/ui/markdown-text";
 import { Loader2, Copy, Check } from "lucide-react";
+import { useLanguage } from "@/providers/Language";
 
 interface StorageItem {
     name: string;
@@ -40,6 +41,7 @@ interface StorageItem {
 }
 
 export function StorageBrowser() {
+    const { t } = useLanguage();
     const { browseStorage, downloadStorage, deleteStorageFile, startHybridChunking, selectedCollection, uploadToStorage, getDoclingSettings, updateDoclingSettings, getStorageFile } = useRagContext();
     const { user } = useAuthContext();
     const [path, setPath] = useState<string>("");
@@ -88,13 +90,13 @@ export function StorageBrowser() {
         setSavingSettings(true);
         try {
             await updateDoclingSettings(conversionOptions);
-            toast.success("Settings saved to database");
+            toast.success(t('settings_saved_db'));
         } catch (error) {
             console.error("Failed to save settings:", error);
         } finally {
             setSavingSettings(false);
         }
-    }, [updateDoclingSettings, conversionOptions]);
+    }, [updateDoclingSettings, conversionOptions, t]);
 
     const fetchItems = useCallback(async (currentPath: string) => {
         if (!currentPath) return;
@@ -113,13 +115,13 @@ export function StorageBrowser() {
             });
             setItems(sortedItems);
         } catch (error: any) {
-            toast.error("Failed to load storage items", {
+            toast.error(t('failed_load_storage'), {
                 description: error.message
             });
         } finally {
             setLoading(false);
         }
-    }, [browseStorage]);
+    }, [browseStorage, t]);
 
     useEffect(() => {
         fetchItems(path);
@@ -141,9 +143,9 @@ export function StorageBrowser() {
         const fullPath = path ? `${path}/${itemName}` : itemName;
         try {
             await downloadStorage(fullPath);
-            toast.success(`Downloaded ${itemName}`);
+            toast.success(t('downloaded_item').replace('{name}', itemName));
         } catch (error: any) {
-            toast.error("Download failed", {
+            toast.error(t('download_failed'), {
                 description: error.message
             });
         }
@@ -170,7 +172,7 @@ export function StorageBrowser() {
                 setPreviewContent(text);
             }
         } catch (error: any) {
-            toast.error("Preview failed", {
+            toast.error(t('preview_failed'), {
                 description: error.message
             });
             setPreviewItem(null);
@@ -184,7 +186,7 @@ export function StorageBrowser() {
         navigator.clipboard.writeText(previewContent);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
-        toast.success("Copied to clipboard");
+        toast.success(t('copied_clipboard'));
     };
 
     const handleDelete = async (itemName: string) => {
@@ -192,10 +194,10 @@ export function StorageBrowser() {
 
         try {
             await deleteStorageFile(fullPath);
-            toast.success(`Deleted ${itemName}`);
+            toast.success(t('deleted_item').replace('{name}', itemName));
             fetchItems(path);
         } catch (error: any) {
-            toast.error("Delete failed", {
+            toast.error(t('delete_failed'), {
                 description: error.message
             });
         }
@@ -203,20 +205,20 @@ export function StorageBrowser() {
 
     const handleProcess = async (itemName: string) => {
         if (!selectedCollection) {
-            toast.error("Please select a collection first", {
-                description: "Documents and chunks need to be stored in a collection."
+            toast.error(t('select_collection_first'), {
+                description: t('docs_need_collection')
             });
             return;
         }
 
         const fullPath = path ? `${path}/${itemName}` : itemName;
-        const loadingToast = toast.loading(`Initiating hybrid chunking for ${itemName}...`);
+        const loadingToast = toast.loading(t('initiating_hybrid_chunking').replace('{name}', itemName));
 
         try {
             await startHybridChunking(selectedCollection.uuid, fullPath, conversionOptions);
-            toast.success(`Processing started for ${itemName}`, { id: loadingToast });
+            toast.success(t('processing_started').replace('{name}', itemName), { id: loadingToast });
         } catch (error: any) {
-            toast.error("Process failed", {
+            toast.error(t('failed_start_crawl'), {
                 id: loadingToast,
                 description: error.message
             });
@@ -232,28 +234,28 @@ export function StorageBrowser() {
         if (!file) return;
 
         if (!selectedCollection) {
-            toast.error("Please select a collection first", {
-                description: "Documents and chunks need to be stored in a collection."
+            toast.error(t('select_collection_first'), {
+                description: t('docs_need_collection')
             });
             return;
         }
 
         setUploading(true);
-        const loadingToast = toast.loading(`Uploading and initiating conversion for ${file.name}...`);
+        const loadingToast = toast.loading(t('initiating_hybrid_chunking').replace('{name}', file.name));
 
         try {
             // 1. Upload to storage
             await uploadToStorage(file, path);
-            toast.message("Upload successful", { id: loadingToast, description: "Starting conversion..." });
+            toast.message(t('upload_successful'), { id: loadingToast, description: t('starting_conversion') });
 
             // 2. Trigger hybrid chunking
             const fullPath = path ? `${path}/${file.name}` : file.name;
             await startHybridChunking(selectedCollection.uuid, fullPath, conversionOptions);
 
-            toast.success(`${file.name} uploaded and conversion started`, { id: loadingToast });
+            toast.success(t('upload_conversion_started').replace('{name}', file.name), { id: loadingToast });
             fetchItems(path);
         } catch (error: any) {
-            toast.error("Process failed", {
+            toast.error(t('failed_start_crawl'), {
                 id: loadingToast,
                 description: error.message
             });
@@ -294,8 +296,8 @@ export function StorageBrowser() {
                             <HardDrive className="size-5 text-blue-500" />
                         </div>
                         <div>
-                            <CardTitle className="text-lg">Storage</CardTitle>
-                            <CardDescription className="text-[10px] uppercase font-mono tracking-widest">Global Asset Browser</CardDescription>
+                            <CardTitle className="text-lg">{t('storage')}</CardTitle>
+                            <CardDescription className="text-[10px] uppercase font-mono tracking-widest">{t('global_asset_browser')}</CardDescription>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -310,7 +312,7 @@ export function StorageBrowser() {
                             size="icon"
                             onClick={() => setShowSettings(!showSettings)}
                             className={`size-8 rounded-full ${showSettings ? "bg-blue-500/20 text-blue-400" : "text-muted-foreground"}`}
-                            title="Processing Settings"
+                            title={t('processing_settings')}
                         >
                             <Settings2 className="size-4" />
                         </Button>
@@ -320,7 +322,7 @@ export function StorageBrowser() {
                             onClick={handleUploadClick}
                             disabled={loading || uploading}
                             className="size-8 rounded-full text-blue-500 hover:bg-blue-500/10"
-                            title="Upload & Convert"
+                            title={t('upload_convert')}
                         >
                             <Upload className={`size-4 ${uploading ? "animate-bounce" : ""}`} />
                         </Button>
@@ -356,7 +358,7 @@ export function StorageBrowser() {
                 <div className="relative mt-3">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
-                        placeholder="Search files..."
+                        placeholder={t('search_files')}
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="pl-9 h-9 bg-background/30 border-white/5 text-xs focus:ring-blue-500/20"
@@ -407,11 +409,11 @@ export function StorageBrowser() {
                                                 </span>
                                                 <div className="flex items-center gap-2">
                                                     {isFolder ? (
-                                                        <span className="text-[10px] text-muted-foreground uppercase font-mono">Directory</span>
+                                                        <span className="text-[10px] text-muted-foreground uppercase font-mono">{t('directory')}</span>
                                                     ) : (
                                                         <>
                                                             <span className="text-[10px] text-muted-foreground uppercase font-mono">
-                                                                {item.metadata?.mimetype?.split('/')[1] || "File"}
+                                                                {item.metadata?.mimetype?.split('/')[1] || t('file')}
                                                             </span>
                                                             <div className="size-1 rounded-full bg-border" />
                                                             <span className="text-[10px] text-muted-foreground font-mono">
@@ -435,7 +437,7 @@ export function StorageBrowser() {
                                                             e.stopPropagation();
                                                             handleProcess(item.name);
                                                         }}
-                                                        title="Convert & Chunk"
+                                                        title={t('convert_chunk')}
                                                     >
                                                         <Zap className="size-3.5 fill-amber-500/20" />
                                                     </Button>
@@ -481,8 +483,8 @@ export function StorageBrowser() {
                         ) : (
                             <div className="flex flex-col items-center justify-center py-20 text-muted-foreground/30">
                                 <Search className="size-12 mb-4 stroke-[1]" />
-                                <p className="text-sm font-bold tracking-tight">Empty Workspace</p>
-                                <p className="text-[10px] uppercase font-mono">No matching records found</p>
+                                <p className="text-sm font-bold tracking-tight">{t('empty_workspace')}</p>
+                                <p className="text-[10px] uppercase font-mono">{t('no_matching_records')}</p>
                             </div>
                         )}
                     </div>
@@ -503,10 +505,10 @@ export function StorageBrowser() {
                             </div>
                             <div className="flex flex-col min-w-0">
                                 <SheetTitle className="truncate pr-8">
-                                    {previewItem?.name || "File Preview"}
+                                    {previewItem?.name || t('file_preview')}
                                 </SheetTitle>
                                 <SheetDescription className="text-xs uppercase font-mono tracking-widest flex items-center gap-2">
-                                    <span>{previewItem?.metadata?.mimetype || "Asset"}</span>
+                                    <span>{previewItem?.metadata?.mimetype || t('orbital_resource')}</span>
                                     {previewItem?.metadata?.size && (
                                         <>
                                             <div className="size-1 rounded-full bg-border" />
@@ -521,7 +523,7 @@ export function StorageBrowser() {
                     <div className="flex-1 overflow-hidden flex flex-col pt-4">
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-none">PREVIEW MODE</Badge>
+                                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-500 border-none">{t('preview_mode')}</Badge>
                             </div>
                             <div className="flex items-center gap-2">
                                 {previewContent && (
@@ -545,7 +547,7 @@ export function StorageBrowser() {
                                 <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-[2px] z-10">
                                     <div className="flex flex-col items-center gap-3">
                                         <Loader2 className="size-8 animate-spin text-emerald-500" />
-                                        <p className="text-sm text-muted-foreground font-medium italic">Fetching asset contents...</p>
+                                        <p className="text-sm text-muted-foreground font-medium italic">{t('fetching_asset_contents')}</p>
                                     </div>
                                 </div>
                             ) : previewUrl ? (
@@ -569,8 +571,8 @@ export function StorageBrowser() {
                             ) : (
                                 <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 p-12 text-center">
                                     <FileIcon className="size-12 mb-4 stroke-[1]" />
-                                    <p className="text-sm font-bold tracking-tight">Preview Not Available</p>
-                                    <p className="text-[10px] uppercase font-mono mt-1">This file type cannot be rendered directly</p>
+                                    <p className="text-sm font-bold tracking-tight">{t('preview_not_available')}</p>
+                                    <p className="text-[10px] uppercase font-mono mt-1">{t('cannot_render_directly')}</p>
                                 </div>
                             )}
                         </div>

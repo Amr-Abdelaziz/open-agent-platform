@@ -35,6 +35,7 @@ import { format } from "date-fns";
 import { Collection } from "@/types/collection";
 import { getCollectionName } from "../../hooks/use-rag";
 import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/providers/Language";
 
 interface DocumentsTableProps {
   documents: ApiDocument[];
@@ -49,16 +50,17 @@ export function DocumentsTable({
   actionsDisabled,
   onView,
 }: DocumentsTableProps) {
+  const { t } = useLanguage();
   const { deleteDocument, processDocument } = useRagContext();
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Document Name</TableHead>
-          <TableHead>Collection</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Date Uploaded</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          <TableHead>{t('document_name')}</TableHead>
+          <TableHead>{t('collections')}</TableHead>
+          <TableHead>{t('status')}</TableHead>
+          <TableHead>{t('date_uploaded')}</TableHead>
+          <TableHead className="text-right">{t('actions')}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -68,7 +70,7 @@ export function DocumentsTable({
               colSpan={5}
               className="text-muted-foreground text-center"
             >
-              No documents found in this collection.
+              {t('no_documents_found')}
             </TableCell>
           </TableRow>
         ) : (
@@ -77,7 +79,7 @@ export function DocumentsTable({
               <TableCell className="font-medium">
                 <div className="flex items-center gap-2">
                   <FileIcon className="size-4 text-primary/70" />
-                  <span>{doc.title || doc.metadata?.name || "Untitled"}</span>
+                  <span>{doc.title || doc.metadata?.name || t('untitled')}</span>
                 </div>
               </TableCell>
               <TableCell>
@@ -89,12 +91,12 @@ export function DocumentsTable({
                 {doc.metadata?.embedding_status === "completed" ? (
                   <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 gap-1 h-6">
                     <Cpu className="size-3" />
-                    Embedded
+                    {t('embedded')}
                   </Badge>
                 ) : (
                   <Badge variant="outline" className="text-muted-foreground gap-1 h-6 opacity-70">
                     <Cpu className="size-3 animate-pulse" />
-                    Pending
+                    {t('pending')}
                   </Badge>
                 )}
               </TableCell>
@@ -120,18 +122,18 @@ export function DocumentsTable({
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => onView(doc)}>
                         <Eye className="mr-2 h-4 w-4" />
-                        View Preview
+                        {t('view_preview')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onView(doc, "pdf")}>
                         <FileIcon className="mr-2 h-4 w-4" />
-                        View PDF
+                        {t('view_pdf')}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => processDocument(selectedCollection.uuid, doc.id)}
                         disabled={actionsDisabled}
                       >
                         <Cpu className="mr-2 h-4 w-4" />
-                        Process & Embed
+                        {t('process_embed')}
                       </DropdownMenuItem>
                       <Separator className="my-1" />
                       <AlertDialogTrigger asChild>
@@ -140,7 +142,7 @@ export function DocumentsTable({
                           disabled={actionsDisabled}
                         >
                           <Trash2 className="mr-2 h-4 w-4" />
-                          Delete
+                          {t('delete')}
                         </DropdownMenuItem>
                       </AlertDialogTrigger>
                     </DropdownMenuContent>
@@ -148,26 +150,20 @@ export function DocumentsTable({
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>
-                        Are you absolutely sure?
+                        {t('are_you_sure')}
                       </AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete the document
-                        <span className="font-semibold">
-                          {" "}
-                          {doc.title || doc.metadata?.name || "Untitled"}
-                        </span>
-                        .
+                        {t('action_undone_delete').replace('{name}', doc.title || doc.metadata?.name || t('untitled'))}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={async () => await deleteDocument(doc.id)}
                         className="bg-destructive hover:bg-destructive/90 text-white"
                         disabled={actionsDisabled}
                       >
-                        Delete
+                        {t('delete')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

@@ -5,13 +5,15 @@ import { CreateCollectionDialog } from "./create-collection-dialog";
 import { useState } from "react";
 import { useRagContext } from "../providers/RAG";
 import { toast } from "sonner";
+import { useLanguage } from "@/providers/Language";
 
 export default function EmptyCollectionsState() {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const { createCollection, setSelectedCollection } = useRagContext();
 
   const handleSubmit = async (name: string, description: string) => {
-    const loadingToast = toast.loading("Creating collection", {
+    const loadingToast = toast.loading(t('creating_collection'), {
       richColors: true,
     });
     const newCollection = await createCollection(name, {
@@ -20,11 +22,11 @@ export default function EmptyCollectionsState() {
     toast.dismiss(loadingToast);
     if (newCollection) {
       setOpen(false);
-      toast.success("Collection created successfully", { richColors: true });
+      toast.success(t('collection_created'), { richColors: true });
       setSelectedCollection(newCollection);
     } else {
       toast.warning(
-        `Collection named '${name}' could not be created (likely already exists).`,
+        t('collection_exists').replace('{name}', name),
         {
           duration: 5000,
           richColors: true,
@@ -50,11 +52,10 @@ export default function EmptyCollectionsState() {
 
           <div className="space-y-3">
             <h3 className="text-3xl font-black tracking-tighter bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent">
-              No Collections Found
+              {t('no_collections')}
             </h3>
             <p className="text-muted-foreground font-medium leading-relaxed">
-              Experience the power of Gorbit RAG by creating your first collection.
-              Organize your documents in organization collections for efficient retrieval.
+              {t('rag_experience_message')}
             </p>
           </div>
 
@@ -68,7 +69,7 @@ export default function EmptyCollectionsState() {
                 className="mt-6 gap-2 bg-primary hover:bg-primary/80 text-primary-foreground font-bold shadow-[0_0_20px_rgba(var(--primary),0.3)] transition-all hover:scale-105 active:scale-95"
               >
                 <FolderPlus className="h-5 w-5" />
-                Initialize Orbital Node
+                {t('initialize_orbital_node')}
               </Button>
             }
           />
