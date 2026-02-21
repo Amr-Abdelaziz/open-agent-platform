@@ -13,8 +13,8 @@ import {
 } from "@/features/chat/components/configuration-sidebar/config-field";
 import { useSearchTools } from "@/hooks/use-search-tools";
 import { useMCPContext } from "@/providers/MCP";
-import { useAuthContext } from "@/providers/Auth";
-import React, { useEffect, useState } from "react";
+import { useOrganizationContext } from "@/providers/Organization";
+import React from "react";
 import {
   ConfigurableFieldAgentsMetadata,
   ConfigurableFieldMCPMetadata,
@@ -25,7 +25,7 @@ import _ from "lodash";
 import { useFetchPreselectedTools } from "@/hooks/use-fetch-preselected-tools";
 import { Controller, useFormContext } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserCircle } from "lucide-react";
+import { UserCircle, Building2 } from "lucide-react";
 
 export function AgentFieldsFormLoading() {
   return (
@@ -64,63 +64,33 @@ export function AgentFieldsForm({
     config: Record<string, any>;
   }>();
 
-  const { session } = useAuthContext();
-  const [personas, setPersonas] = useState<any[]>([]);
-  const [loadingPersonas, setLoadingPersonas] = useState(false);
-
-  useEffect(() => {
-    const fetchPersonas = async () => {
-      const ragApiUrl = process.env.NEXT_PUBLIC_RAG_API_URL;
-      if (!ragApiUrl || !session?.accessToken) return;
-      try {
-        setLoadingPersonas(true);
-        const response = await fetch(`${ragApiUrl}/api/profiles/admin/personas`, {
-          headers: { Authorization: `Bearer ${session.accessToken}` },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setPersonas(data.map((p: any) => ({
-            ...p,
-            tools: typeof p.tools === 'string' ? JSON.parse(p.tools) : (p.tools || []),
-            goals: typeof p.goals === 'string' ? JSON.parse(p.goals) : (p.goals || []),
-            capabilities: typeof p.capabilities === 'string' ? JSON.parse(p.capabilities) : (p.capabilities || []),
-          })));
-        }
-      } catch (error) {
-        console.error("Failed to fetch personas", error);
-      } finally {
-        setLoadingPersonas(false);
-      }
-    };
-    fetchPersonas();
-  }, [session]);
+  // ── Personas from Supabase via OrganizationProvider ─────────────────
+  const { personas, loading: loadingPersonas, buildSystemPrompt, departments } = useOrganizationContext();
 
   const handlePersonaChange = (personaTitle: string) => {
     const persona = personas.find(p => p.job_title === personaTitle);
-    if (persona) {
-      form.setValue("name", persona.job_title);
-      form.setValue("description", persona.persona_text);
+    if (!persona) return;
 
-      // Map Persona fields to a detailed professional system prompt
-      const goalsSection = persona.goals?.length
-        ? `\n\n## PRIMARY GOALS\n${persona.goals.map((g: string) => `- ${g}`).join('\n')}`
-        : '';
-      const capabilitiesSection = persona.capabilities?.length
-        ? `\n\n## CORE CAPABILITIES\n${persona.capabilities.map((c: string) => `- ${c}`).join('\n')}`
-        : '';
+    form.setValue("name", persona.job_title);
+    form.setValue("description", persona.persona_text);
 
-      const professionalPrompt = `# ROLE & CORE IDENTITY\n${persona.persona_text}${goalsSection}${capabilitiesSection}\n\n## OPERATING GUIDELINES\n- Maintain a professional, objective, and efficient tone.\n- Adhere strictly to the defined goals and capabilities.\n- Ensure all responses are high-quality, accurate, and tailored to the persona's expertise.`;
+    // Build org-aware Arabic system prompt using live Supabase data
+    const systemPrompt = buildSystemPrompt({
+      department: persona.department ?? "",
+      jobTitle: persona.job_title,
+      personaText: persona.persona_text,
+      goals: persona.goals ?? [],
+    });
 
-      form.setValue("config.system_prompt", professionalPrompt);
-      form.setValue("config.rag_context", persona.rag_context || "");
+    form.setValue("config.system_prompt", systemPrompt);
+    form.setValue("config.rag_context", persona.rag_context || "");
 
-      if (toolConfigurations[0]?.label) {
-        const currentToolsConfig = toolConfigurations[0].default || { tools: [] };
-        form.setValue(`config.${toolConfigurations[0].label}`, {
-          ...currentToolsConfig,
-          tools: persona.tools || [],
-        });
-      }
+    if (toolConfigurations[0]?.label) {
+      const currentToolsConfig = toolConfigurations[0].default || { tools: [] };
+      form.setValue(`config.${toolConfigurations[0].label}`, {
+        ...currentToolsConfig,
+        tools: persona.tools ?? [],
+      });
     }
   };
 
@@ -145,19 +115,30 @@ export function AgentFieldsForm({
         <p className="text-lg font-semibold tracking-tight">Agent Template (Registry)</p>
         <div className="flex w-full flex-col items-start justify-start gap-2">
           <Label htmlFor="persona_select">Select Persona</Label>
-          <Select onValueChange={handlePersonaChange}>
+          <Select onValueChange={handlePersonaChange} disabled={loadingPersonas}>
             <SelectTrigger id="persona_select" className="w-full">
-              <SelectValue placeholder={loadingPersonas ? "Loading personas..." : "Choose a persona to pre-fill..."} />
+              <SelectValue placeholder={loadingPersonas ? "جارٍ التحميل..." : personas.length === 0 ? "لا توجد شخصيات — أضف من لوحة الإدارة" : "اختر شخصية لملء النموذج تلقائياً..."} />
             </SelectTrigger>
             <SelectContent>
-              {personas.map(p => (
-                <SelectItem key={p.job_title} value={p.job_title}>
-                  <div className="flex items-center gap-2">
-                    <UserCircle className="size-4 text-blue-500" />
-                    <span>{p.job_title}</span>
-                  </div>
-                </SelectItem>
-              ))}
+              {personas.map(p => {
+                const dept = departments.find(d => d.id === p.department || d.name_ar === p.department);
+                return (
+                  <SelectItem key={p.job_title} value={p.job_title}>
+                    <div className="flex items-center gap-2">
+                      <UserCircle className="size-4 text-primary/70" />
+                      <div className="flex flex-col">
+                        <span className="font-medium">{p.job_title}</span>
+                        {dept && (
+                          <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                            <Building2 className="size-2.5" />
+                            {dept.name_ar}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </SelectItem>
+                );
+              })}
             </SelectContent>
           </Select>
           <p className="text-[10px] text-muted-foreground uppercase italic px-1">Selecting a persona will pre-fill name, description, and tools.</p>

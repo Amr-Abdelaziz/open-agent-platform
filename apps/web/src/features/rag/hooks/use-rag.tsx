@@ -48,6 +48,148 @@ export interface CrawlRequest {
   urls?: string[];
   source_display_name?: string;
   skip_discovery?: boolean;
+  browser_config?: Record<string, any>;
+  crawler_config?: Record<string, any>;
+}
+
+export interface CrawlJobPayload {
+  urls: string[];
+  browser_config?: Record<string, any>;
+  crawler_config?: Record<string, any>;
+  webhook_config?: {
+    webhook_url: string;
+    webhook_data_in_payload?: boolean;
+    webhook_headers?: Record<string, string>;
+  };
+}
+
+export interface CrawlTaskResponse {
+  task_id: string;
+}
+
+export interface CrawlMonitorRequest {
+  task_id: string;
+  url: string;
+  status: string;
+  created_at: string;
+  completed_at?: string;
+  error?: string;
+  result?: any;
+}
+
+export interface MonitorRequestsResponse {
+  active: CrawlMonitorRequest[];
+  completed: CrawlMonitorRequest[];
+}
+
+export interface CrawlJobStatus {
+  status: string;
+  result?: any;
+  error?: string;
+}
+
+export interface MonitorHealthResponse {
+  container: {
+    memory_percent: number;
+    cpu_percent: number;
+    network_sent_mb: number;
+    network_recv_mb: number;
+    uptime_seconds: number;
+  };
+  pool: {
+    permanent: { active: boolean; memory_mb: number };
+    hot: { count: number; memory_mb: number };
+    cold: { count: number; memory_mb: number };
+    total_memory_mb: number;
+  };
+  janitor: {
+    next_cleanup_estimate: string;
+    memory_pressure: string;
+  };
+}
+
+export interface CrawlMonitorWSMessage {
+  timestamp: number;
+  health: MonitorHealthResponse;
+  requests: {
+    active: CrawlMonitorRequest[];
+    completed: CrawlMonitorRequest[];
+  };
+  browsers: any[];
+  timeline: {
+    memory: { timestamps: number[], values: number[] };
+    requests: { timestamps: number[], values: number[] };
+    browsers: { timestamps: number[], values: { permanent: number, hot: number, cold: number }[] };
+  };
+  janitor: any[];
+  errors: any[];
+}
+
+export interface MonitorBrowsersResponse {
+  browsers: any[];
+  browser_pool_stats: any;
+}
+
+export interface MonitorEndpointStatsResponse {
+  [endpoint: string]: {
+    total_calls: number;
+    success_rate: number;
+    avg_latency: number;
+  };
+}
+
+export interface MonitorTimelineResponse {
+  timeline: any[];
+  metric: string;
+}
+
+export interface MonitorLogEntry {
+  timestamp: string;
+  message: string;
+  level: string;
+  [key: string]: any;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+}
+
+export interface MarkdownRequest {
+  url: string;
+  f?: "raw" | "fit" | "bm25" | "llm";
+  q?: string;
+  c?: string;
+  provider?: string;
+  temperature?: number;
+  base_url?: string;
+}
+
+export interface HTMLRequest {
+  url: string;
+}
+
+export interface ScreenshotRequest {
+  url: string;
+  screenshot_wait_for?: number;
+  output_path?: string;
+}
+
+export interface PDFRequest {
+  url: string;
+  output_path?: string;
+}
+
+export interface JSEndpointRequest {
+  url: string;
+  scripts: string[];
+}
+
+export interface AskCrawl4AiRequest {
+  context_type?: "code" | "doc" | "all";
+  query?: string;
+  score_ratio?: number;
+  max_results?: number;
 }
 
 export interface HybridChunkingTask {
@@ -128,6 +270,12 @@ function getApiUrlOrThrow(): URL {
     );
   }
   return new URL(process.env.NEXT_PUBLIC_RAG_API_URL);
+}
+
+function getCrawlApiUrlOrThrow(): URL {
+  // Always use our internal proxy route to avoid CORS issues
+  const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000';
+  return new URL(`${baseUrl}/api/crawl/proxy`);
 }
 
 export function getCollectionName(name: string | undefined) {
@@ -270,6 +418,7 @@ interface UseRagReturn {
 
   // Crawl operations
   startCrawl: (collectionId: string, request: CrawlRequest) => Promise<{ task_id: string }>;
+  startCrawlJob: (payload: CrawlJobPayload) => Promise<CrawlTaskResponse>;
   listCrawls: (collectionId: string) => Promise<CrawlTask[]>;
   getCrawlStatus: (taskId: string) => Promise<CrawlTask>;
   cancelCrawl: (taskId: string) => Promise<void>;
@@ -278,6 +427,29 @@ interface UseRagReturn {
   getPageContent: (pageId: string) => Promise<CrawledPage>;
   deletePage: (pageId: string) => Promise<void>;
   deleteSource: (sourceId: string) => Promise<void>;
+  getCrawlMonitorRequests: (status?: string, limit?: number) => Promise<MonitorRequestsResponse>;
+
+  // Extended Crawl4AI operations
+  getCrawlJobStatus: (taskId: string) => Promise<CrawlJobStatus>;
+  getLlmJobStatus: (taskId: string) => Promise<any>;
+  getMonitorHealth: () => Promise<MonitorHealthResponse>;
+  getMonitorBrowsers: () => Promise<MonitorBrowsersResponse>;
+  getMonitorEndpointsStats: () => Promise<MonitorEndpointStatsResponse>;
+  getMonitorTimeline: (metric?: string, window?: string) => Promise<MonitorTimelineResponse>;
+  getMonitorLogsJanitor: (limit?: number) => Promise<MonitorLogEntry[]>;
+  getMonitorLogsErrors: (limit?: number) => Promise<MonitorLogEntry[]>;
+  forceMonitorCleanup: () => Promise<void>;
+  killBrowser: (sig: string) => Promise<void>;
+  restartBrowser: (sig: string) => Promise<void>;
+  resetMonitorStats: () => Promise<void>;
+  getMarkdown: (request: MarkdownRequest) => Promise<any>;
+  generateHtml: (request: HTMLRequest) => Promise<any>;
+  generateScreenshot: (request: ScreenshotRequest) => Promise<any>;
+  generatePdf: (request: PDFRequest) => Promise<any>;
+  executeJs: (request: JSEndpointRequest) => Promise<any>;
+  crawlSync: (request: any) => Promise<any>;
+  askCrawl4Ai: (request: AskCrawl4AiRequest) => Promise<any>;
+  llmExtract: (request: any) => Promise<any>;
   // Storage
   browseStorage: (path?: string) => Promise<any>;
   downloadStorage: (path: string) => Promise<void>;
@@ -295,6 +467,8 @@ interface UseRagReturn {
   // Settings persistence
   getDoclingSettings: () => Promise<HybridChunkingOptions | undefined>;
   updateDoclingSettings: (settings: HybridChunkingOptions) => Promise<void>;
+  getCrawl4AiSettings: () => Promise<{ browser_config?: any, crawler_config?: any } | undefined>;
+  updateCrawl4AiSettings: (settings: { browser_config?: any, crawler_config?: any }) => Promise<void>;
 }
 
 /**
@@ -332,6 +506,47 @@ export function useRag(): UseRagReturn {
     } catch (error) {
       console.error("Error fetching docling settings:", error);
       return undefined;
+    }
+  }, [session?.user?.id]);
+
+  const getCrawl4AiSettings = useCallback(async () => {
+    if (!session?.user?.id) return;
+    try {
+      const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
+      const supabase = getSupabaseClient();
+      const { data, error } = await (supabase as any)
+        .from("user_settings")
+        .select("setting_value")
+        .eq("owner_id", session.user.id)
+        .eq("setting_key", "crawl4ai_settings")
+        .maybeSingle();
+
+      if (error) throw error;
+      return data?.setting_value as { browser_config?: any, crawler_config?: any } | undefined;
+    } catch (error) {
+      console.error("Error fetching Crawl4AI settings:", error);
+      return undefined;
+    }
+  }, [session?.user?.id]);
+
+  const updateCrawl4AiSettings = useCallback(async (settings: { browser_config?: any, crawler_config?: any }) => {
+    if (!session?.user?.id) return;
+    try {
+      const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
+      const supabase = getSupabaseClient();
+      const { error } = await (supabase as any)
+        .from("user_settings")
+        .upsert({
+          owner_id: session.user.id,
+          setting_key: "crawl4ai_settings",
+          setting_value: settings,
+          updated_at: new Date().toISOString(),
+        } as any);
+
+      if (error) throw error;
+    } catch (error) {
+      console.error("Error updating Crawl4AI settings:", error);
+      toast.error("Failed to save Crawl4AI settings");
     }
   }, [session?.user?.id]);
 
@@ -1041,6 +1256,396 @@ export function useRag(): UseRagReturn {
     [session]
   );
 
+  const startCrawlJob = useCallback(
+    async (payload: CrawlJobPayload): Promise<CrawlTaskResponse> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        throw new Error("No session found");
+      }
+
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/crawl/job`;
+
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `Failed to start crawl job: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getCrawlMonitorRequests = useCallback(
+    async (status: string = "all", limit: number = 50): Promise<MonitorRequestsResponse> => {
+      if (!session?.accessToken) {
+        toast.error("No session found");
+        throw new Error("No session found");
+      }
+
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/requests`;
+      url.searchParams.set("status", status);
+      url.searchParams.set("limit", limit.toString());
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `Failed to fetch monitor requests: ${response.statusText}`);
+      }
+
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getCrawlJobStatus = useCallback(
+    async (taskId: string): Promise<CrawlJobStatus> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/crawl/job/${taskId}`;
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to get crawl job status: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getLlmJobStatus = useCallback(
+    async (taskId: string): Promise<any> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/llm/job/${taskId}`;
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to get LLM job status: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getMonitorHealth = useCallback(
+    async (): Promise<MonitorHealthResponse> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/health`;
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to get monitor health: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getMonitorBrowsers = useCallback(
+    async (): Promise<MonitorBrowsersResponse> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/browsers`;
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to get monitor browsers: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getMonitorEndpointsStats = useCallback(
+    async (): Promise<MonitorEndpointStatsResponse> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/endpoints/stats`;
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to get monitor endpoints stats: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getMonitorTimeline = useCallback(
+    async (metric: string = "memory", window: string = "5m"): Promise<MonitorTimelineResponse> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/timeline`;
+      url.searchParams.set("metric", metric);
+      url.searchParams.set("window", window);
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to get monitor timeline: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getMonitorLogsJanitor = useCallback(
+    async (limit: number = 100): Promise<MonitorLogEntry[]> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/logs/janitor`;
+      url.searchParams.set("limit", limit.toString());
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to get janitor logs: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const getMonitorLogsErrors = useCallback(
+    async (limit: number = 100): Promise<MonitorLogEntry[]> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/logs/errors`;
+      url.searchParams.set("limit", limit.toString());
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to get error logs: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const forceMonitorCleanup = useCallback(
+    async (): Promise<void> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/actions/cleanup`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to force cleanup: ${response.statusText}`);
+    },
+    [session]
+  );
+
+  const killBrowser = useCallback(
+    async (sig: string): Promise<void> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/actions/kill_browser`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`
+        },
+        body: JSON.stringify({ sig }),
+      });
+      if (!response.ok) throw new Error(`Failed to kill browser: ${response.statusText}`);
+    },
+    [session]
+  );
+
+  const restartBrowser = useCallback(
+    async (sig: string): Promise<void> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/actions/restart_browser`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`
+        },
+        body: JSON.stringify({ sig }),
+      });
+      if (!response.ok) throw new Error(`Failed to restart browser: ${response.statusText}`);
+    },
+    [session]
+  );
+
+  const resetMonitorStats = useCallback(
+    async (): Promise<void> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/monitor/stats/reset`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to reset stats: ${response.statusText}`);
+    },
+    [session]
+  );
+
+  const getMarkdown = useCallback(
+    async (request: MarkdownRequest): Promise<any> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/md`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`
+        },
+        body: JSON.stringify(request),
+      });
+      if (!response.ok) throw new Error(`Failed to get markdown: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const generateHtml = useCallback(
+    async (request: HTMLRequest): Promise<any> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/html`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`
+        },
+        body: JSON.stringify(request),
+      });
+      if (!response.ok) throw new Error(`Failed to generate HTML: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const generateScreenshot = useCallback(
+    async (request: ScreenshotRequest): Promise<any> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/screenshot`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`
+        },
+        body: JSON.stringify(request),
+      });
+      if (!response.ok) throw new Error(`Failed to generate screenshot: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const generatePdf = useCallback(
+    async (request: PDFRequest): Promise<any> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/pdf`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`
+        },
+        body: JSON.stringify(request),
+      });
+      if (!response.ok) throw new Error(`Failed to generate PDF: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const executeJs = useCallback(
+    async (request: JSEndpointRequest): Promise<any> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/execute_js`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`
+        },
+        body: JSON.stringify(request),
+      });
+      if (!response.ok) throw new Error(`Failed to execute JS: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const crawlSync = useCallback(
+    async (request: any): Promise<any> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/crawl`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`
+        },
+        body: JSON.stringify(request),
+      });
+      if (!response.ok) throw new Error(`Failed to crawl: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const askCrawl4Ai = useCallback(
+    async (request: AskCrawl4AiRequest): Promise<any> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/ask`;
+      if (request.context_type) url.searchParams.set("context_type", request.context_type);
+      if (request.query) url.searchParams.set("query", request.query);
+      if (request.score_ratio !== undefined) url.searchParams.set("score_ratio", request.score_ratio.toString());
+      if (request.max_results !== undefined) url.searchParams.set("max_results", request.max_results.toString());
+
+      const response = await fetch(url.toString(), {
+        headers: { Authorization: `Bearer ${session.accessToken}` },
+      });
+      if (!response.ok) throw new Error(`Failed to ask Crawl4AI: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
+  const llmExtract = useCallback(
+    async (request: any): Promise<any> => {
+      if (!session?.accessToken) throw new Error("No session found");
+      const url = getCrawlApiUrlOrThrow();
+      url.pathname = `/api/crawl/proxy/llm/extract`;
+      const response = await fetch(url.toString(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.accessToken}`
+        },
+        body: JSON.stringify(request),
+      });
+      if (!response.ok) throw new Error(`Failed to perform LLM extraction: ${response.statusText}`);
+      return await response.json();
+    },
+    [session]
+  );
+
   const listCrawls = useCallback(
     async (collectionId: string): Promise<CrawlTask[]> => {
       if (!session?.accessToken) {
@@ -1453,6 +2058,417 @@ export function useRag(): UseRagReturn {
     [collections, session],
   );
 
+  const getStorageFile = useCallback(async (path: string): Promise<Blob> => {
+    if (!session?.accessToken) {
+      toast.error("No session found");
+      throw new Error("No session found");
+    }
+
+    const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase.storage
+      .from("documents")
+      .download(path);
+
+    if (error) {
+      throw new Error(`Failed to fetch from Supabase: ${error.message}`);
+    }
+
+    return data;
+  }, [session]);
+
+  const browseStorage = useCallback(async (path: string = "") => {
+    if (!session?.accessToken) {
+      toast.error("No session found");
+      return [];
+    }
+
+    const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase.storage
+      .from("documents")
+      .list(path);
+
+    if (error) {
+      throw new Error(`Failed to list storage: ${error.message}`);
+    }
+
+    return data || [];
+  }, [session]);
+
+  const downloadStorage = useCallback(async (path: string) => {
+    if (!session?.accessToken) {
+      toast.error("No session found");
+      return;
+    }
+
+    const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase.storage
+      .from("documents")
+      .download(path);
+
+    if (error) {
+      throw new Error(`Failed to download from Supabase: ${error.message}`);
+    }
+
+    const downloadUrl = window.URL.createObjectURL(data);
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.setAttribute("download", path.split("/").pop() || "file");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(downloadUrl);
+  }, [session]);
+
+  const deleteStorageFile = useCallback(async (path: string) => {
+    if (!session?.accessToken) {
+      toast.error("No session found");
+      return;
+    }
+
+    const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase.storage
+      .from("documents")
+      .remove([path]);
+
+    if (error) {
+      throw new Error(`Failed to delete from Supabase: ${error.message}`);
+    }
+  }, [session]);
+
+  const uploadToStorage = useCallback(async (file: File, path: string = "") => {
+    if (!session?.accessToken) {
+      toast.error("No session found");
+      return;
+    }
+
+    const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
+    const supabase = getSupabaseClient();
+
+    const fullPath = path ? (path.endsWith("/") ? `${path}${file.name}` : `${path}/${file.name}`) : file.name;
+
+    const { error } = await supabase.storage
+      .from("documents")
+      .upload(fullPath, file, {
+        upsert: true,
+      });
+
+    if (error) {
+      throw new Error(`Failed to upload to Supabase: ${error.message}`);
+    }
+  }, [session]);
+
+  const listHybridChunkingTasks = useCallback(async (collectionId: string): Promise<HybridChunkingTask[]> => {
+    const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await ((supabase as any)
+      .from("hybrid_chunking_tasks")
+      .select("*")
+      .eq("collection_id", collectionId)
+      .order("created_at", { ascending: false }) as any);
+
+    if (error) {
+      throw new Error(`Failed to fetch tasks: ${error.message}`);
+    }
+
+    const tasks = data as HybridChunkingTask[];
+
+    // Sync active tasks in the background
+    const activeTasks = tasks.filter(t =>
+      ["pending", "processing"].includes(t.status?.toLowerCase() || "")
+    );
+
+    if (activeTasks.length > 0 && session?.accessToken) {
+      activeTasks.forEach(async (task) => {
+        const gorbitTaskId = task.metadata?.gorbit_task?.task_id;
+        if (!gorbitTaskId) return;
+
+        try {
+          const gorbitUrl = `http://gorbit:5001/v1/status/poll/${gorbitTaskId}`;
+          const response = await fetch(gorbitUrl, {
+            headers: {
+              Authorization: `Bearer ${session.accessToken}`,
+            },
+          });
+
+          if (response.ok) {
+            const gorbitStatusData = await response.json();
+            const gorbitStatus = gorbitStatusData.task_status?.toLowerCase() || "";
+
+            let newStatus = task.status;
+            if (gorbitStatus === "completed" || gorbitStatus === "success") {
+              newStatus = "completed";
+            } else if (gorbitStatus === "failed") {
+              newStatus = "failed";
+            }
+
+            if (newStatus !== (task.status?.toLowerCase() || "") || (newStatus === "completed" && !task.metadata?.ingested)) {
+              let gorbitResultData = task.metadata?.gorbit_result;
+              let ingested = task.metadata?.ingested || false;
+
+              if (newStatus === "completed" && !gorbitResultData) {
+                try {
+                  const resultUrl = `http://gorbit:5001/v1/result/${gorbitTaskId}`;
+                  const resltResponse = await fetch(resultUrl, {
+                    headers: {
+                      Authorization: `Bearer ${session.accessToken}`,
+                    },
+                  });
+                  if (resltResponse.ok) {
+                    gorbitResultData = await resltResponse.json();
+                  }
+                } catch (resError) {
+                  console.error(`Failed to fetch result for task ${task.task_id}:`, resError);
+                }
+              }
+
+              if (newStatus === "completed" && gorbitResultData && !ingested) {
+                try {
+                  const docIdMap: Record<string, string> = {};
+                  const documentsFromGorbit = gorbitResultData.documents || [];
+                  const chunksFromGorbit = gorbitResultData.chunks || [];
+
+                  for (const doc of documentsFromGorbit) {
+                    const docId = uuidv4();
+                    const filename = doc.content?.filename || "Untitled";
+                    docIdMap[filename] = docId;
+
+                    await (supabase as any)
+                      .from("documents")
+                      .insert({
+                        id: docId,
+                        collection_id: task.collection_id,
+                        owner_id: task.owner_id,
+                        title: filename,
+                        source: task.file_path,
+                        content: (doc.content?.md_content || doc.content?.text_content || doc.content?.html_content || "").slice(0, 100000),
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString(),
+                        metadata: {
+                          task_id: task.task_id,
+                          ingested_from: "hybrid_chunking",
+                          embedding_status: "pending",
+                          ...doc.content?.metadata
+                        }
+                      });
+                  }
+
+                  const uniqueChunkFilenames = new Set(chunksFromGorbit.map((c: any) => c.filename));
+                  for (const fname of Array.from(uniqueChunkFilenames)) {
+                    if (fname && !docIdMap[fname as string]) {
+                      const docId = uuidv4();
+                      docIdMap[fname as string] = docId;
+                      await (supabase as any)
+                        .from("documents")
+                        .insert({
+                          id: docId,
+                          collection_id: task.collection_id,
+                          owner_id: task.owner_id,
+                          title: String(fname),
+                          source: task.file_path,
+                          content: `Chunks for ${fname}`,
+                          created_at: new Date().toISOString(),
+                          updated_at: new Date().toISOString(),
+                          metadata: {
+                            task_id: task.task_id,
+                            ingested_from: "hybrid_chunking",
+                            embedding_status: "pending",
+                            dummy: true
+                          }
+                        });
+                    }
+                  }
+
+                  const chunksToInsert = chunksFromGorbit
+                    .filter((chunk: any) => chunk.text && chunk.text.trim())
+                    .map((chunk: any) => {
+                      const documentId = docIdMap[chunk.filename] || Object.values(docIdMap)[0];
+                      return {
+                        id: uuidv4(),
+                        document_id: documentId,
+                        content: chunk.text,
+                        chunk_index: chunk.chunk_index,
+                        token_count: chunk.num_tokens || 0,
+                        metadata: {
+                          ...chunk.metadata,
+                          headings: chunk.headings,
+                          captions: chunk.captions,
+                          page_numbers: chunk.page_numbers,
+                          filename: chunk.filename,
+                          task_id: task.task_id
+                        }
+                      };
+                    })
+                    .filter((c: any) => c.document_id);
+
+                  if (chunksToInsert.length > 0) {
+                    const { error: chunkError } = await (supabase as any)
+                      .from("chunks")
+                      .insert(chunksToInsert);
+
+                    if (chunkError) {
+                      for (const chunk of chunksToInsert) {
+                        await (supabase as any).from("chunks").insert(chunk);
+                      }
+                    }
+                  }
+
+                  ingested = true;
+
+                  for (const docId of Object.values(docIdMap)) {
+                    try {
+                      const embedUrl = getApiUrlOrThrow();
+                      embedUrl.pathname = `/collections/${task.collection_id}/documents/${docId}/embed`;
+
+                      fetch(embedUrl.toString(), {
+                        method: "POST",
+                        headers: {
+                          Authorization: `Bearer ${session.accessToken}`,
+                        },
+                      }).then(async (resp) => {
+                        if (resp.ok) {
+                          const { data: currentDoc } = await (supabase as any)
+                            .from("documents")
+                            .select("metadata")
+                            .eq("id", docId)
+                            .single();
+
+                          await (supabase as any)
+                            .from("documents")
+                            .update({
+                              metadata: {
+                                ...(currentDoc?.metadata || {}),
+                                embedding_status: "completed"
+                              }
+                            })
+                            .eq("id", docId);
+                        }
+                      });
+                    } catch (err) {
+                      console.error("Failed to trigger embedding for doc:", docId, err);
+                    }
+                  }
+
+                  const updatedDocs = await listDocuments(task.collection_id);
+                  setDocuments(updatedDocs);
+                } catch (ingestError) {
+                  console.error("Ingestion failed:", ingestError);
+                }
+              }
+
+              await ((supabase as any)
+                .from("hybrid_chunking_tasks")
+                .update({
+                  status: newStatus,
+                  metadata: {
+                    ...task.metadata,
+                    last_sync: new Date().toISOString(),
+                    gorbit_response: gorbitStatusData,
+                    gorbit_result: gorbitResultData,
+                    ingested: ingested
+                  }
+                } as any)
+                .eq("task_id", task.task_id));
+            }
+          }
+        } catch (err) {
+          console.error(`Failed to sync task ${task.task_id}:`, err);
+        }
+      });
+    }
+
+    return tasks;
+  }, [session, listDocuments, setDocuments]);
+
+  const getTaskStatus = useCallback(async (taskId: string) => {
+    const gorbitUrl = `http://gorbit:5001/v1/status/poll/${taskId}`;
+
+    const response = await fetch(gorbitUrl, {
+      headers: {
+        Authorization: `Bearer ${session?.accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch task status: ${response.statusText}`);
+    }
+
+    return await response.json();
+  }, [session]);
+
+  const getTaskResult = useCallback(async (taskId: string) => {
+    const gorbitUrl = `http://gorbit:5001/v1/result/${taskId}`;
+
+    const response = await fetch(gorbitUrl, {
+      headers: {
+        Authorization: `Bearer ${session?.accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch task result: ${response.statusText}`);
+    }
+
+    return await response.json();
+  }, [session]);
+
+  const deleteHybridChunkingTask = useCallback(async (taskId: string) => {
+    const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
+    const supabase = getSupabaseClient();
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    if (!currentSession) throw new Error("Not authenticated");
+
+    const { error } = await (supabase as any)
+      .from("hybrid_chunking_tasks")
+      .delete()
+      .eq("task_id", taskId);
+
+    if (error) throw error;
+    toast.success("Task deleted successfully");
+  }, []);
+
+  const clearRunningTasks = useCallback(async () => {
+    if (!session?.accessToken) throw new Error("Not authenticated");
+    const gorbitUrl = "http://gorbit:5001/v1/clear/converters";
+
+    const response = await fetch(gorbitUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to clear running tasks: ${response.statusText}`);
+    }
+    toast.success("Running tasks cleared");
+  }, [session]);
+
+  const clearResults = useCallback(async () => {
+    if (!session?.accessToken) throw new Error("Not authenticated");
+    const gorbitUrl = "http://gorbit:5001/v1/clear/results";
+
+    const response = await fetch(gorbitUrl, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to clear results: ${response.statusText}`);
+    }
+    toast.success("Processing results cleared");
+  }, [session]);
+
   // --- Return combined state and functions ---
   return {
     // Misc
@@ -1492,6 +2508,7 @@ export function useRag(): UseRagReturn {
 
     // Crawl
     startCrawl,
+    startCrawlJob,
     listCrawls,
     getCrawlStatus,
     cancelCrawl,
@@ -1500,447 +2517,50 @@ export function useRag(): UseRagReturn {
     getPageContent,
     deletePage,
     deleteSource,
+    getCrawlMonitorRequests,
+
+    // Extended Crawl4AI
+    getCrawlJobStatus,
+    getLlmJobStatus,
+    getMonitorHealth,
+    getMonitorBrowsers,
+    getMonitorEndpointsStats,
+    getMonitorTimeline,
+    getMonitorLogsJanitor,
+    getMonitorLogsErrors,
+    forceMonitorCleanup,
+    killBrowser,
+    restartBrowser,
+    resetMonitorStats,
+    getMarkdown,
+    generateHtml,
+    generateScreenshot,
+    generatePdf,
+    executeJs,
+    crawlSync,
+    askCrawl4Ai,
+    llmExtract,
 
     // Storage
-    getStorageFile: useCallback(async (path: string): Promise<Blob> => {
-      if (!session?.accessToken) {
-        toast.error("No session found");
-        throw new Error("No session found");
-      }
+    browseStorage,
+    downloadStorage,
+    getStorageFile,
+    deleteStorageFile,
+    uploadToStorage,
 
-      const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
-      const supabase = getSupabaseClient();
-
-      const { data, error } = await supabase.storage
-        .from('documents')
-        .download(path);
-
-      if (error) {
-        throw new Error(`Failed to fetch from Supabase: ${error.message}`);
-      }
-
-      return data;
-    }, [session]),
-    browseStorage: useCallback(async (path: string = "") => {
-      if (!session?.accessToken) {
-        toast.error("No session found");
-        return [];
-      }
-
-      const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
-      const supabase = getSupabaseClient();
-
-      const { data, error } = await supabase.storage
-        .from('documents')
-        .list(path);
-
-      if (error) {
-        throw new Error(`Failed to list storage: ${error.message}`);
-      }
-
-      return data || [];
-    }, [session]),
-
-    downloadStorage: useCallback(async (path: string) => {
-      if (!session?.accessToken) {
-        toast.error("No session found");
-        return;
-      }
-
-      const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
-      const supabase = getSupabaseClient();
-
-      const { data, error } = await supabase.storage
-        .from('documents')
-        .download(path);
-
-      if (error) {
-        throw new Error(`Failed to download from Supabase: ${error.message}`);
-      }
-
-      const downloadUrl = window.URL.createObjectURL(data);
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.setAttribute('download', path.split('/').pop() || 'file');
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(downloadUrl);
-    }, [session]),
-
-    deleteStorageFile: useCallback(async (path: string) => {
-      if (!session?.accessToken) {
-        toast.error("No session found");
-        return;
-      }
-
-      const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
-      const supabase = getSupabaseClient();
-
-      const { data, error } = await supabase.storage
-        .from('documents')
-        .remove([path]);
-
-      if (error) {
-        throw new Error(`Failed to delete from Supabase: ${error.message}`);
-      }
-    }, [session]),
-
-    uploadToStorage: useCallback(async (file: File, path: string = "") => {
-      if (!session?.accessToken) {
-        toast.error("No session found");
-        return;
-      }
-
-      const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
-      const supabase = getSupabaseClient();
-
-      // Ensure the path ends with the filename
-      const fullPath = path ? (path.endsWith('/') ? `${path}${file.name}` : `${path}/${file.name}`) : file.name;
-
-      const { data, error } = await supabase.storage
-        .from('documents')
-        .upload(fullPath, file, {
-          upsert: true
-        });
-
-      if (error) {
-        throw new Error(`Failed to upload to Supabase: ${error.message}`);
-      }
-    }, [session]),
-
+    // Hybrid Chunking
     startHybridChunking,
+    listHybridChunkingTasks,
+    getTaskStatus,
+    getTaskResult,
+    deleteHybridChunkingTask,
+    clearRunningTasks,
+    clearResults,
 
-    listHybridChunkingTasks: useCallback(async (collectionId: string): Promise<HybridChunkingTask[]> => {
-      const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
-      const supabase = getSupabaseClient();
-
-      const { data, error } = await ((supabase as any)
-        .from("hybrid_chunking_tasks")
-        .select("*")
-        .eq("collection_id", collectionId)
-        .order("created_at", { ascending: false }) as any);
-
-      if (error) {
-        throw new Error(`Failed to fetch tasks: ${error.message}`);
-      }
-
-      const tasks = data as HybridChunkingTask[];
-
-      // Sync active tasks in the background
-      const activeTasks = tasks.filter(t =>
-        ["pending", "processing"].includes(t.status.toLowerCase())
-      );
-
-      if (activeTasks.length > 0 && session?.accessToken) {
-        // We trigger the sync in the background so we don't block the UI
-        // The next poll will pick up the updated status from the database
-        activeTasks.forEach(async (task) => {
-          const gorbitTaskId = task.metadata?.gorbit_task?.task_id;
-          if (!gorbitTaskId) return;
-
-          try {
-            const gorbitUrl = `http://gorbit:5001/v1/status/poll/${gorbitTaskId}`;
-            const response = await fetch(gorbitUrl, {
-              headers: {
-                Authorization: `Bearer ${session.accessToken}`,
-              },
-            });
-
-            if (response.ok) {
-              const gorbitStatusData = await response.json();
-              const gorbitStatus = gorbitStatusData.task_status.toLowerCase();
-
-              let newStatus = task.status;
-              if (gorbitStatus === "completed" || gorbitStatus === "success") {
-                newStatus = "completed";
-              } else if (gorbitStatus === "failed") {
-                newStatus = "failed";
-              }
-
-              if (newStatus !== task.status.toLowerCase() || (newStatus === "completed" && !task.metadata?.ingested)) {
-                let gorbitResultData = task.metadata?.gorbit_result;
-                let ingested = task.metadata?.ingested || false;
-
-                // 1. Fetch result if missing
-                if (newStatus === "completed" && !gorbitResultData) {
-                  try {
-                    const resultUrl = `http://gorbit:5001/v1/result/${gorbitTaskId}`;
-                    const resltResponse = await fetch(resultUrl, {
-                      headers: {
-                        Authorization: `Bearer ${session.accessToken}`,
-                      },
-                    });
-                    if (resltResponse.ok) {
-                      gorbitResultData = await resltResponse.json();
-                      console.log(`Fetched result for task ${task.task_id}`);
-                    }
-                  } catch (resError) {
-                    console.error(`Failed to fetch result for task ${task.task_id}:`, resError);
-                  }
-                }
-
-                // 2. Ingest if completed and not yet ingested
-                if (newStatus === "completed" && gorbitResultData && !ingested) {
-                  console.log(`Starting DB ingestion for task ${task.task_id}...`);
-                  try {
-                    const docIdMap: Record<string, string> = {};
-
-                    // A. Documents & Filename Mapping
-                    const documentsFromGorbit = gorbitResultData.documents || [];
-                    const chunksFromGorbit = gorbitResultData.chunks || [];
-
-                    for (const doc of documentsFromGorbit) {
-                      const docId = uuidv4();
-                      const filename = doc.content?.filename || "Untitled";
-                      docIdMap[filename] = docId;
-
-                      const { error: docError } = await (supabase as any)
-                        .from("documents")
-                        .insert({
-                          id: docId,
-                          collection_id: task.collection_id,
-                          owner_id: task.owner_id,
-                          title: filename,
-                          source: task.file_path,
-                          content: (doc.content?.md_content || doc.content?.text_content || doc.content?.html_content || "").slice(0, 100000), // Safety truncation
-                          created_at: new Date().toISOString(),
-                          updated_at: new Date().toISOString(),
-                          metadata: {
-                            task_id: task.task_id,
-                            ingested_from: "hybrid_chunking",
-                            embedding_status: "pending",
-                            ...doc.content?.metadata
-                          }
-                        });
-
-                      if (docError) console.error("Error inserting document:", docError);
-                    }
-
-                    // Ensure all filenames present in chunks have a document row (fallback if include_converted_doc was false)
-                    const uniqueChunkFilenames = new Set(chunksFromGorbit.map((c: any) => c.filename));
-                    for (const fname of Array.from(uniqueChunkFilenames)) {
-                      if (fname && !docIdMap[fname as string]) {
-                        const docId = uuidv4();
-                        docIdMap[fname as string] = docId;
-                        console.log(`Creating fallback document entry for ${fname}`);
-                        await (supabase as any)
-                          .from("documents")
-                          .insert({
-                            id: docId,
-                            collection_id: task.collection_id,
-                            owner_id: task.owner_id,
-                            title: String(fname),
-                            source: task.file_path,
-                            content: `Chunks for ${fname}`,
-                            created_at: new Date().toISOString(),
-                            updated_at: new Date().toISOString(),
-                            metadata: {
-                              task_id: task.task_id,
-                              ingested_from: "hybrid_chunking",
-                              embedding_status: "pending",
-                              dummy: true
-                            }
-                          });
-                      }
-                    }
-
-                    // B. Chunks Mapping
-                    const chunksToInsert = chunksFromGorbit
-                      .filter((chunk: any) => chunk.text && chunk.text.trim()) // content cannot be empty
-                      .map((chunk: any) => {
-                        const documentId = docIdMap[chunk.filename] || Object.values(docIdMap)[0];
-
-                        return {
-                          id: uuidv4(),
-                          document_id: documentId,
-                          content: chunk.text,
-                          chunk_index: chunk.chunk_index,
-                          token_count: chunk.num_tokens || 0,
-                          metadata: {
-                            ...chunk.metadata,
-                            headings: chunk.headings,
-                            captions: chunk.captions,
-                            page_numbers: chunk.page_numbers,
-                            filename: chunk.filename,
-                            task_id: task.task_id
-                          }
-                        };
-                      })
-                      .filter((c: any) => c.document_id); // final safety check for NOT NULL constraint
-
-                    if (chunksToInsert.length > 0) {
-                      console.log(`Inserting ${chunksToInsert.length} chunks...`);
-                      const { error: chunkError } = await (supabase as any)
-                        .from("chunks")
-                        .insert(chunksToInsert);
-
-                      if (chunkError) {
-                        console.error("Error inserting chunks batch:", chunkError);
-                        // Fallback to individual inserts if batch fails
-                        for (const chunk of chunksToInsert) {
-                          const { error: singleError } = await (supabase as any).from("chunks").insert(chunk);
-                          if (singleError) console.error("Failed to insert single chunk:", singleError);
-                        }
-                      }
-                    }
-
-                    ingested = true;
-                    console.log(`Ingestion complete for task ${task.task_id}: ${Object.keys(docIdMap).length} docs, ${chunksToInsert.length} chunks.`);
-
-                    // 4. Trigger Embedding for each ingested document
-                    for (const docId of Object.values(docIdMap)) {
-                      try {
-                        const embedUrl = getApiUrlOrThrow();
-                        embedUrl.pathname = `/collections/${task.collection_id}/documents/${docId}/embed`;
-
-                        console.log(`Triggering auto-embedding for doc ${docId} at ${embedUrl.toString()}`);
-
-                        fetch(embedUrl.toString(), {
-                          method: "POST",
-                          headers: {
-                            Authorization: `Bearer ${session.accessToken}`,
-                          },
-                        }).then(async (resp) => {
-                          if (resp.ok) {
-                            // Fetch existing to preserve other metadata
-                            const { data: currentDoc } = await (supabase as any)
-                              .from("documents")
-                              .select("metadata")
-                              .eq("id", docId)
-                              .single();
-
-                            await (supabase as any)
-                              .from("documents")
-                              .update({
-                                metadata: {
-                                  ...(currentDoc?.metadata || {}),
-                                  embedding_status: "completed"
-                                }
-                              })
-                              .eq("id", docId);
-                          }
-                        }).catch(e => console.error(`Embedding trigger failed for ${docId}:`, e));
-                      } catch (err) {
-                        console.error("Failed to trigger embedding for doc:", docId, err);
-                      }
-                    }
-
-                    // 5. Refresh document list
-                    const updatedDocs = await listDocuments(task.collection_id);
-                    setDocuments(updatedDocs);
-                  } catch (ingestError) {
-                    console.error("Ingestion failed:", ingestError);
-                  }
-                }
-
-                // 3. Update task status and state in our DB
-                await ((supabase as any)
-                  .from("hybrid_chunking_tasks")
-                  .update({
-                    status: newStatus,
-                    metadata: {
-                      ...task.metadata,
-                      last_sync: new Date().toISOString(),
-                      gorbit_response: gorbitStatusData,
-                      gorbit_result: gorbitResultData,
-                      ingested: ingested
-                    }
-                  } as any)
-                  .eq("task_id", task.task_id));
-              }
-            }
-          } catch (err) {
-            console.error(`Failed to sync task ${task.task_id}:`, err);
-          }
-        });
-      }
-
-      return tasks;
-    }, [session]),
-
-    getTaskStatus: useCallback(async (taskId: string) => {
-      const gorbitUrl = `http://gorbit:5001/v1/status/poll/${taskId}`;
-
-      const response = await fetch(gorbitUrl, {
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch task status: ${response.statusText}`);
-      }
-
-      return await response.json();
-    }, [session]),
-
-    getTaskResult: useCallback(async (taskId: string) => {
-      const gorbitUrl = `http://gorbit:5001/v1/result/${taskId}`;
-
-      const response = await fetch(gorbitUrl, {
-        headers: {
-          Authorization: `Bearer ${session?.accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch task result: ${response.statusText}`);
-      }
-
-      return await response.json();
-    }, [session]),
-
-    deleteHybridChunkingTask: useCallback(async (taskId: string) => {
-      const { getSupabaseClient } = await import("@/lib/auth/supabase-client");
-      const supabase = getSupabaseClient();
-      const { data: { session: currentSession } } = await supabase.auth.getSession();
-      if (!currentSession) throw new Error("Not authenticated");
-
-      const { error } = await (supabase as any)
-        .from("hybrid_chunking_tasks")
-        .delete()
-        .eq("task_id", taskId);
-
-      if (error) throw error;
-      toast.success("Task deleted successfully");
-    }, []),
-
-    clearRunningTasks: useCallback(async () => {
-      if (!session?.accessToken) throw new Error("Not authenticated");
-      const gorbitUrl = "http://gorbit:5001/v1/clear/converters";
-
-      const response = await fetch(gorbitUrl, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to clear running tasks: ${response.statusText}`);
-      }
-      toast.success("Running tasks cleared");
-    }, [session]),
-
-    clearResults: useCallback(async () => {
-      if (!session?.accessToken) throw new Error("Not authenticated");
-      const gorbitUrl = "http://gorbit:5001/v1/clear/results";
-
-      const response = await fetch(gorbitUrl, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to clear results: ${response.statusText}`);
-      }
-      toast.success("Processing results cleared");
-    }, [session]),
-
+    // Settings persistence
     getDoclingSettings,
     updateDoclingSettings,
+    getCrawl4AiSettings,
+    updateCrawl4AiSettings,
   };
 }

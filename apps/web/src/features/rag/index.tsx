@@ -20,7 +20,8 @@ import { Card } from "@/components/ui/card";
 import { DocumentConverter } from "./components/document-converter";
 import { PdfToMarkdown } from "./components/pdf-to-markdown";
 import { HybridChunkingStatusList } from "./components/hybrid-chunking-status-list";
-import { LayoutGrid, HardDrive, Activity, FileScan, FileText } from "lucide-react";
+import { Crawl4AiDashboard } from "./components/crawl4ai-dashboard";
+import { LayoutGrid, HardDrive, Activity, FileScan, FileText, Bug } from "lucide-react";
 import { useLanguage } from "@/providers/Language";
 
 export default function RAGInterface() {
@@ -53,9 +54,9 @@ export default function RAGInterface() {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Sidebar Section */}
-        <div className={`${(activeTab === 'storage' || activeTab === 'tasks' || activeTab === 'converter' || activeTab === 'pdf-to-md') ? 'md:col-span-3' : 'md:col-span-1'} space-y-6 transition-all duration-300`}>
+        <div className={`${(activeTab === 'storage' || activeTab === 'tasks' || activeTab === 'converter' || activeTab === 'pdf-to-md' || activeTab === 'crawl4ai') ? 'md:col-span-3' : 'md:col-span-1'} space-y-6 transition-all duration-300`}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`grid w-full grid-cols-5 bg-background/20 backdrop-blur-md border border-white/5 p-1 h-11 mb-4 rounded-xl ${(activeTab === 'storage' || activeTab === 'tasks' || activeTab === 'converter' || activeTab === 'pdf-to-md') ? 'w-full max-w-4xl mx-auto' : 'w-full'}`}>
+            <TabsList className={`grid w-full grid-cols-6 bg-background/20 backdrop-blur-md border border-white/5 p-1 h-11 mb-4 rounded-xl ${(activeTab === 'storage' || activeTab === 'tasks' || activeTab === 'converter' || activeTab === 'pdf-to-md' || activeTab === 'crawl4ai') ? 'w-full max-w-5xl mx-auto' : 'w-full'}`}>
               <TabsTrigger value="collections" className="gap-2 data-[state=active]:bg-primary/10 data-[state=active]:text-primary rounded-lg transition-all">
                 <LayoutGrid className="size-4" />
                 {t('collections')}
@@ -75,6 +76,10 @@ export default function RAGInterface() {
               <TabsTrigger value="pdf-to-md" className="gap-2 data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-500 rounded-lg transition-all">
                 <FileText className="size-4" />
                 {t('pdf_to_md')}
+              </TabsTrigger>
+              <TabsTrigger value="crawl4ai" className="gap-2 data-[state=active]:bg-green-500/10 data-[state=active]:text-green-500 rounded-lg transition-all">
+                <Bug className="size-4" />
+                {t('crawl4ai')}
               </TabsTrigger>
             </TabsList>
 
@@ -120,6 +125,12 @@ export default function RAGInterface() {
             <TabsContent value="pdf-to-md" className="mt-0 focus-visible:outline-none">
               <div className={activeTab === 'pdf-to-md' ? 'max-w-6xl mx-auto' : ''}>
                 <PdfToMarkdown />
+              </div>
+            </TabsContent>
+
+            <TabsContent value="crawl4ai" className="mt-0 focus-visible:outline-none">
+              <div className={activeTab === 'crawl4ai' ? 'max-w-4xl mx-auto' : ''}>
+                <Crawl4AiDashboard />
               </div>
             </TabsContent>
           </Tabs>

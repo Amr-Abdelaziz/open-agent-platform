@@ -1,6 +1,6 @@
-import { useAuthContext } from "@/providers/Auth";
 import { useConfigStore } from "@/features/chat/hooks/use-config-store";
 import { toast } from "sonner";
+import { fetchOrgUserProfiles } from "@/lib/org-api";
 
 export interface UserProfile {
     user_id: string;
@@ -93,25 +93,63 @@ export async function fetchPersonas(accessToken: string): Promise<Persona[]> {
 }
 
 /**
- * Injects the persona and goals into the agent configuration.
+ * Injects the persona and org-aware context into the agent configuration.
+ * Accepts optional helper functions from OrganizationProvider so we avoid
+ * any dependency on the static mock data at call time.
  */
-export function injectPersona(agentId: string, profile: UserProfile) {
+export function injectPersona(
+    agentId: string,
+    profile: UserProfile,
+    options?: {
+        buildSystemPrompt?: (params: {
+            department: string;
+            jobTitle: string;
+            personaText?: string;
+            goals?: string[];
+        }) => string;
+        getRagCollections?: (department: string, jobTitle: string) => string[];
+    }
+) {
     const { updateConfig } = useConfigStore.getState();
 
-    // Assuming the system prompt field is named "System Prompt" or "system_prompt"
-    // This depends on the agent's schema. We'll try common names.
-    updateConfig(agentId, "System Prompt", profile.system_prompt);
-    updateConfig(agentId, "system_prompt", profile.system_prompt);
+    // Prefer live helpers from OrganizationProvider; fall back to basic prompt
+    const systemPrompt = options?.buildSystemPrompt
+        ? options.buildSystemPrompt({
+            department: profile.department,
+            jobTitle: profile.job_title,
+            personaText: profile.system_prompt,
+        })
+        : profile.system_prompt ?? "";
 
-    // Injection of RAG Context (Provisioning)
-    if (profile.rag_collection_id || profile.rag_context) {
-        const collection = profile.rag_collection_id || profile.rag_context;
-        // Set the collection for RAG
-        updateConfig(agentId, "collections", [collection]);
-        updateConfig(agentId, "rag_collections", [collection]);
+    updateConfig(agentId, "System Prompt", systemPrompt);
+    updateConfig(agentId, "system_prompt", systemPrompt);
+
+    const ragCollections = options?.getRagCollections
+        ? options.getRagCollections(profile.department, profile.job_title)
+        : [profile.rag_collection_id ?? profile.rag_context].filter(Boolean) as string[];
+
+    const primaryCollection = profile.rag_collection_id || profile.rag_context || ragCollections[0];
+
+    updateConfig(agentId, "collections", ragCollections);
+    updateConfig(agentId, "rag_collections", ragCollections);
+    if (primaryCollection) {
+        updateConfig(agentId, "rag_context", primaryCollection);
     }
 
     toast.success(`تم تلقيم الشخصية: ${profile.job_title}`, {
-        description: `تم تحديث أهداف الوكيل وربط البيانات: ${profile.rag_context}`,
+        description: `تم تحديث السياق المؤسسي وربط ${ragCollections.length} مجموعات معرفية`,
     });
+}
+
+/**
+ * Fetch the current user's org profile from Supabase (org_user_profiles table).
+ * Returns null if the user hasn't been registered yet.
+ */
+export async function fetchMyOrgProfile(userId: string): Promise<import("@/lib/org-api").OrgUserProfile | null> {
+    try {
+        const all = await fetchOrgUserProfiles();
+        return all.find(p => p.user_id === userId) ?? null;
+    } catch {
+        return null;
+    }
 }

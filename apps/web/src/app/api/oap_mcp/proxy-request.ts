@@ -21,8 +21,8 @@ async function getSupabaseToken(req: NextRequest) {
         get(name: string) {
           return req.cookies.get(name)?.value;
         },
-        set() {}, // Not needed for token retrieval
-        remove() {}, // Not needed for token retrieval
+        set() { }, // Not needed for token retrieval
+        remove() { }, // Not needed for token retrieval
       },
     });
 
