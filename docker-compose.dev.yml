@@ -2,44 +2,55 @@ version: '3.8'
 
 services:
   web:
+    image: open-agent-platform-web-dev
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile.dev
     volumes:
-      - ./apps/web:/app/apps/web:delegated
-      - ./package.json:/app/package.json:ro
-      - ./yarn.lock:/app/yarn.lock:ro
-      - ./tsconfig.json:/app/tsconfig.json:ro
-      - ./turbo.json:/app/turbo.json:ro
-      - ./.yarnrc.yml:/app/.yarnrc.yml:ro
-      # Exclude node_modules to avoid conflicts
+      # Mount the entire apps/web directory for code hot reloading
+      - ./apps/web:/app/apps/web
+      # Mount the root .env file to allow hot reloading of environment variables (requires restart or polling)
+      - ./.env:/app/.env
+      # Mount configuration files
+      - ./package.json:/app/package.json
+      - ./yarn.lock:/app/yarn.lock
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./turbo.json:/app/turbo.json
+      - ./.yarnrc.yml:/app/.yarnrc.yml
+      # Avoid overwriting node_modules in the container with local ones
       - /app/node_modules
       - /app/apps/web/node_modules
-      - /app/apps/web/.next
+      # Persist .next cache
+      - next_cache:/app/apps/web/.next
     ports:
       - "${WEB_PORT:-3000}:3000"
     environment:
       - NODE_ENV=development
+      # Enable polling for file changes (useful for some systems/VMs)
       - CHOKIDAR_USEPOLLING=true
       - WATCHPACK_POLLING=true
-      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-      - NEXT_PUBLIC_BASE_API_URL=${NEXT_PUBLIC_BASE_API_URL:-http://localhost:8123}
-      - NEXT_PUBLIC_RAG_API_URL=${NEXT_PUBLIC_RAG_API_URL:-http://gorbit:8080}
-      - NEXT_PUBLIC_DEPLOYMENTS=${NEXT_PUBLIC_DEPLOYMENTS}
-      - NEXT_PUBLIC_MCP_SERVER_URL=${NEXT_PUBLIC_MCP_SERVER_URL}
-      - NEXT_PUBLIC_MCP_AUTH_REQUIRED=${NEXT_PUBLIC_MCP_AUTH_REQUIRED:-false}
-      - NEXT_PUBLIC_USE_LANGSMITH_AUTH=${NEXT_PUBLIC_USE_LANGSMITH_AUTH:-false}
-      - NEXT_PUBLIC_GOOGLE_AUTH_DISABLED=${NEXT_PUBLIC_GOOGLE_AUTH_DISABLED:-false}
-      - NEXT_PUBLIC_DEMO_APP=${NEXT_PUBLIC_DEMO_APP:-false}
+      # Pass through all relevant environment variables from the host
+      - NEXT_PUBLIC_SUPABASE_URL
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY
+      - NEXT_PUBLIC_BASE_API_URL
+      - NEXT_PUBLIC_RAG_API_URL
+      - NEXT_PUBLIC_DEPLOYMENTS
+      - NEXT_PUBLIC_MCP_SERVER_URL
+      - NEXT_PUBLIC_MCP_AUTH_REQUIRED
+      - NEXT_PUBLIC_USE_LANGSMITH_AUTH
+      - NEXT_PUBLIC_GOOGLE_AUTH_DISABLED
+      - NEXT_PUBLIC_DEMO_APP
     stdin_open: true
     tty: true
     restart: unless-stopped
+    # Use a shared network if needed, or default
     networks:
-      - dev-network
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - default
 
 networks:
-  dev-network:
-    name: open-agent-platform-dev
+  default:
+    name: proxy
+    external: true
+
+volumes:
+  next_cache:

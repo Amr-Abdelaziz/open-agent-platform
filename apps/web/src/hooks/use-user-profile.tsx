@@ -19,7 +19,7 @@ export function useUserProfile() {
 
                     if (p) {
                         // Check if user is admin
-                        const userIsAdmin = p.is_admin || session?.user?.email === "amr2@dr-ai.tech";
+                        const userIsAdmin = p.is_admin;
 
                         let foundPersona: Persona | null = null;
 
@@ -65,7 +65,7 @@ export function useUserProfile() {
         loadData();
     }, [session?.accessToken]);
 
-    const isAdmin = profile?.is_admin || session?.user?.email === "amr2@dr-ai.tech";
+    const isAdmin = profile?.is_admin;
 
     return {
         profile,
