@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, DragEvent } from "react";
+import { useState, DragEvent, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,9 +12,18 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { FileUp, X, Sparkles, Languages } from "lucide-react";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { FileUp, X, Sparkles, Languages, Eye, RefreshCw } from "lucide-react";
 import { useRagContext } from "../providers/RAG";
+import { useOllama } from "@/hooks/use-ollama";
 import { toast } from "sonner";
+import { OllamaModelInfo } from "@/types/ollama";
 
 export function DocumentConverter() {
     const { t } = useLanguage();
@@ -24,9 +33,49 @@ export function DocumentConverter() {
         documentsLoading,
     } = useRagContext();
 
+    const { discoverModels } = useOllama();
+
     const [stagedFiles, setStagedFiles] = useState<File[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
+
+    // Vision model selection state
+    const [ollamaModels, setOllamaModels] = useState<OllamaModelInfo[]>([]);
+    const [selectedModel, setSelectedModel] = useState<string>("");
+    const [modelsLoading, setModelsLoading] = useState(false);
+
+    const fetchModels = useCallback(async () => {
+        setModelsLoading(true);
+        try {
+            const data = await discoverModels();
+            if (data?.models) {
+                // Include all models (vision + general) so the user has full choice
+                setOllamaModels(data.models);
+                // Auto-select the first vision-capable model only if nothing chosen yet
+                const visionModels = data.models.filter((m) =>
+                    m.capabilities?.includes("vision") ||
+                    m.name.toLowerCase().includes("vision") ||
+                    m.name.toLowerCase().includes("llava") ||
+                    m.name.toLowerCase().includes("minicpm") ||
+                    m.name.toLowerCase().includes("qwen") ||
+                    m.name.toLowerCase().includes("granite"),
+                );
+                const firstModel = visionModels[0] ?? data.models[0];
+                if (firstModel) {
+                    // Use functional updater so we don't need selectedModel in deps
+                    setSelectedModel((prev) => prev || firstModel.name);
+                }
+            }
+        } catch {
+            // silently ignore — user can still convert with the default model
+        } finally {
+            setModelsLoading(false);
+        }
+    }, [discoverModels]);
+
+    useEffect(() => {
+        fetchModels();
+    }, [fetchModels]);
 
     const handleFiles = (files: File[] | null) => {
         if (!files?.length) return;
@@ -101,7 +150,11 @@ export function DocumentConverter() {
         const fileList = dataTransfer.files;
 
         try {
-            await handleGraniteConversion(fileList, selectedCollection.uuid);
+            await handleGraniteConversion(
+                fileList,
+                selectedCollection.uuid,
+                selectedModel || undefined,
+            );
             setStagedFiles([]);
         } catch (error) {
             // Error handled in hook
@@ -109,6 +162,18 @@ export function DocumentConverter() {
             setIsUploading(false);
         }
     };
+
+    // Partition models into vision-capable and others for the selector
+    const visionModels = ollamaModels.filter(
+        (m) =>
+            m.capabilities?.includes("vision") ||
+            m.name.toLowerCase().includes("vision") ||
+            m.name.toLowerCase().includes("llava") ||
+            m.name.toLowerCase().includes("minicpm") ||
+            m.name.toLowerCase().includes("qwen") ||
+            m.name.toLowerCase().includes("granite"),
+    );
+    const otherModels = ollamaModels.filter((m) => !visionModels.includes(m));
 
     return (
         <Card className="glass-card neon-border-purple border-none overflow-hidden relative">
@@ -127,6 +192,80 @@ export function DocumentConverter() {
                 </CardDescription>
             </CardHeader>
             <CardContent className="relative z-10 space-y-6">
+
+                {/* Vision Model Selector */}
+                <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                        <Label className="text-xs font-bold text-foreground/70 uppercase tracking-wider flex items-center gap-1.5">
+                            <Eye className="size-3.5 text-primary/70" />
+                            {t('vision_model')}
+                        </Label>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="size-6 hover:bg-primary/20 rounded-md transition-all active:scale-90"
+                            onClick={fetchModels}
+                            disabled={modelsLoading}
+                            title={t('refresh')}
+                        >
+                            <RefreshCw className={`size-3 text-primary/70 ${modelsLoading ? "animate-spin" : ""}`} />
+                        </Button>
+                    </div>
+
+                    <Select
+                        value={selectedModel}
+                        onValueChange={setSelectedModel}
+                        disabled={modelsLoading || ollamaModels.length === 0}
+                    >
+                        <SelectTrigger className="w-full bg-primary/5 border-primary/20 hover:border-primary/40 transition-colors text-sm font-medium">
+                            <SelectValue
+                                placeholder={
+                                    modelsLoading
+                                        ? t('loading')
+                                        : ollamaModels.length === 0
+                                            ? t('no_models_available')
+                                            : t('select_vision_model')
+                                }
+                            />
+                        </SelectTrigger>
+                        <SelectContent className="glass-card border-primary/20">
+                            {visionModels.length > 0 && (
+                                <>
+                                    <div className="px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary/60">
+                                        {t('vision_capable')}
+                                    </div>
+                                    {visionModels.map((model) => (
+                                        <SelectItem key={model.name} value={model.name}>
+                                            <div className="flex items-center gap-2">
+                                                <Eye className="size-3 text-primary/60 flex-shrink-0" />
+                                                <span>{model.name}</span>
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </>
+                            )}
+                            {otherModels.length > 0 && (
+                                <>
+                                    <div className="px-2 py-1.5 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mt-1">
+                                        {t('other_models')}
+                                    </div>
+                                    {otherModels.map((model) => (
+                                        <SelectItem key={model.name} value={model.name}>
+                                            {model.name}
+                                        </SelectItem>
+                                    ))}
+                                </>
+                            )}
+                        </SelectContent>
+                    </Select>
+
+                    {selectedModel && (
+                        <p className="text-[11px] text-muted-foreground/70 italic">
+                            {t('using_model')}: <span className="font-mono text-primary/80">{selectedModel}</span>
+                        </p>
+                    )}
+                </div>
+
                 <div
                     className={`flex flex-col items-center rounded-xl border-2 border-dashed p-10 transition-all duration-300 ${isDragging
                         ? "neon-border-purple bg-primary/10 scale-[1.01]"
@@ -215,7 +354,9 @@ export function DocumentConverter() {
                             ) : (
                                 <div className="flex items-center gap-2">
                                     <Sparkles className="size-4" />
-                                    {t('convert_with_granite_vision')}
+                                    {selectedModel
+                                        ? `${t('convert_with_vision_model')}: ${selectedModel}`
+                                        : t('convert_with_granite_vision')}
                                 </div>
                             )}
                         </Button>

@@ -399,6 +399,7 @@ interface UseRagReturn {
   handleGraniteConversion: (
     files: FileList | null,
     collectionId: string,
+    visionModel?: string,
   ) => Promise<void>;
   handleTextUpload: (textInput: string, collectionId: string) => Promise<void>;
   getDocumentChunks: (
@@ -412,7 +413,7 @@ interface UseRagReturn {
     filter?: Record<string, any>
   ) => Promise<SearchResult[]>;
   getMarkdownPreview: (file: File) => Promise<string>;
-  getGraniteMarkdownPreview: (file: File, maxPages?: number) => Promise<string>;
+  getGraniteMarkdownPreview: (file: File, maxPages?: number, visionModel?: string) => Promise<string>;
   processDocument: (collectionId: string, documentId: string) => Promise<void>;
   checkOllamaHealth: () => Promise<any>;
 
@@ -910,7 +911,7 @@ export function useRag(): UseRagReturn {
   );
 
   const handleGraniteConversion = useCallback(
-    async (files: FileList | null, collectionId: string) => {
+    async (files: FileList | null, collectionId: string, visionModel?: string) => {
       if (!session?.accessToken) {
         toast.error("No session found", {
           richColors: true,
@@ -925,7 +926,8 @@ export function useRag(): UseRagReturn {
       }
 
       setDocumentsLoading(true);
-      const loadingToast = toast.loading("Processing with Granite Vision...", { richColors: true });
+      const modelLabel = visionModel ? ` (${visionModel})` : "";
+      const loadingToast = toast.loading(`Processing with Vision${modelLabel}...`, { richColors: true });
 
       try {
         const url = getApiUrlOrThrow();
@@ -935,6 +937,11 @@ export function useRag(): UseRagReturn {
         Array.from(files).forEach((file) => {
           formData.append("files", file, file.name);
         });
+
+        // Pass the selected vision model to the backend if specified
+        if (visionModel) {
+          formData.append("vision_model", visionModel);
+        }
 
         const response = await fetch(url.toString(), {
           method: "POST",
@@ -950,18 +957,18 @@ export function useRag(): UseRagReturn {
           if (Array.isArray(errorDetail)) {
             errorDetail = JSON.stringify(errorDetail);
           }
-          throw new Error(`Granite conversion failed: ${errorDetail}`);
+          throw new Error(`Vision conversion failed: ${errorDetail}`);
         }
 
-        toast.success("Granite conversion started successfully", { richColors: true });
+        toast.success("Vision conversion started successfully", { richColors: true });
 
         // Refresh documents
         const updatedDocs = await listDocuments(collectionId);
         setDocuments(updatedDocs);
 
       } catch (error: any) {
-        console.error("Granite conversion error:", error);
-        toast.error(error.message || "Failed to start Granite conversion");
+        console.error("Vision conversion error:", error);
+        toast.error(error.message || "Failed to start vision conversion");
       } finally {
         setDocumentsLoading(false);
         toast.dismiss(loadingToast);
@@ -1105,7 +1112,7 @@ export function useRag(): UseRagReturn {
   );
 
   const getGraniteMarkdownPreview = useCallback(
-    async (file: File, maxPages?: number): Promise<string> => {
+    async (file: File, maxPages?: number, visionModel?: string): Promise<string> => {
       if (!session?.accessToken) {
         toast.error("No session found");
         return "";
@@ -1119,6 +1126,10 @@ export function useRag(): UseRagReturn {
 
       const formData = new FormData();
       formData.append("file", file);
+
+      if (visionModel) {
+        formData.append("vision_model", visionModel);
+      }
 
       const response = await fetch(url.toString(), {
         method: "POST",
