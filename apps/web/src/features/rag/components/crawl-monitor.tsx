@@ -135,6 +135,11 @@ export function CrawlMonitor() {
             const baseUrl = process.env.NEXT_PUBLIC_CRAWL4AI_API_URL || "http://aictserver:11235";
             const wsUrl = baseUrl.replace(/^http/, "ws") + "/monitor/ws";
 
+            // // If the current page is HTTPS, the WebSocket must use WSS
+            // if (typeof window !== "undefined" && window.location.protocol === "https:" && wsUrl.startsWith("ws://")) {
+            //     wsUrl = wsUrl.replace("ws://", "wss://");
+            // }
+
             try {
                 socket = new WebSocket(wsUrl);
 

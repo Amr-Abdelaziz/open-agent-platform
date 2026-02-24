@@ -460,7 +460,6 @@ const translations: Record<Language, Record<string, string>> = {
         concurrent_requests: "الطلبات المتزامنة",
         skip_discovery: "تخطي الاكتشاف",
         skip_discovery_description: "الزحف فقط إلى العناوين المزودة دون البحث عن عناوين جديدة.",
-<<<<<<< HEAD
         settings_visual: "الإعدادات المرئية",
         settings_advanced: "متقدم (JSON)",
         browser_headless_label: "الوضع الخفي",
@@ -524,10 +523,7 @@ const translations: Record<Language, Record<string, string>> = {
         pressure: "الضغط",
         refresh: "تحديث",
         settings_save: "حفظ الإعدادات",
-        engaging_orbital_scout: "جاري تشغيل المستكشف المداري...",
-=======
         engaging_orbital_scout: "جاري تشغيل المستكشف ...",
->>>>>>> 83cd108 (ok)
         start_crawl: "بدء الزحف",
         document_name: "اسم المستند",
         status: "الحالة",
