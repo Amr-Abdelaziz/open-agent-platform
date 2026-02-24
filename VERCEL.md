@@ -12,8 +12,8 @@ This project is a monorepo using Turbo and Yarn. To deploy the web application t
 1. **Import Project**: Go to your Vercel Dashboard and click "New Project".
 2. **Select Repository**: Choose your `open-agent-platform` repository.
 3. **Configure Project**:
+   - **Root Directory**: **IMPORTANT**: Select `apps/web`. Vercel needs this to find the `public` directory and the `package.json` for the web app.
    - **Framework Preset**: Select `Next.js`.
-   - **Root Directory**: Select `apps/web`.
    - **Build Command**: Ensure it is set to `yarn build` (which now runs `next build`).
    - **Install Command**: `yarn install`.
    - **Output Directory**: `.next`.
